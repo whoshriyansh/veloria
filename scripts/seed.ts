@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import { connectMongo } from "../src/lib/mongodb";
+import { collections, ObjectId } from "../src/lib/models";
 
 const questions = [
   {
@@ -97,74 +97,103 @@ const questions = [
 ];
 
 async function main() {
-  const passwordHash = await bcrypt.hash("admin123", 10);
-
-  await prisma.user.upsert({
-    where: { email: "admin@veloria.legal" },
-    update: {},
-    create: {
-      email: "admin@veloria.legal",
-      name: "Veloria Admin",
-      passwordHash,
-      role: "ADMIN",
-    },
-  });
-
-  await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: {},
-    create: {
-      id: "default",
-      siteName: "Veloria",
-      tagline: "Investment Ready",
-      heroHeadline: "Investment Ready",
-      heroSubheadline:
-        "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
-      heroCtaLabel: "Start Legal Health Checkup",
-      heroCtaHref: "/legal-health-checkup",
-      aboutPreview:
-        "We are your Eternal Legal Counsel — the strategic legal partner founders keep for every raise, hire, and exit.",
-      footerText: "© Veloria. Eternal legal counsel for ambitious startups.",
-      logoText: "Veloria",
-      metaTitle: "Veloria — Investment Ready Legal Counsel",
-      metaDescription:
-        "Veloria helps startups become investment ready, compliance ready, and paperwork ready. Eternal legal counsel for founders.",
-      showCheckupPopup: true,
-      popupDelayMs: 1800,
-      popupTitle: "How investment-ready is your startup?",
-      popupBody:
-        "Take our free 15-question Legal Health Checkup. A Veloria representative will review your answers and call you with a clear path forward.",
-      popupCta: "Begin checkup",
-    },
-  });
-
-  await prisma.contactInfo.upsert({
-    where: { id: "default" },
-    update: {},
-    create: {
-      id: "default",
-      email: "hello@veloria.legal",
-      phone: "+1 (415) 555-0142",
-      address: "San Francisco · New York · Remote",
-      linkedin: "https://linkedin.com",
-      hours: "Mon–Fri, 9am–6pm PT",
-    },
-  });
-
-  await prisma.navigationItem.deleteMany();
-  const nav = [
-    { label: "About", href: "/about", order: 1 },
-    { label: "Services", href: "/services", order: 2 },
-    { label: "Packages", href: "/packages", order: 3 },
-    { label: "Founder Circle", href: "/founder-circle", order: 4 },
-    { label: "Health Checkup", href: "/legal-health-checkup", order: 5 },
-    { label: "Contact", href: "/contact", order: 6 },
-  ];
-  for (const item of nav) {
-    await prisma.navigationItem.create({ data: item });
+  if (!process.env.MONGODB_URI) {
+    throw new Error("Set MONGODB_URI in .env before seeding.");
   }
 
-  const pages = [
+  await connectMongo();
+
+  const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@veloria.legal";
+
+  const users = await collections.users();
+  const siteSettings = await collections.siteSettings();
+  const contactInfo = await collections.contactInfo();
+  const navigationItems = await collections.navigationItems();
+  const pages = await collections.pages();
+  const services = await collections.services();
+  const packages = await collections.packages();
+  const healthQuestions = await collections.healthQuestions();
+
+  await users.findOneAndUpdate(
+    { email: adminEmail },
+    {
+      $setOnInsert: {
+        email: adminEmail,
+        name: "Veloria Admin",
+        passwordHash,
+        role: "ADMIN",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    },
+    { upsert: true },
+  );
+
+  await siteSettings.findOneAndUpdate(
+    { key: "default" },
+    {
+      $setOnInsert: {
+        key: "default",
+        siteName: "Veloria",
+        tagline: "Investment Ready",
+        heroHeadline: "Investment Ready",
+        heroSubheadline:
+          "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
+        heroCtaLabel: "Start Legal Health Checkup",
+        heroCtaHref: "/legal-health-checkup",
+        aboutPreview:
+          "We are your Eternal Legal Counsel — the strategic legal partner founders keep for every raise, hire, and exit.",
+        footerText: "© Veloria. Eternal legal counsel for ambitious startups.",
+        logoText: "Veloria",
+        metaTitle: "Veloria — Investment Ready Legal Counsel",
+        metaDescription:
+          "Veloria helps startups become investment ready, compliance ready, and paperwork ready. Eternal legal counsel for founders.",
+        showCheckupPopup: true,
+        popupDelayMs: 1800,
+        popupTitle: "How investment-ready is your startup?",
+        popupBody:
+          "Take our free 15-question Legal Health Checkup. A Veloria representative will review your answers and call you with a clear path forward.",
+        popupCta: "Begin checkup",
+      },
+    },
+    { upsert: true },
+  );
+
+  await contactInfo.findOneAndUpdate(
+    { key: "default" },
+    {
+      $setOnInsert: {
+        key: "default",
+        email: "hello@veloria.legal",
+        phone: "+1 (415) 555-0142",
+        address: "San Francisco · New York · Remote",
+        linkedin: "https://linkedin.com",
+        twitter: "",
+        calendly: "",
+        hours: "Mon–Fri, 9am–6pm PT",
+      },
+    },
+    { upsert: true },
+  );
+
+  await navigationItems.deleteMany({});
+  await navigationItems.insertMany([
+    { label: "About", href: "/about", order: 1, isVisible: true, isExternal: false },
+    { label: "Services", href: "/services", order: 2, isVisible: true, isExternal: false },
+    { label: "Packages", href: "/packages", order: 3, isVisible: true, isExternal: false },
+    { label: "Founder Circle", href: "/founder-circle", order: 4, isVisible: true, isExternal: false },
+    {
+      label: "Health Checkup",
+      href: "/legal-health-checkup",
+      order: 5,
+      isVisible: true,
+      isExternal: false,
+    },
+    { label: "Contact", href: "/contact", order: 6, isVisible: true, isExternal: false },
+  ]);
+
+  const pageDocs = [
     {
       slug: "home",
       title: "Investment Ready",
@@ -172,6 +201,10 @@ async function main() {
         "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
       content:
         "Veloria is the legal authority founders call when the next raise, hire, or enterprise deal demands a clean legal foundation — without the traditional firm friction.",
+      heroImage: "",
+      seoTitle: "",
+      seoDescription: "",
+      isPublished: true,
       sections: JSON.stringify([
         {
           type: "stats",
@@ -219,6 +252,10 @@ We are not a one-off formation vendor. We are not a document marketplace. We are
 
 **Who we serve**
 Pre-seed through Series B founding teams who want institutional-grade legal readiness without institutional inertia.`,
+      heroImage: "",
+      seoTitle: "",
+      seoDescription: "",
+      isPublished: true,
       sections: JSON.stringify([
         {
           type: "principles",
@@ -254,35 +291,47 @@ Members receive priority counsel access, closed-door diligence clinics, peer dea
 - Priority placement on retainer packages when you scale
 
 Membership is curated. Apply through contact — we respond personally.`,
+      heroImage: "",
+      seoTitle: "",
+      seoDescription: "",
+      isPublished: true,
       sections: JSON.stringify([]),
     },
     {
       slug: "contact",
       title: "Let’s talk readiness",
       subtitle: "Tell us where you are. We’ll tell you what diligence will ask next.",
-      content: "Whether you need a full retainer or a single Legal Health Checkup review, our team replies within one business day.",
+      content:
+        "Whether you need a full retainer or a single Legal Health Checkup review, our team replies within one business day.",
+      heroImage: "",
+      seoTitle: "",
+      seoDescription: "",
+      isPublished: true,
       sections: JSON.stringify([]),
     },
   ];
 
-  for (const page of pages) {
-    await prisma.page.upsert({
-      where: { slug: page.slug },
-      update: page,
-      create: page,
-    });
+  for (const page of pageDocs) {
+    const now = new Date();
+    await pages.findOneAndUpdate(
+      { slug: page.slug },
+      { $set: { ...page, updatedAt: now }, $setOnInsert: { createdAt: now } },
+      { upsert: true },
+    );
   }
 
-  await prisma.service.deleteMany();
-  const services = [
+  await services.deleteMany({});
+  await services.insertMany([
     {
       title: "Investment Readiness",
       slug: "investment-readiness",
       summary: "Diligence-grade cleanup before your next raise.",
       description:
         "We audit formation, equity, IP, governance, and prior financings — then close gaps so lead investors open a clean data room, not a cleanup project.",
+      imageUrl: "",
       icon: "landmark",
       order: 1,
+      isVisible: true,
       features: JSON.stringify([
         "Formation & governance audit",
         "Cap table reconciliation",
@@ -296,8 +345,10 @@ Membership is curated. Apply through contact — we respond personally.`,
       summary: "Privacy, commercial, and regulatory scaffolding that scales.",
       description:
         "From privacy policies to sector-specific obligations, we design compliance that matches your product stage — not a binder of unread policies.",
+      imageUrl: "",
       icon: "shield",
       order: 2,
+      isVisible: true,
       features: JSON.stringify([
         "Privacy & terms refresh",
         "Vendor & DPA review",
@@ -311,8 +362,10 @@ Membership is curated. Apply through contact — we respond personally.`,
       summary: "Hiring, advisors, and commercial paper at founder velocity.",
       description:
         "Offer letters, advisor grants, NDAs, and customer agreements — templated, reviewed, and ready so legal never becomes the bottleneck on growth.",
+      imageUrl: "",
       icon: "file-stack",
       order: 3,
+      isVisible: true,
       features: JSON.stringify([
         "Employment & contractor packs",
         "Advisor & equity grants",
@@ -326,8 +379,10 @@ Membership is curated. Apply through contact — we respond personally.`,
       summary: "Standing legal partnership for every chapter of the company.",
       description:
         "A named counsel relationship with monthly readiness reviews, on-demand guidance, and priority turnaround when a term sheet hits the inbox.",
+      imageUrl: "",
       icon: "infinity",
       order: 4,
+      isVisible: true,
       features: JSON.stringify([
         "Named counsel access",
         "Monthly health reviews",
@@ -335,15 +390,10 @@ Membership is curated. Apply through contact — we respond personally.`,
         "Founder Circle eligibility",
       ]),
     },
-  ];
-  for (const service of services) {
-    await prisma.service.create({ data: service });
-  }
+  ]);
 
-  await prisma.packageFeature.deleteMany();
-  await prisma.package.deleteMany();
-
-  const packages = [
+  await packages.deleteMany({});
+  await packages.insertMany([
     {
       name: "Foundation",
       slug: "foundation",
@@ -353,13 +403,15 @@ Membership is curated. Apply through contact — we respond personally.`,
       cadence: "Monthly",
       highlight: false,
       order: 1,
+      isVisible: true,
+      ctaLabel: "Request access",
       features: [
         "Formation & founder equity review",
         "IP assignment completion",
         "Core template suite (NDA, offer, advisor)",
         "Quarterly Legal Health Checkup",
         "Async counsel channel",
-      ],
+      ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
     {
       name: "Growth Counsel",
@@ -370,6 +422,8 @@ Membership is curated. Apply through contact — we respond personally.`,
       cadence: "Monthly",
       highlight: true,
       order: 2,
+      isVisible: true,
+      ctaLabel: "Request access",
       features: [
         "Everything in Foundation",
         "Cap table & SAFE monitoring",
@@ -377,7 +431,7 @@ Membership is curated. Apply through contact — we respond personally.`,
         "Commercial contract review hours",
         "Monthly readiness briefing",
         "Priority response SLA",
-      ],
+      ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
     {
       name: "Series Ready",
@@ -388,6 +442,8 @@ Membership is curated. Apply through contact — we respond personally.`,
       cadence: "Monthly",
       highlight: false,
       order: 3,
+      isVisible: true,
+      ctaLabel: "Request access",
       features: [
         "Everything in Growth Counsel",
         "Full diligence data room ownership",
@@ -395,44 +451,27 @@ Membership is curated. Apply through contact — we respond personally.`,
         "Board governance packaging",
         "Named partner-level counsel",
         "Founder Circle membership",
-      ],
+      ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
-  ];
+  ]);
 
-  for (const pkg of packages) {
-    const { features, ...rest } = pkg;
-    await prisma.package.create({
-      data: {
-        ...rest,
-        features: {
-          create: features.map((text, order) => ({ text, order })),
-        },
-      },
-    });
-  }
+  await healthQuestions.deleteMany({});
+  await healthQuestions.insertMany(
+    questions.map((q, index) => ({
+      ...q,
+      order: index + 1,
+      weight: 1,
+      isActive: true,
+    })),
+  );
 
-  await prisma.leadAnswer.deleteMany();
-  await prisma.healthQuestion.deleteMany();
-  for (const [index, q] of questions.entries()) {
-    await prisma.healthQuestion.create({
-      data: {
-        ...q,
-        order: index + 1,
-        weight: 1,
-        isActive: true,
-      },
-    });
-  }
-
-  console.log("Veloria seed complete.");
-  console.log("Admin login: admin@veloria.legal / admin123");
+  console.log("Veloria MongoDB seed complete.");
+  console.log(`Admin login: ${adminEmail} / ${process.env.ADMIN_PASSWORD || "admin123"}`);
 }
 
 main()
+  .then(() => process.exit(0))
   .catch((e) => {
     console.error(e);
     process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
   });

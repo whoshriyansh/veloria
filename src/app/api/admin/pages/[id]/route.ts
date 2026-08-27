@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -9,9 +10,15 @@ export async function GET(_request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
-  const page = await prisma.page.findUnique({ where: { id } });
+  if (!isValidId(id)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  await connectMongo();
+  const pages = await collections.pages();
+  const page = await pages.findOne({ _id: oid(id) });
   if (!page) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(page);
+  return NextResponse.json(serialize(page as Record<string, unknown>));
 }
 
 export async function PATCH(request: Request, context: Ctx) {
@@ -19,6 +26,10 @@ export async function PATCH(request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
+  if (!isValidId(id)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const body = (await request.json()) as Record<string, unknown>;
   const data: {
     title?: string;
@@ -30,6 +41,7 @@ export async function PATCH(request: Request, context: Ctx) {
     seoDescription?: string;
     heroImage?: string;
     slug?: string;
+    updatedAt?: Date;
   } = {};
 
   if (typeof body.title === "string") data.title = body.title;
@@ -41,13 +53,17 @@ export async function PATCH(request: Request, context: Ctx) {
   if (typeof body.seoDescription === "string") data.seoDescription = body.seoDescription;
   if (typeof body.heroImage === "string") data.heroImage = body.heroImage;
   if (typeof body.slug === "string") data.slug = body.slug;
+  data.updatedAt = new Date();
 
-  try {
-    const page = await prisma.page.update({ where: { id }, data });
-    return NextResponse.json(page);
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
+  await connectMongo();
+  const pages = await collections.pages();
+  const page = await pages.findOneAndUpdate(
+    { _id: oid(id) },
+    { $set: data },
+    { returnDocument: "after" },
+  );
+  if (!page) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(serialize(page as Record<string, unknown>));
 }
 
 export async function DELETE(_request: Request, context: Ctx) {
@@ -55,10 +71,15 @@ export async function DELETE(_request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
-  try {
-    await prisma.page.delete({ where: { id } });
-    return NextResponse.json({ ok: true });
-  } catch {
+  if (!isValidId(id)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  await connectMongo();
+  const pages = await collections.pages();
+  const result = await pages.deleteOne({ _id: oid(id) });
+  if (result.deletedCount === 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  return NextResponse.json({ ok: true });
 }

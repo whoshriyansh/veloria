@@ -1,11 +1,20 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { AdminCard, PageHeader } from "@/components/admin/ui";
 
 export default async function PackagesPage() {
-  const packages = await prisma.package.findMany({
-    orderBy: { order: "asc" },
-    include: { features: { orderBy: { order: "asc" } } },
+  await connectMongo();
+  const packagesCol = await collections.packages();
+  const packagesRaw = await packagesCol.find({}).sort({ order: 1 }).toArray();
+  const packages = packagesRaw.map((pkg) => {
+    const serialized = serialize(pkg as Record<string, unknown>);
+    if (Array.isArray(serialized.features)) {
+      serialized.features = [...(serialized.features as { order?: number }[])].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0),
+      );
+    }
+    return serialized;
   });
 
   return (
@@ -20,17 +29,17 @@ export default async function PackagesPage() {
                   href={`/admin/packages/${pkg.id}`}
                   className="text-lg font-medium text-white hover:text-[#6ef0a4]"
                 >
-                  {pkg.name}
+                  {String(pkg.name)}
                 </Link>
-                <div className="text-sm text-white/50">{pkg.tagline}</div>
+                <div className="text-sm text-white/50">{String(pkg.tagline)}</div>
               </div>
               <div className="text-xs text-white/40">
-                Order {pkg.order} · {pkg.isVisible ? "Visible" : "Hidden"}
+                Order {Number(pkg.order)} · {pkg.isVisible ? "Visible" : "Hidden"}
                 {pkg.highlight ? " · Highlighted" : ""}
               </div>
             </div>
             <ul className="space-y-1 text-sm text-white/70">
-              {pkg.features.map((f) => (
+              {((pkg.features as { id: string; text: string }[]) ?? []).map((f) => (
                 <li key={f.id}>• {f.text}</li>
               ))}
             </ul>

@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, ObjectId, oid } from "@/lib/models";
 import { readinessFromScore } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -35,15 +36,25 @@ export async function POST(request: Request) {
   const { name, phone, email, company, answers } = parsed.data;
   const questionIds = [...new Set(answers.map((a) => a.questionId))];
 
-  const questions = await prisma.healthQuestion.findMany({
-    where: { id: { in: questionIds }, isActive: true },
-  });
+  if (!questionIds.every((id) => isValidId(id))) {
+    return NextResponse.json({ error: "One or more questions are invalid" }, { status: 400 });
+  }
+
+  await connectMongo();
+  const healthQuestions = await collections.healthQuestions();
+
+  const questions = await healthQuestions
+    .find({
+      _id: { $in: questionIds.map((id) => oid(id)) },
+      isActive: true,
+    })
+    .toArray();
 
   if (questions.length !== questionIds.length) {
     return NextResponse.json({ error: "One or more questions are invalid" }, { status: 400 });
   }
 
-  const questionMap = new Map(questions.map((q) => [q.id, q]));
+  const questionMap = new Map(questions.map((q) => [String(q._id), q]));
   let score = 0;
   let maxScore = 0;
 
@@ -57,30 +68,46 @@ export async function POST(request: Request) {
   }
 
   const readiness = readinessFromScore(score, maxScore);
+  const now = new Date();
 
-  const lead = await prisma.lead.create({
-    data: {
-      name,
-      phone,
-      email: email || null,
-      company: company || null,
-      score,
-      maxScore,
-      readiness,
-      status: "NEW",
-      source: "Legal Health Checkup",
-      answers: {
-        create: answers.map((a) => ({
-          questionId: a.questionId,
-          answer: a.answer,
-        })),
-      },
-    },
-  });
+  const doc = {
+    name,
+    phone,
+    email: email || null,
+    company: company || null,
+    score,
+    maxScore,
+    readiness,
+    status: "NEW",
+    source: "Legal Health Checkup",
+    notes: "",
+    answers: answers.map((a) => {
+      const question = questionMap.get(a.questionId)!;
+      return {
+        _id: new ObjectId(),
+        questionId: a.questionId,
+        answer: a.answer,
+        questionSnapshot: {
+          question: question.question,
+          category: question.category,
+          yesIsGood: question.yesIsGood,
+          helpText: question.helpText,
+          order: question.order,
+        },
+        createdAt: now,
+      };
+    }),
+    leadNotes: [] as never[],
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const leads = await collections.leads();
+  const result = await leads.insertOne(doc);
 
   return NextResponse.json({
     ok: true,
-    leadId: lead.id,
+    leadId: String(result.insertedId),
     score,
     maxScore,
     readiness,

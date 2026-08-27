@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { PageHeader } from "@/components/admin/ui";
 import { StatusBadge, ReadinessBadge } from "@/components/admin/status-badge";
 import { LeadDetailClient } from "@/components/admin/lead-detail-client";
@@ -12,44 +13,59 @@ export default async function LeadDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const lead = await prisma.lead.findUnique({
-    where: { id },
-    include: {
-      answers: {
-        include: { question: true },
-        orderBy: { question: { order: "asc" } },
-      },
-      leadNotes: {
-        include: { author: { select: { id: true, name: true, email: true } } },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  });
+  if (!isValidId(id)) notFound();
 
-  if (!lead) notFound();
+  await connectMongo();
+  const leads = await collections.leads();
+  const leadRaw = await leads.findOne({ _id: oid(id) });
+  if (!leadRaw) notFound();
+
+  const lead = serialize(leadRaw as Record<string, unknown>);
+
+  if (Array.isArray(lead.answers)) {
+    lead.answers = [...(lead.answers as { question?: { order?: number } }[])].sort(
+      (a, b) => (a.question?.order ?? 0) - (b.question?.order ?? 0),
+    );
+  }
+  if (Array.isArray(lead.leadNotes)) {
+    lead.leadNotes = [...(lead.leadNotes as { createdAt?: string }[])].sort((a, b) =>
+      String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")),
+    );
+  }
 
   const serialized = {
-    ...lead,
-    createdAt: lead.createdAt.toISOString(),
-    calledAt: lead.calledAt?.toISOString() ?? null,
-    answers: lead.answers.map((a) => ({
-      id: a.id,
-      answer: a.answer,
+    id: lead.id,
+    name: String(lead.name),
+    phone: String(lead.phone),
+    email: lead.email ? String(lead.email) : null,
+    company: lead.company ? String(lead.company) : null,
+    score: Number(lead.score),
+    maxScore: Number(lead.maxScore),
+    readiness: String(lead.readiness),
+    status: String(lead.status),
+    source: String(lead.source ?? ""),
+    notes: String(lead.notes ?? ""),
+    assignedTo: lead.assignedTo ? String(lead.assignedTo) : null,
+    createdAt: String(lead.createdAt),
+    calledAt: lead.calledAt ? String(lead.calledAt) : null,
+    answers: (lead.answers as {
+      id: string;
+      answer: boolean;
       question: {
-        id: a.question.id,
-        question: a.question.question,
-        category: a.question.category,
-        yesIsGood: a.question.yesIsGood,
-        helpText: a.question.helpText,
-        order: a.question.order,
-      },
-    })),
-    leadNotes: lead.leadNotes.map((n) => ({
-      id: n.id,
-      body: n.body,
-      createdAt: n.createdAt.toISOString(),
-      author: n.author,
-    })),
+        id: string;
+        question: string;
+        category: string;
+        yesIsGood: boolean;
+        helpText: string;
+        order: number;
+      };
+    }[]) ?? [],
+    leadNotes: (lead.leadNotes as {
+      id: string;
+      body: string;
+      createdAt: string;
+      author: { id: string; name: string; email: string } | null;
+    }[]) ?? [],
   };
 
   return (
@@ -62,13 +78,13 @@ export default async function LeadDetailPage({
         Back to leads
       </Link>
       <PageHeader
-        title={lead.name}
+        title={serialized.name}
         description={
           <span className="inline-flex flex-wrap items-center gap-2">
-            <StatusBadge status={lead.status} />
-            <ReadinessBadge readiness={lead.readiness} />
+            <StatusBadge status={serialized.status} />
+            <ReadinessBadge readiness={serialized.readiness} />
             <span className="text-white/40">
-              {lead.score}/{lead.maxScore}
+              {serialized.score}/{serialized.maxScore}
             </span>
           </span>
         }

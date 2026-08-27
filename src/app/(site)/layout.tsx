@@ -3,6 +3,8 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { CheckupPopup } from "@/components/checkup/checkup-popup";
 import { getContactInfo, getNavigation, getSiteSettings } from "@/lib/cms";
 
+export const dynamic = "force-dynamic";
+
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [settings, contact, nav] = await Promise.all([
     getSiteSettings(),

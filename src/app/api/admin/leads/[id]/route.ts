@@ -1,31 +1,40 @@
 import { requireAdmin } from "@/lib/admin-auth";
 import { isLeadStatus } from "@/lib/lead-status";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 type Ctx = { params: Promise<{ id: string }> };
+
+function serializeLead(lead: Record<string, unknown>) {
+  const serialized = serialize(lead);
+  if (Array.isArray(serialized.answers)) {
+    serialized.answers = [...(serialized.answers as { question?: { order?: number } }[])].sort(
+      (a, b) => (a.question?.order ?? 0) - (b.question?.order ?? 0),
+    );
+  }
+  if (Array.isArray(serialized.leadNotes)) {
+    serialized.leadNotes = [...(serialized.leadNotes as { createdAt?: string }[])].sort((a, b) =>
+      String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")),
+    );
+  }
+  return serialized;
+}
 
 export async function GET(_request: Request, context: Ctx) {
   const { error } = await requireAdmin();
   if (error) return error;
 
   const { id } = await context.params;
-  const lead = await prisma.lead.findUnique({
-    where: { id },
-    include: {
-      answers: {
-        include: { question: true },
-        orderBy: { question: { order: "asc" } },
-      },
-      leadNotes: {
-        include: { author: { select: { id: true, name: true, email: true } } },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  });
+  if (!isValidId(id)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
+  await connectMongo();
+  const leads = await collections.leads();
+  const lead = await leads.findOne({ _id: oid(id) });
   if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(lead);
+  return NextResponse.json(serializeLead(lead as Record<string, unknown>));
 }
 
 export async function PATCH(request: Request, context: Ctx) {
@@ -33,12 +42,17 @@ export async function PATCH(request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
+  if (!isValidId(id)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const body = (await request.json()) as Record<string, unknown>;
   const data: {
     status?: string;
     notes?: string;
     assignedTo?: string | null;
     calledAt?: Date | null;
+    updatedAt?: Date;
   } = {};
 
   if (typeof body.status === "string") {
@@ -58,24 +72,15 @@ export async function PATCH(request: Request, context: Ctx) {
     }
     data.calledAt = parsed;
   }
+  data.updatedAt = new Date();
 
-  try {
-    const lead = await prisma.lead.update({
-      where: { id },
-      data,
-      include: {
-        answers: {
-          include: { question: true },
-          orderBy: { question: { order: "asc" } },
-        },
-        leadNotes: {
-          include: { author: { select: { id: true, name: true, email: true } } },
-          orderBy: { createdAt: "desc" },
-        },
-      },
-    });
-    return NextResponse.json(lead);
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
+  await connectMongo();
+  const leads = await collections.leads();
+  const lead = await leads.findOneAndUpdate(
+    { _id: oid(id) },
+    { $set: data },
+    { returnDocument: "after" },
+  );
+  if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(serializeLead(lead as Record<string, unknown>));
 }

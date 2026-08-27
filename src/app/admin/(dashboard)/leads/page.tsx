@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { AdminCard, PageHeader, Table, Th, Td } from "@/components/admin/ui";
 import { ReadinessBadge, StatusBadge } from "@/components/admin/status-badge";
 
 export default async function LeadsPage() {
-  const leads = await prisma.lead.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  await connectMongo();
+  const leadsCol = await collections.leads();
+  const leadsRaw = await leadsCol.find({}).sort({ createdAt: -1 }).toArray();
+  const leads = leadsRaw.map((lead) => serialize(lead as Record<string, unknown>));
 
   return (
     <div>
@@ -40,25 +42,25 @@ export default async function LeadsPage() {
                       href={`/admin/leads/${lead.id}`}
                       className="font-medium text-white hover:text-[#6ef0a4]"
                     >
-                      {lead.name}
+                      {String(lead.name)}
                     </Link>
                     {lead.company ? (
-                      <div className="text-xs text-white/40">{lead.company}</div>
+                      <div className="text-xs text-white/40">{String(lead.company)}</div>
                     ) : null}
                   </Td>
-                  <Td>{lead.phone}</Td>
-                  <Td className="text-white/70">{lead.email ?? "—"}</Td>
+                  <Td>{String(lead.phone)}</Td>
+                  <Td className="text-white/70">{lead.email ? String(lead.email) : "—"}</Td>
                   <Td>
-                    {lead.score}/{lead.maxScore}
+                    {Number(lead.score)}/{Number(lead.maxScore)}
                   </Td>
                   <Td>
-                    <ReadinessBadge readiness={lead.readiness} />
+                    <ReadinessBadge readiness={String(lead.readiness)} />
                   </Td>
                   <Td>
-                    <StatusBadge status={lead.status} />
+                    <StatusBadge status={String(lead.status)} />
                   </Td>
                   <Td className="whitespace-nowrap text-white/50">
-                    {format(lead.createdAt, "MMM d, yyyy HH:mm")}
+                    {format(new Date(String(lead.createdAt)), "MMM d, yyyy HH:mm")}
                   </Td>
                 </tr>
               ))}

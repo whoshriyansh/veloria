@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -9,6 +10,10 @@ export async function PATCH(request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
+  if (!isValidId(id)) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const body = (await request.json()) as Record<string, unknown>;
   const data: {
     question?: string;
@@ -28,12 +33,15 @@ export async function PATCH(request: Request, context: Ctx) {
   if (typeof body.isActive === "boolean") data.isActive = body.isActive;
   if (typeof body.weight === "number") data.weight = body.weight;
 
-  try {
-    const question = await prisma.healthQuestion.update({ where: { id }, data });
-    return NextResponse.json(question);
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
+  await connectMongo();
+  const healthQuestions = await collections.healthQuestions();
+  const question = await healthQuestions.findOneAndUpdate(
+    { _id: oid(id) },
+    { $set: data },
+    { returnDocument: "after" },
+  );
+  if (!question) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(serialize(question as Record<string, unknown>));
 }
 
 export async function DELETE(_request: Request, context: Ctx) {
@@ -41,10 +49,15 @@ export async function DELETE(_request: Request, context: Ctx) {
   if (error) return error;
 
   const { id } = await context.params;
-  try {
-    await prisma.healthQuestion.delete({ where: { id } });
-    return NextResponse.json({ ok: true });
-  } catch {
+  if (!isValidId(id)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  await connectMongo();
+  const healthQuestions = await collections.healthQuestions();
+  const result = await healthQuestions.deleteOne({ _id: oid(id) });
+  if (result.deletedCount === 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  return NextResponse.json({ ok: true });
 }

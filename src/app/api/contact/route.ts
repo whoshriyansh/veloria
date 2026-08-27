@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections } from "@/lib/models";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -24,25 +25,30 @@ export async function POST(request: Request) {
   }
 
   const { name, phone, email, company, message } = parsed.data;
+  const now = new Date();
 
-  const lead = await prisma.lead.create({
-    data: {
-      name,
-      phone,
-      email: email || null,
-      company: company || null,
-      score: 0,
-      maxScore: 0,
-      readiness: "Contact Inquiry",
-      status: "NEW",
-      source: "Contact Form",
-      notes: message || "",
-    },
+  await connectMongo();
+  const leads = await collections.leads();
+  const result = await leads.insertOne({
+    name,
+    phone,
+    email: email || null,
+    company: company || null,
+    score: 0,
+    maxScore: 0,
+    readiness: "Contact Inquiry",
+    status: "NEW",
+    source: "Contact Form",
+    notes: message || "",
+    answers: [],
+    leadNotes: [],
+    createdAt: now,
+    updatedAt: now,
   });
 
   return NextResponse.json({
     ok: true,
-    leadId: lead.id,
+    leadId: String(result.insertedId),
     message: "Thanks — a Veloria representative will call you soon.",
   });
 }

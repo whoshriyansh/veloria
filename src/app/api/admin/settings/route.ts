@@ -1,13 +1,16 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
-  return NextResponse.json(settings);
+  await connectMongo();
+  const siteSettings = await collections.siteSettings();
+  const settings = await siteSettings.findOne({ key: "default" });
+  return NextResponse.json(settings ? serialize(settings as Record<string, unknown>) : null);
 }
 
 export async function PATCH(request: Request) {
@@ -40,11 +43,13 @@ export async function PATCH(request: Request) {
   if (typeof body.showCheckupPopup === "boolean") data.showCheckupPopup = body.showCheckupPopup;
   if (typeof body.popupDelayMs === "number") data.popupDelayMs = body.popupDelayMs;
 
-  const settings = await prisma.siteSettings.upsert({
-    where: { id: "default" },
-    update: data,
-    create: { id: "default", ...data },
-  });
+  await connectMongo();
+  const siteSettings = await collections.siteSettings();
+  const settings = await siteSettings.findOneAndUpdate(
+    { key: "default" },
+    { $set: data, $setOnInsert: { key: "default" } },
+    { upsert: true, returnDocument: "after" },
+  );
 
-  return NextResponse.json(settings);
+  return NextResponse.json(serialize(settings as Record<string, unknown>));
 }

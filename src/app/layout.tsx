@@ -3,6 +3,8 @@ import { Cormorant_Garamond, Outfit, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/cms";
 
+export const dynamic = "force-dynamic";
+
 const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],

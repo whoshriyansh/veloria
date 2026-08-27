@@ -9,30 +9,41 @@ import {
   Settings,
   ArrowRight,
 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { AdminCard, PageHeader, Table, Th, Td } from "@/components/admin/ui";
 import { ReadinessBadge, StatusBadge } from "@/components/admin/status-badge";
 import { LEAD_STATUSES } from "@/lib/lead-status";
 
 export default async function AdminDashboardPage() {
-  const [leads, statusGroups, recentLeads, counts] = await Promise.all([
-    prisma.lead.count(),
-    prisma.lead.groupBy({ by: ["status"], _count: { _all: true } }),
-    prisma.lead.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 8,
-    }),
+  await connectMongo();
+
+  const leadsCol = await collections.leads();
+  const pagesCol = await collections.pages();
+  const servicesCol = await collections.services();
+  const packagesCol = await collections.packages();
+  const healthQuestions = await collections.healthQuestions();
+
+  const [leads, statusGroups, recentLeadsRaw, counts] = await Promise.all([
+    leadsCol.countDocuments(),
+    leadsCol
+      .aggregate<{ _id: string; count: number }>([{ $group: { _id: "$status", count: { $sum: 1 } } }])
+      .toArray(),
+    leadsCol.find({}).sort({ createdAt: -1 }).limit(8).toArray(),
     Promise.all([
-      prisma.page.count(),
-      prisma.service.count(),
-      prisma.package.count(),
-      prisma.healthQuestion.count({ where: { isActive: true } }),
+      pagesCol.countDocuments(),
+      servicesCol.countDocuments(),
+      packagesCol.countDocuments(),
+      healthQuestions.countDocuments({ isActive: true }),
     ]),
   ]);
 
-  const statusMap = Object.fromEntries(
-    statusGroups.map((g) => [g.status, g._count._all]),
-  ) as Record<string, number>;
+  const recentLeads = recentLeadsRaw.map((lead) => serialize(lead as Record<string, unknown>));
+
+  const statusMap = Object.fromEntries(statusGroups.map((g) => [g._id, g.count])) as Record<
+    string,
+    number
+  >;
 
   const quickLinks = [
     { href: "/admin/leads", label: "Leads", icon: Users, meta: `${leads} total` },
@@ -127,21 +138,21 @@ export default async function AdminDashboardPage() {
                       href={`/admin/leads/${lead.id}`}
                       className="font-medium text-white hover:text-[#6ef0a4]"
                     >
-                      {lead.name}
+                      {String(lead.name)}
                     </Link>
-                    <div className="text-xs text-white/40">{lead.phone}</div>
+                    <div className="text-xs text-white/40">{String(lead.phone)}</div>
                   </Td>
                   <Td>
-                    {lead.score}/{lead.maxScore}
+                    {Number(lead.score)}/{Number(lead.maxScore)}
                   </Td>
                   <Td>
-                    <ReadinessBadge readiness={lead.readiness} />
+                    <ReadinessBadge readiness={String(lead.readiness)} />
                   </Td>
                   <Td>
-                    <StatusBadge status={lead.status} />
+                    <StatusBadge status={String(lead.status)} />
                   </Td>
                   <Td className="text-white/50">
-                    {formatDistanceToNow(lead.createdAt, { addSuffix: true })}
+                    {formatDistanceToNow(new Date(String(lead.createdAt)), { addSuffix: true })}
                   </Td>
                 </tr>
               ))}

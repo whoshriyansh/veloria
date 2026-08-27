@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { AdminCard, PageHeader, Table, Th, Td } from "@/components/admin/ui";
 
 export default async function ServicesPage() {
-  const services = await prisma.service.findMany({ orderBy: { order: "asc" } });
+  await connectMongo();
+  const servicesCol = await collections.services();
+  const servicesRaw = await servicesCol.find({}).sort({ order: 1 }).toArray();
+  const services = servicesRaw.map((s) => serialize(s as Record<string, unknown>));
 
   return (
     <div>
@@ -42,12 +46,12 @@ export default async function ServicesPage() {
                       href={`/admin/services/${service.id}`}
                       className="font-medium text-white hover:text-[#6ef0a4]"
                     >
-                      {service.title}
+                      {String(service.title)}
                     </Link>
-                    <div className="text-xs text-white/40">{service.summary}</div>
+                    <div className="text-xs text-white/40">{String(service.summary)}</div>
                   </Td>
-                  <Td className="text-white/55">{service.slug}</Td>
-                  <Td>{service.order}</Td>
+                  <Td className="text-white/55">{String(service.slug)}</Td>
+                  <Td>{Number(service.order)}</Td>
                   <Td>{service.isVisible ? "Yes" : "No"}</Td>
                 </tr>
               ))}

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { PageHeader } from "@/components/admin/ui";
 import { PageEditor } from "@/components/admin/page-editor";
 
@@ -11,8 +12,13 @@ export default async function PageEditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const page = await prisma.page.findUnique({ where: { id } });
-  if (!page) notFound();
+  if (!isValidId(id)) notFound();
+
+  await connectMongo();
+  const pages = await collections.pages();
+  const pageRaw = await pages.findOne({ _id: oid(id) });
+  if (!pageRaw) notFound();
+  const page = serialize(pageRaw as Record<string, unknown>);
 
   return (
     <div>
@@ -23,16 +29,16 @@ export default async function PageEditPage({
         <ArrowLeft className="size-3.5" />
         Back to pages
       </Link>
-      <PageHeader title={page.title} description={`/${page.slug}`} />
+      <PageHeader title={String(page.title)} description={`/${String(page.slug)}`} />
       <PageEditor
         page={{
           id: page.id,
-          slug: page.slug,
-          title: page.title,
-          subtitle: page.subtitle,
-          content: page.content,
-          sections: page.sections,
-          isPublished: page.isPublished,
+          slug: String(page.slug),
+          title: String(page.title),
+          subtitle: String(page.subtitle ?? ""),
+          content: String(page.content ?? ""),
+          sections: String(page.sections ?? "[]"),
+          isPublished: Boolean(page.isPublished),
         }}
       />
     </div>

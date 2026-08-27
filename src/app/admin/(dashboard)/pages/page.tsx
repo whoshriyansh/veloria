@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { AdminCard, PageHeader, Table, Th, Td } from "@/components/admin/ui";
 
 export default async function PagesListPage() {
-  const pages = await prisma.page.findMany({ orderBy: { slug: "asc" } });
+  await connectMongo();
+  const pagesCol = await collections.pages();
+  const pagesRaw = await pagesCol.find({}).sort({ slug: 1 }).toArray();
+  const pages = pagesRaw.map((page) => serialize(page as Record<string, unknown>));
 
   return (
     <div>
@@ -27,13 +31,13 @@ export default async function PagesListPage() {
                     href={`/admin/pages/${page.id}`}
                     className="font-medium text-white hover:text-[#6ef0a4]"
                   >
-                    {page.title}
+                    {String(page.title)}
                   </Link>
                 </Td>
-                <Td className="text-white/55">/{page.slug}</Td>
+                <Td className="text-white/55">/{String(page.slug)}</Td>
                 <Td>{page.isPublished ? "Yes" : "No"}</Td>
                 <Td className="text-white/45">
-                  {format(page.updatedAt, "MMM d, yyyy")}
+                  {format(new Date(String(page.updatedAt)), "MMM d, yyyy")}
                 </Td>
               </tr>
             ))}

@@ -1,13 +1,16 @@
 import { requireAdmin } from "@/lib/admin-auth";
-import { prisma } from "@/lib/prisma";
+import { connectMongo } from "@/lib/mongodb";
+import { collections, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const { error } = await requireAdmin();
   if (error) return error;
 
-  const services = await prisma.service.findMany({ orderBy: { order: "asc" } });
-  return NextResponse.json(services);
+  await connectMongo();
+  const servicesCol = await collections.services();
+  const services = await servicesCol.find({}).sort({ order: 1 }).toArray();
+  return NextResponse.json(services.map((s) => serialize(s as Record<string, unknown>)));
 }
 
 export async function POST(request: Request) {
@@ -30,19 +33,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "title and slug are required" }, { status: 400 });
   }
 
-  const service = await prisma.service.create({
-    data: {
-      title: body.title.trim(),
-      slug: body.slug.trim(),
-      summary: body.summary ?? "",
-      description: body.description ?? "",
-      imageUrl: body.imageUrl ?? "",
-      icon: body.icon ?? "scale",
-      order: typeof body.order === "number" ? body.order : 0,
-      features: body.features ?? "[]",
-      isVisible: body.isVisible ?? true,
-    },
-  });
+  await connectMongo();
+  const servicesCol = await collections.services();
+  const now = new Date();
+  const doc = {
+    title: body.title.trim(),
+    slug: body.slug.trim(),
+    summary: body.summary ?? "",
+    description: body.description ?? "",
+    imageUrl: body.imageUrl ?? "",
+    icon: body.icon ?? "scale",
+    order: typeof body.order === "number" ? body.order : 0,
+    features: body.features ?? "[]",
+    isVisible: body.isVisible ?? true,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const result = await servicesCol.insertOne(doc);
 
-  return NextResponse.json(service, { status: 201 });
+  return NextResponse.json(
+    serialize({ ...doc, _id: result.insertedId } as Record<string, unknown>),
+    { status: 201 },
+  );
 }
