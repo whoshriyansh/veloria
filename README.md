@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Veloria
 
-## Getting Started
+Luxury full-stack legal counsel platform for startups becoming **Investment Ready**, compliance ready, and paperwork ready.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
+- Prisma + SQLite
+- NextAuth (credentials) for admin CMS
+- Framer Motion for cinematic motion
+
+## Quick start
 
 ```bash
+npm install
+npx prisma migrate dev
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Site: [http://localhost:3000](http://localhost:3000)
+- Admin: [http://localhost:3000/admin](http://localhost:3000/admin)
+- Login: `admin@veloria.legal` / `admin123`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What you get
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Public site
+- Craft / Subduxion inspired luxury marketing experience
+- Pages: Home, About (Eternal Legal Counsel), Services, Packages, Founder Circle, Legal Health Checkup, Contact
+- First-visit popup for the Legal Health Checkup
+- 15-question yes/no diagnostic → lead capture (name, phone, optional email)
 
-## Learn More
+### Admin CMS (`/admin`)
+Manage the full site from the backend:
+- Navigation menu
+- Site settings + checkup popup copy
+- Contact information
+- Pages, services, packages
+- Health checkup questions
+- Leads with full answer reports, status, and notes for representatives
 
-To learn more about Next.js, take a look at the following resources:
+## Design references
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Inspired by [itscraft.com](https://itscraft.com/), [subduxion.com](https://subduxion.com/), Primefolio, and BCG — dark forest aurora heroes, cream editorial sections, floating glass nav, expressive serif display typography.
