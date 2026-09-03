@@ -102,7 +102,7 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-[2rem] border border-ink/8 bg-white/50 p-8 md:p-12"
+        className="border border-ink/8 bg-white/50 p-8 md:p-12"
       >
         <p className="eyebrow mb-4">Report received</p>
         <h2 className="font-display text-4xl tracking-tight text-ink md:text-5xl">
@@ -131,7 +131,7 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
   }
 
   return (
-    <div className="rounded-[2rem] border border-ink/8 bg-white/40 p-6 backdrop-blur-sm md:p-10">
+    <div className=" border border-ink/8 bg-white/40 p-6 backdrop-blur-sm md:p-10">
       <div className="mb-8">
         <div className="mb-3 flex items-center justify-between text-xs tracking-[0.16em] text-ink-soft">
           <span>

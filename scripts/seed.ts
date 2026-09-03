@@ -1,121 +1,118 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
-import { connectMongo } from "../src/lib/mongodb";
-import { collections, ObjectId } from "../src/lib/models";
+import { MongoClient, ObjectId } from "mongodb";
+
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB || "veloria";
+
+if (!uri) {
+  throw new Error("Set MONGODB_URI in .env before seeding.");
+}
+
+const mongoUri: string = uri;
 
 const questions = [
   {
-    question: "Is your company formally incorporated (C-Corp, LLC, or equivalent)?",
-    category: "Formation",
+    question: "Is the company formally incorporated with current statutory records on file?",
+    category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Investors expect a clean entity structure before writing a check.",
+    helpText: "Investors and counterparties expect a clean legal architecture before writing a cheque.",
   },
   {
-    question: "Have all founders signed equity / stock purchase agreements with vesting?",
-    category: "Equity",
+    question: "Is ownership documented with founder agreements and a current cap table?",
+    category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Unvested or undocumented founder equity is a red flag in diligence.",
+    helpText: "Undocumented equity is one of the fastest ways to stall a raise or a sale.",
   },
   {
     question: "Have all founders assigned intellectual property to the company?",
-    category: "IP",
+    category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Missing IP assignments can stall or kill a financing round.",
+    helpText: "Missing IP assignments can kill a financing round or acquisition.",
   },
   {
-    question: "Have 83(b) elections been filed (if applicable) within the required window?",
-    category: "Equity",
-    yesIsGood: true,
-    helpText: "Missed 83(b) filings create irreversible tax and equity risk.",
-  },
-  {
-    question: "Do you maintain a current, accurate capitalization table?",
-    category: "Cap Table",
-    yesIsGood: true,
-    helpText: "Cap table errors surface immediately during investor diligence.",
-  },
-  {
-    question: "Are all prior SAFE / convertible notes documented and tracked?",
-    category: "Fundraising",
-    yesIsGood: true,
-    helpText: "Undocumented instruments create conversion chaos at priced rounds.",
-  },
-  {
-    question: "Do employee and contractor agreements include IP assignment and confidentiality?",
-    category: "Employment",
-    yesIsGood: true,
-    helpText: "Every contributor who touches code or product should have paper.",
-  },
-  {
-    question: "Do you have a board (or sole director) with proper consents and minutes on file?",
+    question: "Are board or director consents, minutes and decision records maintained?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "Governance hygiene signals operational maturity to counsel and VCs.",
+    helpText: "Governance hygiene signals institutional discipline to sophisticated counterparties.",
   },
   {
-    question: "Is your privacy policy and terms of service current for your product?",
+    question: "Is there a clear process for material decisions, related-party deals and authority?",
+    category: "Governance",
+    yesIsGood: true,
+    helpText: "Unclear authority creates negotiation risk when capital or a buyer arrives.",
+  },
+  {
+    question: "Are customer, vendor and project contracts in writing and current?",
+    category: "Contracts",
+    yesIsGood: true,
+    helpText: "Handshake deals become diligence exceptions — and price chips.",
+  },
+  {
+    question: "Do employment and contractor agreements include confidentiality and IP assignment?",
+    category: "Contracts",
+    yesIsGood: true,
+    helpText: "Every contributor who touches the product should have paper behind them.",
+  },
+  {
+    question: "Have unusual liability, exclusivity or payment terms been reviewed?",
+    category: "Contracts",
+    yesIsGood: true,
+    helpText: "Early commercial paper can quietly lock you into bad economics.",
+  },
+  {
+    question: "Are privacy, terms and any sector registrations current for how you operate?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "Consumer and B2B products both face rising regulatory scrutiny.",
+    helpText: "Regulatory gaps surface immediately in diligence and lender reviews.",
   },
   {
-    question: "Have you completed any required industry or data-protection registrations?",
+    question: "Are licences, filings and statutory compliances up to date?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "GDPR, CCPA, and sector rules often apply earlier than founders expect.",
+    helpText: "Missed filings are inexpensive to fix early and expensive once a term sheet exists.",
   },
   {
-    question: "Is your data room organized with formation, equity, IP, and financial docs?",
-    category: "Diligence",
+    question: "Is a data room organised with formation, equity, contracts and financials?",
+    category: "Transaction Readiness",
     yesIsGood: true,
     helpText: "A clean data room shortens diligence from weeks to days.",
   },
   {
-    question: "Do you have standard templates for NDAs, offer letters, and advisor agreements?",
-    category: "Operations",
+    question: "Have prior SAFEs, notes or investment instruments been inventoried?",
+    category: "Transaction Readiness",
     yesIsGood: true,
-    helpText: "Templates keep velocity high without reinventing legal every hire.",
+    helpText: "Undocumented instruments create conversion chaos at priced rounds.",
   },
   {
-    question: "Are customer / commercial contracts reviewed for unusual liability or exclusivity?",
-    category: "Commercial",
+    question: "Would you feel confident opening your files to a lead investor or buyer tomorrow?",
+    category: "Transaction Readiness",
     yesIsGood: true,
-    helpText: "Early enterprise deals can quietly lock you into bad economics.",
+    helpText: "If the answer is no, that is exactly why the Veloria Score exists.",
   },
   {
-    question: "Have you identified material litigation, disputes, or regulatory exposure?",
-    category: "Risk",
+    question: "Have you identified material litigation, disputes or regulatory exposure?",
+    category: "Business Risk",
     yesIsGood: false,
     helpText: "Answering Yes means exposure exists — we help quantify and contain it.",
   },
   {
-    question: "Would you feel confident opening your legal files to a lead investor tomorrow?",
-    category: "Readiness",
-    yesIsGood: true,
-    helpText: "If the answer is no, that is exactly why Veloria exists.",
+    question: "Are there known payment, counterparty or project risks that could weaken value?",
+    category: "Business Risk",
+    yesIsGood: false,
+    helpText: "Hidden commercial risk is what sophisticated buyers price in last.",
   },
 ];
 
 async function main() {
-  if (!process.env.MONGODB_URI) {
-    throw new Error("Set MONGODB_URI in .env before seeding.");
-  }
-
-  await connectMongo();
+  const client = new MongoClient(mongoUri);
+  await client.connect();
+  const db = client.db(dbName);
 
   const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
   const adminEmail = process.env.ADMIN_EMAIL || "admin@veloria.legal";
 
-  const users = await collections.users();
-  const siteSettings = await collections.siteSettings();
-  const contactInfo = await collections.contactInfo();
-  const navigationItems = await collections.navigationItems();
-  const pages = await collections.pages();
-  const services = await collections.services();
-  const packages = await collections.packages();
-  const healthQuestions = await collections.healthQuestions();
-
-  await users.findOneAndUpdate(
+  await db.collection("users").updateOne(
     { email: adminEmail },
     {
       $setOnInsert: {
@@ -124,292 +121,338 @@ async function main() {
         passwordHash,
         role: "ADMIN",
         createdAt: new Date(),
+      },
+    },
+    { upsert: true },
+  );
+
+  await db.collection("siteSettings").updateOne(
+    { key: "default" },
+    {
+      $set: {
+        key: "default",
+        siteName: "Veloria",
+        tagline: "Structure. Strength. Readiness.",
+        heroHeadline: "Build before you raise.",
+        heroSubheadline:
+          "Veloria helps startups, companies, builders, contractors, founders and business owners strengthen the foundations behind serious growth, capital, transactions and expansion.",
+        heroCtaLabel: "Start a Readiness Review",
+        heroCtaHref: "/legal-health-checkup",
+        aboutPreview: "A stronger business is easier to fund, easier to scale and harder to disrupt.",
+        footerText:
+          "© 2026 Veloria. All rights reserved. Information on this website is general in nature and does not constitute legal advice.",
+        logoText: "VELORIA",
+        metaTitle: "Veloria — Build Before You Raise",
+        metaDescription:
+          "Veloria helps startups, companies, builders, contractors and business owners strengthen structure, governance and transaction readiness.",
+        showCheckupPopup: true,
+        popupDelayMs: 1800,
+        popupTitle: "How ready is your business?",
+        popupBody:
+          "Take the free Veloria Score — a 15-question Legal Health Checkup. A representative will review your answers and call you with a clear path forward.",
+        popupCta: "Begin the Score",
         updatedAt: new Date(),
       },
     },
     { upsert: true },
   );
 
-  await siteSettings.findOneAndUpdate(
+  await db.collection("contactInfo").updateOne(
     { key: "default" },
     {
-      $setOnInsert: {
+      $set: {
         key: "default",
-        siteName: "Veloria",
-        tagline: "Investment Ready",
-        heroHeadline: "Investment Ready",
-        heroSubheadline:
-          "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
-        heroCtaLabel: "Start Legal Health Checkup",
-        heroCtaHref: "/legal-health-checkup",
-        aboutPreview:
-          "We are your Eternal Legal Counsel — the strategic legal partner founders keep for every raise, hire, and exit.",
-        footerText: "© Veloria. Eternal legal counsel for ambitious startups.",
-        logoText: "Veloria",
-        metaTitle: "Veloria — Investment Ready Legal Counsel",
-        metaDescription:
-          "Veloria helps startups become investment ready, compliance ready, and paperwork ready. Eternal legal counsel for founders.",
-        showCheckupPopup: true,
-        popupDelayMs: 1800,
-        popupTitle: "How investment-ready is your startup?",
-        popupBody:
-          "Take our free 15-question Legal Health Checkup. A Veloria representative will review your answers and call you with a clear path forward.",
-        popupCta: "Begin checkup",
-      },
-    },
-    { upsert: true },
-  );
-
-  await contactInfo.findOneAndUpdate(
-    { key: "default" },
-    {
-      $setOnInsert: {
-        key: "default",
-        email: "hello@veloria.legal",
-        phone: "+1 (415) 555-0142",
-        address: "San Francisco · New York · Remote",
-        linkedin: "https://linkedin.com",
+        email: "hello@veloria.in",
+        phone: "+91 98765 43210",
+        address: "India",
+        linkedin: "",
         twitter: "",
         calendly: "",
-        hours: "Mon–Fri, 9am–6pm PT",
+        hours: "Mon–Fri, 10am–7pm IST",
+        updatedAt: new Date(),
       },
     },
     { upsert: true },
   );
 
-  await navigationItems.deleteMany({});
-  await navigationItems.insertMany([
-    { label: "About", href: "/about", order: 1, isVisible: true, isExternal: false },
-    { label: "Services", href: "/services", order: 2, isVisible: true, isExternal: false },
-    { label: "Packages", href: "/packages", order: 3, isVisible: true, isExternal: false },
-    { label: "Founder Circle", href: "/founder-circle", order: 4, isVisible: true, isExternal: false },
-    {
-      label: "Health Checkup",
-      href: "/legal-health-checkup",
-      order: 5,
-      isVisible: true,
-      isExternal: false,
-    },
+  await db.collection("navigationItems").deleteMany({});
+  await db.collection("navigationItems").insertMany([
+    { label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
+    { label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
+    { label: "Veloria Score", href: "/legal-health-checkup", order: 3, isVisible: true, isExternal: false },
+    { label: "Clients", href: "/#clients", order: 4, isVisible: true, isExternal: false },
+    { label: "Founders Circle", href: "/founder-circle", order: 5, isVisible: true, isExternal: false },
     { label: "Contact", href: "/contact", order: 6, isVisible: true, isExternal: false },
   ]);
 
-  const pageDocs = [
+  const homeSections = JSON.stringify([
+    {
+      type: "trust",
+      items: ["Capital Readiness", "Governance", "Contracts", "Transactions", "Commercial Risk"],
+    },
+    {
+      type: "audiences",
+      label: "Who we work with",
+      title: "Built for businesses beyond one stage or one industry.",
+      body: "Veloria works at the points where structure, documentation, governance and commercial readiness directly influence business value.",
+      items: [
+        {
+          title: "Startups",
+          body: "For founders preparing to raise capital, formalise ownership, strengthen contracts and move from an early-stage business into a more institutional company.",
+        },
+        {
+          title: "Companies",
+          body: "For established and growing companies that need stronger governance, commercial documentation, transaction readiness and corporate discipline.",
+        },
+        {
+          title: "Builders & Developers",
+          body: "For real-estate and project businesses navigating contracts, counterparties, commercial arrangements, risk allocation and large transactions.",
+        },
+        {
+          title: "Contractors",
+          body: "For project-driven businesses managing work orders, payments, liabilities, subcontracting arrangements and recurring commercial exposure.",
+        },
+        {
+          title: "Entrepreneurs & Business Owners",
+          body: "For promoters preparing for partnerships, expansion, succession, investment or a more professional operating structure.",
+        },
+      ],
+    },
+    {
+      type: "score",
+      label: "A proprietary readiness framework",
+      title: "See your business the way a serious counterparty will.",
+      body: "The Veloria Score is designed to give business owners a structured view of readiness across the areas that matter during fundraising, high-value transactions, partnerships, expansion and diligence.",
+      value: "78",
+      caption: "Illustrative Business Readiness Index",
+      items: [
+        { title: "Corporate Structure", body: "Ownership, records and legal architecture" },
+        { title: "Governance", body: "Decision-making and institutional discipline" },
+        { title: "Contracts", body: "Commercial documentation and risk allocation" },
+        { title: "Compliance", body: "Operational and regulatory readiness" },
+        { title: "Transaction Readiness", body: "Diligence and documentation preparedness" },
+        { title: "Business Risk", body: "Exposure that could weaken value or negotiations" },
+      ],
+    },
+    {
+      type: "approach",
+      title: "A clear path from uncertainty to readiness.",
+      body: "Veloria keeps the process commercial, prioritised and practical.",
+      items: [
+        { mini: "Assess", title: "Understand", body: "Review structure, documentation, risk and the business objective ahead." },
+        { mini: "Prioritise", title: "Focus", body: "Separate urgent issues from improvements that can follow later." },
+        { mini: "Implement", title: "Strengthen", body: "Put the agreements, systems, records and governance foundations in place." },
+        { mini: "Ready", title: "Move", body: "Approach capital, partnerships, projects and transactions with greater confidence." },
+      ],
+    },
+    {
+      type: "circle",
+      quote: "Build the company before you build the pitch.",
+    },
+  ]);
+
+  const pages = [
     {
       slug: "home",
-      title: "Investment Ready",
-      subtitle:
-        "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
+      title: "Build before you raise.",
+      subtitle: "Structure. Strength. Readiness.",
       content:
-        "Veloria is the legal authority founders call when the next raise, hire, or enterprise deal demands a clean legal foundation — without the traditional firm friction.",
+        "Veloria helps startups, companies, builders, contractors, founders and business owners strengthen the foundations behind serious growth, capital, transactions and expansion.",
       heroImage: "",
-      seoTitle: "",
-      seoDescription: "",
       isPublished: true,
-      sections: JSON.stringify([
-        {
-          type: "stats",
-          label: "VELORIA AT A GLANCE",
-          items: [
-            {
-              value: "15",
-              label: "Point Legal Health Checkup covering formation through diligence.",
-            },
-            {
-              value: "48h",
-              label: "Average time from checkup to first counsel conversation.",
-            },
-            {
-              value: "100%",
-              label: "Of retained clients receive a living diligence roadmap.",
-            },
-            {
-              value: "∞",
-              label: "Eternal counsel — we stay with you from seed to scale.",
-            },
-          ],
-        },
-        {
-          type: "split",
-          label: "WHY FOUNDERS CHOOSE VELORIA",
-          title: "Legal that moves at startup speed",
-          body: "Document platforms incorporate you. Traditional firms bill you. Veloria sits between — senior counsel judgment, productized delivery, and a dashboard that keeps your legal health visible every month.",
-        },
-      ]),
+      sections: homeSections,
     },
     {
       slug: "about",
-      title: "Eternal Legal Counsel",
-      subtitle: "We are going to be your Eternal Legal Counsels.",
-      content: `Veloria exists for one reason: founders should never scramble for counsel the night before a term sheet.
+      title: "Built for businesses beyond one stage or one industry.",
+      subtitle: "We strengthen the business behind the opportunity.",
+      content: `Veloria works at the points where structure, documentation, governance and commercial readiness directly influence business value.
 
-We are not a one-off formation vendor. We are not a document marketplace. We are your standing legal authority — the team that keeps your entity, equity, IP, compliance, and paperwork continuously investment-ready.
+We are not a document marketplace. We are not a one-off filing service. We review businesses through the lens of an investor, institutional counterparty or sophisticated buyer — then help you strengthen what matters before the opportunity arrives.
 
-**What eternal counsel means**
-- A named counsel relationship that scales with your company
-- Continuous legal health monitoring, not reactive fire drills
-- Fundraising, hiring, and commercial paperwork that survives diligence
-- Strategic judgment when templates are not enough
+The objective is not documentation for its own sake. It is to make the business more credible, defensible and ready for serious counterparties.
 
-**Who we serve**
-Pre-seed through Series B founding teams who want institutional-grade legal readiness without institutional inertia.`,
+Whether you are raising capital, entering a major transaction, expanding, taking on a project or professionalising the company, Veloria helps prepare the foundation first.`,
       heroImage: "",
-      seoTitle: "",
-      seoDescription: "",
       isPublished: true,
       sections: JSON.stringify([
         {
-          type: "principles",
+          type: "audiences",
           items: [
-            {
-              title: "Authority",
-              body: "Counsel that investors and co-counsel recognize as serious.",
-            },
-            {
-              title: "Continuity",
-              body: "The same strategic partner from incorporation through exit.",
-            },
-            {
-              title: "Clarity",
-              body: "Plain-language roadmaps. No mystery invoices. No fog.",
-            },
+            { title: "Startups", body: "For founders preparing to raise capital, formalise ownership, strengthen contracts and move from an early-stage business into a more institutional company." },
+            { title: "Companies", body: "For established and growing companies that need stronger governance, commercial documentation, transaction readiness and corporate discipline." },
+            { title: "Builders & Developers", body: "For real-estate and project businesses navigating contracts, counterparties, commercial arrangements, risk allocation and large transactions." },
+            { title: "Contractors", body: "For project-driven businesses managing work orders, payments, liabilities, subcontracting arrangements and recurring commercial exposure." },
+            { title: "Entrepreneurs & Business Owners", body: "For promoters preparing for partnerships, expansion, succession, investment or a more professional operating structure." },
           ],
         },
       ]),
     },
     {
       slug: "founder-circle",
-      title: "Founder Circle",
-      subtitle: "A private counsel circle for operators building the next decade.",
-      content: `Founder Circle is Veloria’s invitation-only community for founders who treat legal readiness as a competitive advantage.
+      title: "A network around stronger businesses.",
+      subtitle: "Veloria Founders Circle — curated for operators who treat readiness as leverage.",
+      content: `A curated community for founders, entrepreneurs, professionals and investors focused on business building, readiness and long-term value creation.
 
-Members receive priority counsel access, closed-door diligence clinics, peer deal reviews, and early briefings on market terms — SAFEs, option pools, side letters, and governance patterns that actually close.
+Members receive priority counsel access, closed-door readiness clinics, peer deal reviews, and briefings on market terms — the patterns that actually close.
 
-**Inside the Circle**
+Inside the Circle
 - Monthly readiness clinics with Veloria counsel
-- Cap table and term sheet office hours
-- Warm introductions across the Veloria operator network
-- Priority placement on retainer packages when you scale
+- Cap table, contracts and term-sheet office hours
+- Warm introductions across the operator network
+- Priority placement when you scale into a retainer
 
-Membership is curated. Apply through contact — we respond personally.`,
+Membership is curated. Apply through contact — we respond personally.
+
+“Build the company before you build the pitch.”`,
       heroImage: "",
-      seoTitle: "",
-      seoDescription: "",
       isPublished: true,
       sections: JSON.stringify([]),
     },
     {
       slug: "contact",
-      title: "Let’s talk readiness",
-      subtitle: "Tell us where you are. We’ll tell you what diligence will ask next.",
+      title: "Build before the opportunity arrives.",
+      subtitle: "Speak with Veloria. Tell us where you are. We will tell you what diligence will ask next.",
       content:
-        "Whether you need a full retainer or a single Legal Health Checkup review, our team replies within one business day.",
+        "Whether you are raising capital, entering a major transaction, expanding a business, taking on a project or simply professionalising the company, Veloria helps prepare the foundation first. Our team replies within one business day.",
       heroImage: "",
-      seoTitle: "",
-      seoDescription: "",
       isPublished: true,
       sections: JSON.stringify([]),
     },
   ];
 
-  for (const page of pageDocs) {
-    const now = new Date();
-    await pages.findOneAndUpdate(
+  for (const page of pages) {
+    await db.collection("pages").updateOne(
       { slug: page.slug },
-      { $set: { ...page, updatedAt: now }, $setOnInsert: { createdAt: now } },
+      { $set: { ...page, updatedAt: new Date() } },
       { upsert: true },
     );
   }
 
-  await services.deleteMany({});
-  await services.insertMany([
+  await db.collection("services").deleteMany({});
+  await db.collection("services").insertMany([
     {
-      title: "Investment Readiness",
-      slug: "investment-readiness",
-      summary: "Diligence-grade cleanup before your next raise.",
+      title: "Corporate Structure & Governance",
+      slug: "corporate-structure-governance",
+      summary: "Ownership, board processes, records, founder arrangements and governance architecture.",
       description:
-        "We audit formation, equity, IP, governance, and prior financings — then close gaps so lead investors open a clean data room, not a cleanup project.",
+        "We review the legal spine of the company — incorporation, ownership, founder arrangements, board process and records — so the entity can survive diligence, not just a pitch meeting.",
       imageUrl: "",
       icon: "landmark",
       order: 1,
       isVisible: true,
       features: JSON.stringify([
-        "Formation & governance audit",
-        "Cap table reconciliation",
-        "SAFE / note inventory",
-        "Diligence data room build",
+        "Ownership and founder arrangements",
+        "Board process and minutes",
+        "Statutory records",
+        "Governance architecture",
       ]),
     },
     {
-      title: "Compliance Architecture",
-      slug: "compliance-architecture",
-      summary: "Privacy, commercial, and regulatory scaffolding that scales.",
+      title: "Contracts & Commercial Risk",
+      slug: "contracts-commercial-risk",
+      summary: "Commercial agreements, project contracts, employment arrangements and recurring documentation.",
       description:
-        "From privacy policies to sector-specific obligations, we design compliance that matches your product stage — not a binder of unread policies.",
+        "We strengthen the paper that actually runs the business — customers, vendors, projects, employment and recurring commercial exposure — with risk allocation a sophisticated counterparty will respect.",
       imageUrl: "",
-      icon: "shield",
+      icon: "file-stack",
       order: 2,
       isVisible: true,
       features: JSON.stringify([
-        "Privacy & terms refresh",
-        "Vendor & DPA review",
-        "Regulatory exposure map",
-        "Policy operating cadence",
+        "Customer and vendor agreements",
+        "Project and works contracts",
+        "Employment and contractor packs",
+        "Risk allocation review",
       ]),
     },
     {
-      title: "Paperwork Engine",
-      slug: "paperwork-engine",
-      summary: "Hiring, advisors, and commercial paper at founder velocity.",
+      title: "Fundraising & Investment Readiness",
+      slug: "fundraising-investment-readiness",
+      summary: "Diligence preparation, term-sheet support and investment documentation.",
       description:
-        "Offer letters, advisor grants, NDAs, and customer agreements — templated, reviewed, and ready so legal never becomes the bottleneck on growth.",
+        "We prepare the company the way a lead investor will read it — cap table, prior instruments, data room and the narrative of ownership — so the raise is a process, not a cleanup project.",
       imageUrl: "",
-      icon: "file-stack",
+      icon: "trending-up",
       order: 3,
       isVisible: true,
       features: JSON.stringify([
-        "Employment & contractor packs",
-        "Advisor & equity grants",
-        "NDA & commercial templates",
-        "Board consent workflows",
+        "SAFE and note inventory",
+        "Cap table reconciliation",
+        "Term-sheet support",
+        "Investment documentation",
       ]),
     },
     {
-      title: "Eternal Counsel Retainer",
-      slug: "eternal-counsel",
-      summary: "Standing legal partnership for every chapter of the company.",
+      title: "Due Diligence Preparation",
+      slug: "due-diligence-preparation",
+      summary: "Identifying gaps before investors, lenders, buyers or institutional counterparties do.",
       description:
-        "A named counsel relationship with monthly readiness reviews, on-demand guidance, and priority turnaround when a term sheet hits the inbox.",
+        "We run the review an investor, lender or buyer would run — then close gaps while you still control the timeline.",
       imageUrl: "",
-      icon: "infinity",
+      icon: "search",
       order: 4,
       isVisible: true,
       features: JSON.stringify([
+        "Gap analysis across six Score pillars",
+        "Data room build",
+        "Exception list and remediation plan",
+        "Counterparty-ready packaging",
+      ]),
+    },
+    {
+      title: "Projects & Expansion",
+      slug: "projects-expansion",
+      summary: "Legal-commercial support for projects, partnerships, growth and new markets.",
+      description:
+        "For builders, contractors and expanding companies — we support the contracts, counterparties and risk allocation that sit underneath growth.",
+      imageUrl: "",
+      icon: "building-2",
+      order: 5,
+      isVisible: true,
+      features: JSON.stringify([
+        "Project and JV documentation",
+        "Partnership structures",
+        "New-market readiness",
+        "Counterparty risk mapping",
+      ]),
+    },
+    {
+      title: "Strategic Advisory",
+      slug: "strategic-advisory",
+      summary: "Clear legal-commercial thinking around consequential business decisions.",
+      description:
+        "Standing counsel for decisions that move value — partnerships, succession, expansion, and the moments when templates are not enough.",
+      imageUrl: "",
+      icon: "compass",
+      order: 6,
+      isVisible: true,
+      features: JSON.stringify([
         "Named counsel access",
-        "Monthly health reviews",
-        "Priority deal support",
-        "Founder Circle eligibility",
+        "Consequential decision support",
+        "Monthly readiness reviews",
+        "Founders Circle eligibility",
       ]),
     },
   ]);
 
-  await packages.deleteMany({});
-  await packages.insertMany([
+  await db.collection("packages").deleteMany({});
+  await db.collection("packages").insertMany([
     {
       name: "Foundation",
       slug: "foundation",
-      tagline: "Get legally formed and founder-clean.",
+      tagline: "Get the legal spine in place.",
       description:
-        "Ideal for pre-seed teams establishing the legal spine: entity hygiene, founder equity, IP assignment, and baseline compliance.",
+        "For early teams establishing entity hygiene, founder equity, IP assignment and baseline commercial paper.",
       cadence: "Monthly",
       highlight: false,
       order: 1,
       isVisible: true,
       ctaLabel: "Request access",
       features: [
-        "Formation & founder equity review",
+        "Structure and founder equity review",
         "IP assignment completion",
-        "Core template suite (NDA, offer, advisor)",
-        "Quarterly Legal Health Checkup",
+        "Core template suite",
+        "Quarterly Veloria Score",
         "Async counsel channel",
       ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
@@ -418,7 +461,7 @@ Membership is curated. Apply through contact — we respond personally.`,
       slug: "growth-counsel",
       tagline: "Stay raise-ready while you hire and sell.",
       description:
-        "For teams hiring, closing customers, and preparing a seed or extension. Continuous readiness with faster turnaround.",
+        "For teams hiring, closing customers and preparing a seed or extension. Continuous readiness with faster turnaround.",
       cadence: "Monthly",
       highlight: true,
       order: 2,
@@ -426,11 +469,11 @@ Membership is curated. Apply through contact — we respond personally.`,
       ctaLabel: "Request access",
       features: [
         "Everything in Foundation",
-        "Cap table & SAFE monitoring",
-        "Employment & contractor paperwork",
+        "Cap table and SAFE monitoring",
+        "Employment and contractor paperwork",
         "Commercial contract review hours",
         "Monthly readiness briefing",
-        "Priority response SLA",
+        "Priority response",
       ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
     {
@@ -438,7 +481,7 @@ Membership is curated. Apply through contact — we respond personally.`,
       slug: "series-ready",
       tagline: "Institutional diligence, without the scramble.",
       description:
-        "Built for founders approaching priced rounds. Full diligence orchestration, board support, and eternal counsel continuity.",
+        "For founders approaching priced rounds or high-value transactions. Full diligence orchestration and standing counsel.",
       cadence: "Monthly",
       highlight: false,
       order: 3,
@@ -447,16 +490,25 @@ Membership is curated. Apply through contact — we respond personally.`,
       features: [
         "Everything in Growth Counsel",
         "Full diligence data room ownership",
-        "Term sheet & side letter support",
+        "Term sheet and side letter support",
         "Board governance packaging",
-        "Named partner-level counsel",
-        "Founder Circle membership",
+        "Named counsel",
+        "Founders Circle membership",
       ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
   ]);
 
-  await healthQuestions.deleteMany({});
-  await healthQuestions.insertMany(
+  await db.collection("clients").deleteMany({});
+  await db.collection("clients").insertMany([
+    { name: "Northline", logoUrl: "", website: "", order: 1, isVisible: true },
+    { name: "Harbour & Co.", logoUrl: "", website: "", order: 2, isVisible: true },
+    { name: "Kiteworks", logoUrl: "", website: "", order: 3, isVisible: true },
+    { name: "Aether Labs", logoUrl: "", website: "", order: 4, isVisible: true },
+    { name: "Pinnacle Infra", logoUrl: "", website: "", order: 5, isVisible: true },
+  ]);
+
+  await db.collection("healthQuestions").deleteMany({});
+  await db.collection("healthQuestions").insertMany(
     questions.map((q, index) => ({
       ...q,
       order: index + 1,
@@ -466,12 +518,11 @@ Membership is curated. Apply through contact — we respond personally.`,
   );
 
   console.log("Veloria MongoDB seed complete.");
-  console.log(`Admin login: ${adminEmail} / ${process.env.ADMIN_PASSWORD || "admin123"}`);
+  console.log(`Admin: ${adminEmail} / ${process.env.ADMIN_PASSWORD || "admin123"}`);
+  await client.close();
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

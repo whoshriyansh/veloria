@@ -49,7 +49,7 @@ export function CheckupPopup({
             role="dialog"
             aria-modal="true"
             aria-labelledby="checkup-popup-title"
-            className="relative w-full max-w-lg overflow-hidden rounded-[1.75rem] bg-cream p-7 shadow-2xl md:p-9"
+            className="relative w-full max-w-lg overflow-hidden bg-cream p-7 shadow-2xl md:p-9"
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
@@ -65,7 +65,7 @@ export function CheckupPopup({
               <X size={16} />
             </button>
 
-            <p className="eyebrow mb-4 relative">Legal Health Checkup</p>
+            <p className="eyebrow mb-4 relative">The Veloria Score™</p>
             <h2
               id="checkup-popup-title"
               className="font-display relative text-3xl leading-tight tracking-tight text-ink md:text-4xl"

@@ -37,6 +37,7 @@ export default async function PageEditPage({
           title: String(page.title),
           subtitle: String(page.subtitle ?? ""),
           content: String(page.content ?? ""),
+          heroImage: String(page.heroImage ?? ""),
           sections: String(page.sections ?? "[]"),
           isPublished: Boolean(page.isPublished),
         }}

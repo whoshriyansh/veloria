@@ -16,46 +16,38 @@ export function SiteFooter({
   nav: { id: string; label: string; href: string }[];
 }) {
   return (
-    <footer className="relative overflow-hidden bg-forest-950 text-cream">
-      <div className="aurora opacity-40" />
-      <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-24">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+    <footer className="bg-[#101613] text-[#aab3ad]">
+      <div className="container-v py-11">
+        <div className="grid gap-11 md:grid-cols-[1.3fr_.8fr_.8fr]">
           <div>
-            <p className="font-display text-5xl tracking-tight md:text-6xl">{logoText}</p>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-cream/65">
-              Eternal legal counsel for founders who refuse to arrive at diligence unprepared.
+            <p className="font-display text-[29px] tracking-[0.11em] text-white">{logoText}</p>
+            <p className="mt-3 max-w-[350px] text-[12px] leading-relaxed">
+              Business readiness, governance and transaction advisory for ambitious companies and
+              entrepreneurs.
             </p>
-            <Link
-              href="/legal-health-checkup"
-              className="mt-8 inline-flex rounded-full bg-signal px-5 py-3 text-sm font-medium text-forest-950 transition hover:brightness-105"
-            >
-              Free Legal Health Checkup
-            </Link>
           </div>
-
           <div>
-            <p className="eyebrow eyebrow-light mb-4">Navigate</p>
-            <ul className="space-y-3 text-sm text-cream/75">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#d4dad6]">Explore</p>
+            <ul className="space-y-2 text-[12px]">
               {nav.map((item) => (
                 <li key={item.id}>
-                  <Link href={item.href} className="transition hover:text-cream">
+                  <Link href={item.href} className="nav-link transition hover:text-white">
                     {item.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-
           <div>
-            <p className="eyebrow eyebrow-light mb-4">Contact</p>
-            <ul className="space-y-3 text-sm text-cream/75">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#d4dad6]">Contact</p>
+            <ul className="space-y-2 text-[12px]">
               <li>
-                <a href={`mailto:${email}`} className="hover:text-cream">
+                <a href={`mailto:${email}`} className="hover:text-white">
                   {email}
                 </a>
               </li>
               <li>
-                <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-cream">
+                <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-white">
                   {phone}
                 </a>
               </li>
@@ -63,13 +55,10 @@ export function SiteFooter({
             </ul>
           </div>
         </div>
-
-        <div className="mt-20 flex flex-col gap-3 border-t border-cream/10 pt-6 text-xs tracking-[0.14em] text-cream/45 md:flex-row md:items-center md:justify-between">
-          <p>{footerText}</p>
-          <p>INVESTMENT · COMPLIANCE · PAPERWORK</p>
+        <div className="mt-8 border-t border-white/10 pt-5 text-[10px] leading-relaxed text-[#7c8781]">
+          {footerText}
         </div>
       </div>
-      <div className="h-3 bg-cream" />
     </footer>
   );
 }

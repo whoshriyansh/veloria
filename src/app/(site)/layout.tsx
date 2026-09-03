@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { CheckupPopup } from "@/components/checkup/checkup-popup";
+import { CustomCursor } from "@/components/site/custom-cursor";
+import { FilmGrain, ScrollProgress } from "@/components/site/chrome";
 import { getContactInfo, getNavigation, getSiteSettings } from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +16,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <>
+      <CustomCursor />
+      <ScrollProgress />
+      <FilmGrain />
       <SiteHeader
         logoText={settings.logoText}
         items={nav}

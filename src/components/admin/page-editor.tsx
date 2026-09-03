@@ -11,6 +11,7 @@ import {
   Input,
   Textarea,
 } from "@/components/admin/ui";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 type PageData = {
   id: string;
@@ -18,6 +19,7 @@ type PageData = {
   title: string;
   subtitle: string;
   content: string;
+  heroImage: string;
   sections: string;
   isPublished: boolean;
 };
@@ -85,6 +87,13 @@ export function PageEditor({ page }: { page: PageData }) {
             id="subtitle"
             value={form.subtitle}
             onChange={(e) => setForm((s) => ({ ...s, subtitle: e.target.value }))}
+          />
+        </Field>
+        <Field label="Hero image" className="md:col-span-2">
+          <ImageUploader
+            value={form.heroImage}
+            onChange={(heroImage) => setForm((s) => ({ ...s, heroImage }))}
+            label="Page hero image"
           />
         </Field>
         <Field label="Content" htmlFor="content" className="md:col-span-2">

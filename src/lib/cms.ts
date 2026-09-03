@@ -1,5 +1,12 @@
 import { connectMongo, hasMongoUri } from "@/lib/mongodb";
 import { collections, serialize } from "@/lib/models";
+import {
+  FALLBACK_CLIENTS,
+  FALLBACK_PACKAGES,
+  FALLBACK_PAGES,
+  FALLBACK_QUESTIONS,
+  FALLBACK_SERVICES,
+} from "@/lib/fallback-content";
 
 export type CmsSettings = {
   id: string;
@@ -60,58 +67,45 @@ export type CmsPackage = {
 const DEFAULT_SETTINGS: CmsSettings = {
   id: "default",
   siteName: "Veloria",
-  tagline: "Investment Ready",
-  heroHeadline: "Investment Ready",
+  tagline: "Structure. Strength. Readiness.",
+  heroHeadline: "Build before you raise.",
   heroSubheadline:
-    "Startups: Make your platform Investment Ready, compliance ready, and paperwork ready.",
-  heroCtaLabel: "Start Legal Health Checkup",
+    "Veloria helps startups, companies, builders, contractors, founders and business owners strengthen the foundations behind serious growth, capital, transactions and expansion.",
+  heroCtaLabel: "Start a Readiness Review",
   heroCtaHref: "/legal-health-checkup",
   aboutPreview:
-    "We are your Eternal Legal Counsel — the strategic legal partner founders keep for every raise, hire, and exit.",
-  footerText: "© Veloria. Eternal legal counsel for ambitious startups.",
-  logoText: "Veloria",
-  metaTitle: "Veloria — Investment Ready Legal Counsel",
+    "A stronger business is easier to fund, easier to scale and harder to disrupt.",
+  footerText:
+    "© 2026 Veloria. All rights reserved. Information on this website is general in nature and does not constitute legal advice.",
+  logoText: "VELORIA",
+  metaTitle: "Veloria — Build Before You Raise",
   metaDescription:
-    "Veloria helps startups become investment ready, compliance ready, and paperwork ready.",
+    "Veloria helps startups, companies, builders, contractors and business owners strengthen structure, governance and transaction readiness.",
   showCheckupPopup: true,
   popupDelayMs: 1800,
-  popupTitle: "How investment-ready is your startup?",
+  popupTitle: "How ready is your business?",
   popupBody:
-    "Take our free 15-question Legal Health Checkup. A Veloria representative will review your answers and call you with a clear path forward.",
-  popupCta: "Begin checkup",
+    "Take the free Veloria Score — a 15-question Legal Health Checkup. A representative will review your answers and call you with a clear path forward.",
+  popupCta: "Begin the Score",
 };
 
 const DEFAULT_CONTACT: CmsContact = {
   id: "default",
-  email: "hello@veloria.legal",
-  phone: "+1 (415) 555-0142",
-  address: "San Francisco · New York · Remote",
+  email: "hello@veloria.in",
+  phone: "+91 98765 43210",
+  address: "India",
   linkedin: "",
   twitter: "",
   calendly: "",
-  hours: "Mon–Fri, 9am–6pm PT",
+  hours: "Mon–Fri, 10am–7pm IST",
 };
 
 const DEFAULT_NAV: CmsNavItem[] = [
-  { id: "nav-1", label: "About", href: "/about", order: 1, isVisible: true, isExternal: false },
-  { id: "nav-2", label: "Services", href: "/services", order: 2, isVisible: true, isExternal: false },
-  { id: "nav-3", label: "Packages", href: "/packages", order: 3, isVisible: true, isExternal: false },
-  {
-    id: "nav-4",
-    label: "Founder Circle",
-    href: "/founder-circle",
-    order: 4,
-    isVisible: true,
-    isExternal: false,
-  },
-  {
-    id: "nav-5",
-    label: "Health Checkup",
-    href: "/legal-health-checkup",
-    order: 5,
-    isVisible: true,
-    isExternal: false,
-  },
+  { id: "nav-1", label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
+  { id: "nav-2", label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
+  { id: "nav-3", label: "Veloria Score", href: "/legal-health-checkup", order: 3, isVisible: true, isExternal: false },
+  { id: "nav-4", label: "Clients", href: "/#clients", order: 4, isVisible: true, isExternal: false },
+  { id: "nav-5", label: "Founders Circle", href: "/founder-circle", order: 5, isVisible: true, isExternal: false },
   { id: "nav-6", label: "Contact", href: "/contact", order: 6, isVisible: true, isExternal: false },
 ];
 
@@ -157,6 +151,7 @@ export async function getNavigation(): Promise<CmsNavItem[]> {
     await connectMongo();
     const navigationItems = await collections.navigationItems();
     const items = await navigationItems.find({ isVisible: true }).sort({ order: 1 }).toArray();
+    if (!items.length) return DEFAULT_NAV;
     return items.map((item) => serialize(item as Record<string, unknown>) as unknown as CmsNavItem);
   } catch {
     return DEFAULT_NAV;
@@ -164,7 +159,8 @@ export async function getNavigation(): Promise<CmsNavItem[]> {
 }
 
 export async function getPageBySlug(slug: string) {
-  if (!hasMongoUri()) return null;
+  const fallback = FALLBACK_PAGES[slug] ?? null;
+  if (!hasMongoUri()) return fallback;
   try {
     await connectMongo();
     const pages = await collections.pages();
@@ -177,18 +173,19 @@ export async function getPageBySlug(slug: string) {
           content: string;
           sections: string;
         })
-      : null;
+      : fallback;
   } catch {
-    return null;
+    return fallback;
   }
 }
 
 export async function getServices() {
-  if (!hasMongoUri()) return [];
+  if (!hasMongoUri()) return FALLBACK_SERVICES;
   try {
     await connectMongo();
     const servicesCol = await collections.services();
     const services = await servicesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
+    if (!services.length) return FALLBACK_SERVICES;
     return services.map(
       (s) =>
         serialize(s as Record<string, unknown>) as Record<string, unknown> & {
@@ -197,21 +194,23 @@ export async function getServices() {
           slug: string;
           summary: string;
           description: string;
+          imageUrl: string;
           icon: string;
           features: string;
         },
     );
   } catch {
-    return [];
+    return FALLBACK_SERVICES;
   }
 }
 
 export async function getPackages(): Promise<CmsPackage[]> {
-  if (!hasMongoUri()) return [];
+  if (!hasMongoUri()) return FALLBACK_PACKAGES;
   try {
     await connectMongo();
     const packagesCol = await collections.packages();
     const packages = await packagesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
+    if (!packages.length) return FALLBACK_PACKAGES;
     return packages.map((pkg) => {
       const serialized = serialize(pkg as Record<string, unknown>) as unknown as CmsPackage;
       serialized.features = [...(serialized.features ?? [])].sort(
@@ -220,16 +219,17 @@ export async function getPackages(): Promise<CmsPackage[]> {
       return serialized;
     });
   } catch {
-    return [];
+    return FALLBACK_PACKAGES;
   }
 }
 
 export async function getHealthQuestions() {
-  if (!hasMongoUri()) return [];
+  if (!hasMongoUri()) return FALLBACK_QUESTIONS;
   try {
     await connectMongo();
     const healthQuestions = await collections.healthQuestions();
     const questions = await healthQuestions.find({ isActive: true }).sort({ order: 1 }).toArray();
+    if (!questions.length) return FALLBACK_QUESTIONS;
     return questions.map(
       (q) =>
         serialize(q as Record<string, unknown>) as {
@@ -243,6 +243,29 @@ export async function getHealthQuestions() {
         },
     );
   } catch {
-    return [];
+    return FALLBACK_QUESTIONS;
+  }
+}
+
+export type CmsClient = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  website: string;
+  order: number;
+};
+
+export async function getClients(): Promise<CmsClient[]> {
+  if (!hasMongoUri()) return FALLBACK_CLIENTS;
+  try {
+    await connectMongo();
+    const clientsCol = await collections.clients();
+    const clients = await clientsCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
+    if (!clients.length) return FALLBACK_CLIENTS;
+    return clients.map(
+      (c) => serialize(c as Record<string, unknown>) as unknown as CmsClient,
+    );
+  } catch {
+    return FALLBACK_CLIENTS;
   }
 }

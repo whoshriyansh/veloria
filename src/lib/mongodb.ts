@@ -26,7 +26,9 @@ export async function getDb(): Promise<Db> {
     );
   }
 
-  if (cached.client) return cached.client.db();
+  const dbName = process.env.MONGODB_DB || "veloria";
+
+  if (cached.client) return cached.client.db(dbName);
 
   if (!cached.promise) {
     const client = new MongoClient(uri);
@@ -38,7 +40,7 @@ export async function getDb(): Promise<Db> {
 
   try {
     const client = await cached.promise;
-    return client.db();
+    return client.db(dbName);
   } catch (error) {
     cached.promise = null;
     cached.client = null;

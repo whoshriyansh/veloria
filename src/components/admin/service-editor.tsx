@@ -12,6 +12,7 @@ import {
   Textarea,
 } from "@/components/admin/ui";
 import { parseJsonArray } from "@/lib/utils";
+import { ImageUploader } from "@/components/admin/image-uploader";
 
 type ServiceData = {
   id?: string;
@@ -127,11 +128,11 @@ export function ServiceEditor({
             onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
           />
         </Field>
-        <Field label="Image URL" htmlFor="imageUrl">
-          <Input
-            id="imageUrl"
+        <Field label="Image" className="md:col-span-2">
+          <ImageUploader
             value={form.imageUrl}
-            onChange={(e) => setForm((s) => ({ ...s, imageUrl: e.target.value }))}
+            onChange={(imageUrl) => setForm((s) => ({ ...s, imageUrl }))}
+            label="Service image"
           />
         </Field>
         <Field label="Icon" htmlFor="icon">

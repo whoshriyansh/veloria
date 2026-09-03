@@ -1,47 +1,41 @@
 # Veloria
 
-Luxury full-stack legal counsel platform for startups becoming **Investment Ready**, compliance ready, and paperwork ready.
+Business readiness, governance and transaction advisory. Full-stack Next.js site with a CMS, Veloria Score (Legal Health Checkup), and Cloudinary image uploads.
 
 ## Stack
 
-- Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
-- **MongoDB** via the official `mongodb` driver (Atlas-ready for Vercel)
-- NextAuth (credentials) for admin CMS
-- Framer Motion
+- Next.js 16 + TypeScript + Tailwind CSS 4
+- MongoDB (native driver)
+- Cloudinary for images (max 10MB)
+- NextAuth for `/admin`
 
 ## Environment
 
-Copy `.env.example` → `.env` and set:
+Copy `.env.example` → `.env`:
 
 ```bash
 MONGODB_URI="mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/veloria?retryWrites=true&w=majority"
+MONGODB_DB="veloria"
 AUTH_SECRET="long-random-secret"
-AUTH_TRUST_HOST="true"
+CLOUDINARY_CLOUD_NAME="daprgk9i3"
+CLOUDINARY_API_KEY="your-key"
+CLOUDINARY_API_SECRET="your-secret"
 ```
 
-On **Vercel → Project → Settings → Environment Variables**, add the same `MONGODB_URI` and `AUTH_SECRET` for Production (and Preview if needed).
-
-## Quick start
+On Vercel, set the same variables. Then:
 
 ```bash
 npm install
-# set MONGODB_URI in .env
 npm run db:seed
 npm run dev
 ```
 
 - Site: http://localhost:3000
 - Admin: http://localhost:3000/admin
-- Login (after seed): `admin@veloria.legal` / `admin123`
+- After seed: `admin@veloria.legal` / `admin123`
 
-## What you get
+## Admin
 
-### Public site
-- Craft / Subduxion inspired luxury marketing experience
-- Pages: Home, About, Services, Packages, Founder Circle, Legal Health Checkup, Contact
-- First-visit checkup popup
-- 15-question diagnostic → lead capture
+From `/admin` you can edit navigation, pages, services (with images), clients/logos, packages, checkup questions, settings, contact, and leads.
 
-### Admin CMS (`/admin`)
-- Navigation, settings, contact, pages, services, packages, questions
-- Leads with answer reports, status, and notes
+Upload images under **10MB** via Cloudinary on services, pages, and clients.

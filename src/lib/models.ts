@@ -79,6 +79,15 @@ export type ServiceDoc = {
   features: string;
 };
 
+export type ClientDoc = {
+  _id?: ObjectId;
+  name: string;
+  logoUrl: string;
+  website: string;
+  order: number;
+  isVisible: boolean;
+};
+
 export type PackageFeature = {
   _id?: ObjectId;
   id?: string;
@@ -168,6 +177,7 @@ export const collections = {
   navigationItems: () => col<NavigationItemDoc>("navigationItems"),
   pages: () => col<PageDoc>("pages"),
   services: () => col<ServiceDoc>("services"),
+  clients: () => col<ClientDoc>("clients"),
   packages: () => col<PackageDoc>("packages"),
   healthQuestions: () => col<HealthQuestionDoc>("healthQuestions"),
   leads: () => col<LeadDoc>("leads"),

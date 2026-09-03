@@ -1,5 +1,58 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
 import { FadeIn } from "@/components/site/reveal";
+import { SplitHeading } from "@/components/site/split-heading";
+import { Magnetic } from "@/components/site/magnetic";
+
+function HeroPanel({ preview }: { preview: string }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const shineRef = useRef<HTMLDivElement>(null);
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = panelRef.current;
+    const shine = shineRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transition = "none";
+    el.style.transform = `perspective(1100px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    if (shine) {
+      shine.style.opacity = "1";
+      shine.style.left = `${e.clientX - r.left}px`;
+      shine.style.top = `${e.clientY - r.top}px`;
+    }
+  };
+
+  const onLeave = () => {
+    const el = panelRef.current;
+    if (el) {
+      el.style.transition = "transform 0.75s cubic-bezier(0.22, 1, 0.36, 1)";
+      el.style.transform = "perspective(1100px) rotateY(0deg) rotateX(0deg)";
+    }
+    if (shineRef.current) shineRef.current.style.opacity = "0";
+  };
+
+  return (
+    <div
+      ref={panelRef}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      data-cursor
+      className="hero-panel relative flex min-h-[360px] flex-col justify-end overflow-hidden border border-[#cec5b6] p-8 md:min-h-[500px] md:p-[42px]"
+    >
+      <div ref={shineRef} className="hero-shine" aria-hidden />
+      <p className="font-display relative z-[1] max-w-[440px] text-[28px] leading-[1.18] text-ink md:text-[34px]">
+        {preview}
+      </p>
+      <p className="relative z-[1] mt-5 text-[11px] uppercase tracking-[0.14em] text-[#56615b]">
+        Veloria · Business Readiness Advisory
+      </p>
+    </div>
+  );
+}
 
 export function HeroSection({
   headline,
@@ -7,76 +60,60 @@ export function HeroSection({
   ctaLabel,
   ctaHref,
   aboutPreview,
-  logoText,
 }: {
   headline: string;
   subheadline: string;
   ctaLabel: string;
   ctaHref: string;
   aboutPreview: string;
-  logoText: string;
+  logoText?: string;
 }) {
-  const words = headline.split(" ");
-  const primary = words.slice(0, Math.max(1, words.length - 1)).join(" ");
-  const accent = words[words.length - 1] ?? "";
-
   return (
-    <section className="relative min-h-[100svh] overflow-hidden bg-forest-950 text-cream">
-      <div className="aurora" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(6,20,16,0.55)_70%,rgba(6,20,16,0.92)_100%)]" />
-
-      <div
-        aria-hidden
-        className="watermark absolute bottom-[-4%] left-1/2 w-[140%] -translate-x-1/2 text-center text-[22vw] leading-none md:text-[18vw]"
-      >
-        {logoText}
-      </div>
-
-      <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-between px-6 pb-16 pt-36 md:pb-20 md:pt-44">
-        <div className="max-w-4xl">
-          <FadeIn delay={0.05}>
-            <p className="eyebrow eyebrow-light mb-8">Legal Authority for Founders</p>
+    <section className="relative border-b border-ink/10 py-[84px] md:py-[108px]">
+      <div className="container-v grid items-center gap-12 lg:grid-cols-[1.08fr_.92fr] lg:gap-[72px]">
+        <div>
+          <FadeIn>
+            <p className="eyebrow mb-5">Veloria</p>
           </FadeIn>
-
-          <FadeIn delay={0.15}>
-            <h1 className="font-display text-[clamp(3.4rem,11vw,7.5rem)] font-medium leading-[0.92] tracking-[-0.03em]">
-              <span className="block uppercase">{primary}</span>
-              <span className="mt-1 block font-serif text-[0.92em] italic lowercase first-letter:uppercase md:ml-[12%] md:mt-2">
-                {accent}
-              </span>
-            </h1>
+          <SplitHeading
+            text={headline}
+            className="font-display text-[clamp(3.4rem,8vw,6.5rem)] font-medium leading-[0.96] tracking-[-0.05em] text-ink"
+          />
+          <FadeIn delay={0.38}>
+            <p className="font-display mt-5 text-[28px] text-[#2e3833] md:text-[37px]">
+              Structure. Strength. Readiness.
+            </p>
           </FadeIn>
-
-          <FadeIn delay={0.28}>
-            <p className="mt-8 max-w-xl text-base leading-relaxed text-cream/70 md:text-lg">
+          <FadeIn delay={0.48}>
+            <p className="mt-6 max-w-[690px] text-[17px] leading-relaxed text-ink-soft">
               {subheadline}
             </p>
           </FadeIn>
-
-          <FadeIn delay={0.4}>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link
-                href={ctaHref}
-                className="rounded-full bg-signal px-6 py-3.5 text-sm font-semibold text-forest-950 transition hover:brightness-105"
-              >
-                {ctaLabel}
-              </Link>
-              <Link
-                href="/about"
-                className="rounded-full border border-cream/25 px-6 py-3.5 text-sm text-cream/85 transition hover:border-cream/50 hover:text-cream"
-              >
-                Meet eternal counsel
-              </Link>
+          <FadeIn delay={0.58}>
+            <div className="mt-8 flex flex-wrap gap-3.5">
+              <Magnetic>
+                <Link href={ctaHref} className="btn-lux btn-lux-fill">
+                  {ctaLabel}
+                </Link>
+              </Magnetic>
+              <Magnetic>
+                <Link href="/services" className="btn-lux btn-lux-ghost">
+                  Explore Veloria
+                </Link>
+              </Magnetic>
             </div>
           </FadeIn>
         </div>
 
-        <FadeIn delay={0.5} className="mt-16 max-w-sm md:mt-0">
-          <p className="text-xs leading-relaxed text-cream/55 md:text-sm">{aboutPreview}</p>
+        <FadeIn delay={0.28}>
+          <HeroPanel preview={aboutPreview} />
         </FadeIn>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 h-4 bg-cream" />
+      <a href="#who" className="scroll-cue" data-cursor>
+        <span>Scroll</span>
+        <span className="scroll-cue-line" />
+      </a>
     </section>
   );
 }

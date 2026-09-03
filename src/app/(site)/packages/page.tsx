@@ -8,12 +8,12 @@ export default async function PackagesPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-40 text-cream md:pt-48">
+      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-28 text-cream md:pt-36">
         <div className="aurora" />
-        <div className="relative mx-auto max-w-6xl">
+        <div className="container-v">
           <Reveal>
-            <p className="eyebrow eyebrow-light mb-6">Packages</p>
-            <h1 className="font-display max-w-3xl text-5xl tracking-tight md:text-7xl">
+            <p className="eyebrow eyebrow-light mb-6">Retainers</p>
+            <h1 className="font-display max-w-3xl text-5xl font-medium tracking-tight md:text-7xl">
               Monthly counsel. No price tags on the page.
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">
@@ -25,8 +25,8 @@ export default async function PackagesPage() {
         <div className="absolute inset-x-0 bottom-0 h-3 bg-cream" />
       </section>
 
-      <section className="bg-cream px-6 py-20 md:py-28">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
+      <section className="py-[88px]">
+        <div className="container-v grid gap-6 lg:grid-cols-3">
           {packages.map((pkg, i) => (
             <Reveal key={pkg.id} delay={i * 0.08}>
               <article
@@ -78,10 +78,10 @@ export default async function PackagesPage() {
                 <Link
                   href="/contact"
                   className={cn(
-                    "mt-8 inline-flex justify-center rounded-full px-5 py-3 text-sm font-medium transition",
+                    "btn-lux mt-8 justify-center rounded-full font-medium",
                     pkg.highlight
                       ? "bg-signal text-forest-950 hover:brightness-105"
-                      : "bg-forest-900 text-cream hover:bg-forest-800",
+                      : "btn-lux-fill",
                   )}
                 >
                   {pkg.ctaLabel}
