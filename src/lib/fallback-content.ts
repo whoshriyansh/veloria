@@ -39,12 +39,12 @@ export const FALLBACK_HOME_SECTIONS = JSON.stringify([
     value: "78",
     caption: "Illustrative Business Readiness Index",
     items: [
-      { title: "Corporate Structure", body: "Ownership, records and legal architecture" },
-      { title: "Governance", body: "Decision-making and institutional discipline" },
-      { title: "Contracts", body: "Commercial documentation and risk allocation" },
-      { title: "Compliance", body: "Operational and regulatory readiness" },
-      { title: "Transaction Readiness", body: "Diligence and documentation preparedness" },
-      { title: "Business Risk", body: "Exposure that could weaken value or negotiations" },
+      { title: "Corporate Structure", body: "Ownership, records and legal architecture", value: "82" },
+      { title: "Governance", body: "Decision-making and institutional discipline", value: "76" },
+      { title: "Contracts", body: "Commercial documentation and risk allocation", value: "80" },
+      { title: "Compliance", body: "Operational and regulatory readiness", value: "74" },
+      { title: "Transaction Readiness", body: "Diligence and documentation preparedness", value: "78" },
+      { title: "Business Risk", body: "Exposure that could weaken value or negotiations", value: "78" },
     ],
   },
   {
@@ -97,11 +97,12 @@ The objective is not documentation for its own sake. It is to make the business 
   },
   "founder-circle": {
     id: "founder-circle",
-    title: "A network around stronger businesses.",
-    subtitle: "Veloria Founders Circle — curated for operators who treat readiness as leverage.",
-    content: `A curated community for founders, entrepreneurs, professionals and investors focused on business building, readiness and long-term value creation.
+    title: "This is not a networking group.",
+    subtitle:
+      "A closed table for founders, promoters and investors who treat readiness as leverage. Convened with intention. Extended by invitation.",
+    content: `Submitting signals interest only. It does not constitute membership. Those selected are contacted directly. We read every note.
 
-Members receive priority counsel access, closed-door readiness clinics, peer deal reviews, and briefings on market terms.
+Members sit at closed dinners, readiness clinics, peer deal reviews and market briefings. What is said in the room stays in the room.
 
 “Build the company before you build the pitch.”`,
     sections: "[]",

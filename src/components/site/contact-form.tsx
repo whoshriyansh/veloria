@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-export function ContactForm() {
+export function ContactForm({ defaultMessage = "" }: { defaultMessage?: string }) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +91,7 @@ export function ContactForm() {
           <textarea
             name="message"
             rows={4}
+            defaultValue={defaultMessage}
             className="rounded-2xl border border-ink/12 bg-white/80 px-4 py-3 outline-none focus:ring-2 focus:ring-signal-deep/40"
           />
         </label>

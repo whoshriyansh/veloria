@@ -2,8 +2,20 @@ import { ContactForm } from "@/components/site/contact-form";
 import { Reveal } from "@/components/site/reveal";
 import { getContactInfo, getPageBySlug } from "@/lib/cms";
 
-export default async function ContactPage() {
-  const [page, contact] = await Promise.all([getPageBySlug("contact"), getContactInfo()]);
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ intent?: string }>;
+}) {
+  const [page, contact, params] = await Promise.all([
+    getPageBySlug("contact"),
+    getContactInfo(),
+    searchParams,
+  ]);
+  const defaultMessage =
+    params.intent === "circle"
+      ? "I would like to be considered for the Veloria Founders Circle. I am requesting a conversation — not a seat by default."
+      : "";
 
   return (
     <>
@@ -48,7 +60,7 @@ export default async function ContactPage() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <ContactForm />
+            <ContactForm defaultMessage={defaultMessage} />
           </Reveal>
         </div>
       </section>

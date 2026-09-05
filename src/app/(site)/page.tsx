@@ -4,10 +4,13 @@ import { Reveal } from "@/components/site/reveal";
 import { TrustMarquee } from "@/components/site/trust-marquee";
 import { CountUp } from "@/components/site/count-up";
 import { Magnetic } from "@/components/site/magnetic";
+import { ScoreMatrix } from "@/components/site/score-matrix";
+import { Testimonials } from "@/components/site/testimonials";
 import { getClients, getPageBySlug, getServices, getSiteSettings } from "@/lib/cms";
+import { mergeScorePillars } from "@/lib/score-pillars";
 import { parseJsonArray } from "@/lib/utils";
 
-type Item = { title?: string; body?: string; mini?: string; value?: string; label?: string };
+type Item = { title?: string; body?: string; mini?: string; value?: string | number; label?: string };
 type Section = {
   type: string;
   label?: string;
@@ -35,8 +38,9 @@ export default async function HomePage() {
   const circle = sections.find((s) => s.type === "circle");
   const trustItems = (trust?.items ?? []) as string[];
   const audienceItems = (audiences?.items ?? []) as Item[];
-  const scoreItems = (score?.items ?? []) as Item[];
+  const scoreItems = mergeScorePillars((score?.items ?? []) as Item[]);
   const approachItems = (approach?.items ?? []) as Item[];
+  const scoreTitle = score?.title ?? "See your business the way a serious counterparty will.";
 
   return (
     <>
@@ -144,23 +148,23 @@ export default async function HomePage() {
               <p className="text-[13px] text-[#c5cdc8]">{score?.caption}</p>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal delay={0.1} className="relative overflow-visible">
             <p className="eyebrow mb-4">{score?.label}</p>
             <h2 className="font-display text-[36px] font-medium leading-[1.07] md:text-[50px]">
-              {score?.title}
+              {scoreTitle.includes("the way a serious counterparty will") ? (
+                <>
+                  See your business{" "}
+                  <span className="mark-signal">the way a serious counterparty will.</span>
+                </>
+              ) : (
+                scoreTitle
+              )}
             </h2>
             <p className="mt-[18px] max-w-[650px] text-ink-soft">{score?.body}</p>
-            <div className="mt-[30px] border-t border-[#d2cbbb]">
-              {scoreItems.map((item) => (
-                <div
-                  key={item.title}
-                  className="score-row grid gap-2 border-b border-[#d2cbbb] py-[17px] text-[13px] sm:grid-cols-2"
-                >
-                  <strong>{item.title}</strong>
-                  <span className="text-ink-soft">{item.body}</span>
-                </div>
-              ))}
-            </div>
+            <ScoreMatrix items={scoreItems} />
+            <p className="mt-3 text-[11px] text-ink-soft">
+              Composite {score?.value ?? "78"} — the average of the six pillar scores.
+            </p>
             <Magnetic className="mt-8">
               <Link href="/legal-health-checkup" className="btn-lux btn-lux-fill">
                 Take the Legal Health Checkup
@@ -236,16 +240,18 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <Testimonials />
+
       <section id="circle" className="bg-[#232c28] py-[88px] text-cream md:py-[104px]">
         <div className="container-v grid items-center gap-12 lg:grid-cols-2 lg:gap-[72px]">
           <Reveal>
-            <p className="eyebrow eyebrow-light mb-5">Veloria Founders Circle</p>
+            <p className="eyebrow eyebrow-light mb-5">Veloria Founders Circle · Invitation only</p>
             <h2 className="font-display text-[40px] font-medium leading-[1.05] md:text-[52px]">
-              A network around stronger businesses.
+              This is not a networking group.
             </h2>
             <p className="my-[18px] max-w-xl text-[#bdc5c0]">
-              A curated community for founders, entrepreneurs, professionals and investors focused on
-              business building, readiness and long-term value creation.
+              A closed table for founders, promoters and investors who treat readiness as leverage.
+              Convened with intention. Extended after a conversation — never after a form.
             </p>
             <Magnetic>
               <Link href="/founder-circle" className="btn-lux btn-lux-light">

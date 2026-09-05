@@ -245,11 +245,78 @@ body {
 }
 
 .score-row {
+  position: relative;
+  border-bottom: 1px solid #d2cbbb;
+  outline: none;
   transition: padding-left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.score-row:hover {
+.score-row:hover,
+.score-row:focus-visible {
   padding-left: 8px;
+}
+
+.score-track {
+  height: 1px;
+  margin-bottom: 14px;
+  background: rgba(20, 24, 22, 0.08);
+}
+
+.score-fill {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transform-origin: left;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.score-float {
+  position: absolute;
+  left: 0;
+  z-index: 30;
+  width: min(420px, calc(100vw - 48px));
+  padding: 22px 24px 20px;
+  background: #fbfaf6;
+  border: 1px solid rgba(20, 24, 22, 0.12);
+  box-shadow: 0 28px 70px rgba(6, 20, 16, 0.14);
+}
+
+.score-float-down { top: calc(100% - 6px); }
+.score-float-up { bottom: calc(100% - 6px); }
+
+.mark-signal {
+  background: color-mix(in oklab, var(--signal) 58%, white);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.16em;
+}
+
+.testimonial-stage {
+  align-items: stretch;
+}
+
+.testimonial-bar {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  animation: testimonial-bar 7s linear;
+}
+
+.testimonial-bar-paused {
+  animation-play-state: paused;
+}
+
+@keyframes testimonial-bar {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .score-float {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
 }
 
 .hero-shine {
