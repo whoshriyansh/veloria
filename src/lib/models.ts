@@ -88,6 +88,17 @@ export type ClientDoc = {
   isVisible: boolean;
 };
 
+export type ArticleDoc = {
+  _id?: ObjectId;
+  title: string;
+  heading: string;
+  imageUrl: string;
+  link: string;
+  order: number;
+  isPublished: boolean;
+  publishedAt?: Date;
+};
+
 export type PackageFeature = {
   _id?: ObjectId;
   id?: string;
@@ -178,6 +189,7 @@ export const collections = {
   pages: () => col<PageDoc>("pages"),
   services: () => col<ServiceDoc>("services"),
   clients: () => col<ClientDoc>("clients"),
+  articles: () => col<ArticleDoc>("articles"),
   packages: () => col<PackageDoc>("packages"),
   healthQuestions: () => col<HealthQuestionDoc>("healthQuestions"),
   leads: () => col<LeadDoc>("leads"),

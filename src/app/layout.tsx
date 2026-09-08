@@ -3,19 +3,19 @@ import { Playfair_Display, DM_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/cms";
 
-export const dynamic = "force-dynamic";
-
 const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 const playfair = Playfair_Display({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 const instrument = Instrument_Serif({
@@ -23,6 +23,7 @@ const instrument = Instrument_Serif({
   subsets: ["latin"],
   weight: ["400"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {

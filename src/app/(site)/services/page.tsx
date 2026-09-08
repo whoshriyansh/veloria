@@ -1,6 +1,8 @@
 import { Reveal } from "@/components/site/reveal";
 import { getServices } from "@/lib/cms";
 import { parseJsonArray } from "@/lib/utils";
+import { Photo } from "@/components/site/photo";
+import { serviceIcon } from "@/lib/visual";
 import Link from "next/link";
 
 export default async function ServicesPage() {
@@ -13,7 +15,7 @@ export default async function ServicesPage() {
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">What we do</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium tracking-tight md:text-7xl">
+            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
               We strengthen the business behind the opportunity.
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">
@@ -28,22 +30,22 @@ export default async function ServicesPage() {
         <div className="container-v space-y-0">
           {services.map((service, i) => {
             const features = parseJsonArray<string>(service.features);
+            const Icon = serviceIcon(service.slug, service.title);
             return (
               <Reveal key={service.id} delay={i * 0.04}>
                 <article
                   id={service.slug}
                   className="grid gap-8 border-b border-ink/10 py-16 first:pt-0 md:grid-cols-[0.4fr_1fr]"
                 >
-                  <div>
+                  <div className="group">
                     <p className="text-xs tracking-[0.2em] text-gold">0{i + 1}</p>
-                    <h2 className="font-display mt-3 text-4xl font-medium tracking-tight">
+                    <Icon className="icon-glyph icon-glyph-xl mt-5" strokeWidth={1.15} />
+                    <h2 className="font-display mt-4 text-4xl font-medium leading-[1.18] tracking-tight">
                       {service.title}
                     </h2>
                     {service.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Photo
                         src={service.imageUrl}
-                        alt=""
                         className="mt-6 aspect-[4/3] w-full object-cover"
                       />
                     ) : null}

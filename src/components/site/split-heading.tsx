@@ -19,12 +19,12 @@ export function SplitHeading({
   return (
     <h1 className={className}>
       {words.map((word, i) => (
-        <span key={`${word}-${i}`} className="inline-block overflow-hidden align-bottom pr-[0.22em]">
+        <span key={`${word}-${i}`} className="inline-block overflow-hidden align-bottom pb-[0.28em] pr-[0.22em] -mb-[0.18em]">
           <motion.span
             className="inline-block"
             initial={{ y: "115%" }}
             animate={{ y: "0%" }}
-            transition={{ duration: 0.95, delay: 0.12 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.45, delay: 0.04 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
           >
             {word}
           </motion.span>

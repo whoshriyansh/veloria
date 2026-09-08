@@ -14,7 +14,7 @@ export default async function ContactPage({
   ]);
   const defaultMessage =
     params.intent === "circle"
-      ? "I would like to be considered for the Veloria Founders Circle. I am requesting a conversation — not a seat by default."
+      ? "I am writing regarding a Veloria dinner."
       : "";
 
   return (
@@ -24,7 +24,7 @@ export default async function ContactPage({
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Veloria Advisory</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium tracking-tight md:text-7xl">
+            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
               {page?.title ?? "Build before the opportunity arrives."}
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">{page?.subtitle}</p>

@@ -5,6 +5,7 @@ const uri = process.env.MONGODB_URI;
 type Cache = {
   client: MongoClient | null;
   promise: Promise<MongoClient> | null;
+  version: number;
 };
 
 declare global {
@@ -12,7 +13,13 @@ declare global {
   var mongoCache: Cache | undefined;
 }
 
-const cached: Cache = global.mongoCache ?? { client: null, promise: null };
+const MONGO_CACHE_VERSION = 2;
+const cached: Cache = global.mongoCache ?? { client: null, promise: null, version: 0 };
+if (cached.version !== MONGO_CACHE_VERSION) {
+  cached.client = null;
+  cached.promise = null;
+  cached.version = MONGO_CACHE_VERSION;
+}
 global.mongoCache = cached;
 
 export function hasMongoUri() {
@@ -31,7 +38,13 @@ export async function getDb(): Promise<Db> {
   if (cached.client) return cached.client.db(dbName);
 
   if (!cached.promise) {
-    const client = new MongoClient(uri);
+    const client = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 800,
+      connectTimeoutMS: 800,
+      socketTimeoutMS: 1200,
+      maxIdleTimeMS: 30_000,
+      maxPoolSize: 5,
+    });
     cached.promise = client.connect().then((c) => {
       cached.client = c;
       return c;

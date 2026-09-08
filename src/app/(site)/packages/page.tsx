@@ -13,7 +13,7 @@ export default async function PackagesPage() {
         <div className="container-v">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Retainers</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium tracking-tight md:text-7xl">
+            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
               Monthly counsel. No price tags on the page.
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">

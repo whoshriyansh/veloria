@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
+import { afterPublicCmsWrite } from "@/lib/cms";
 import { connectMongo } from "@/lib/mongodb";
 import { collections, isValidId, oid, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
@@ -37,6 +38,7 @@ export async function PATCH(request: Request, context: Ctx) {
     { returnDocument: "after" },
   );
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  afterPublicCmsWrite();
   return NextResponse.json(serialize(item as Record<string, unknown>));
 }
 
@@ -55,5 +57,6 @@ export async function DELETE(_request: Request, context: Ctx) {
   if (result.deletedCount === 0) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  afterPublicCmsWrite();
   return NextResponse.json({ ok: true });
 }

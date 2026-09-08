@@ -179,10 +179,8 @@ async function main() {
   await db.collection("navigationItems").insertMany([
     { label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
     { label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
-    { label: "Veloria Score", href: "/legal-health-checkup", order: 3, isVisible: true, isExternal: false },
-    { label: "Clients", href: "/#clients", order: 4, isVisible: true, isExternal: false },
-    { label: "Founders Circle", href: "/founder-circle", order: 5, isVisible: true, isExternal: false },
-    { label: "Contact", href: "/contact", order: 6, isVisible: true, isExternal: false },
+    { label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
+    { label: "Contact", href: "/contact", order: 4, isVisible: true, isExternal: false },
   ]);
 
   const homeSections = JSON.stringify([
@@ -290,14 +288,9 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     },
     {
       slug: "founder-circle",
-      title: "This is not a networking group.",
-      subtitle:
-        "A closed table for founders, promoters and investors who treat readiness as leverage. Convened with intention. Extended by invitation.",
-      content: `Submitting signals interest only. It does not constitute membership. Those selected are contacted directly. We read every note.
-
-Members sit at closed dinners, readiness clinics, peer deal reviews and market briefings. What is said in the room stays in the room.
-
-“Build the company before you build the pitch.”`,
+      title: "A table. A night. The room decides the rest.",
+      subtitle: "Veloria hosts a private dinner. Invitations are sent. There is nothing to join.",
+      content: `A private dinner, thrown by Veloria. Royal in manner. Quiet in purpose. Invitations are extended — never an open list, never an application.`,
       heroImage: "",
       isPublished: true,
       sections: JSON.stringify([]),
@@ -486,7 +479,7 @@ Members sit at closed dinners, readiness clinics, peer deal reviews and market b
         "Term sheet and side letter support",
         "Board governance packaging",
         "Named counsel",
-        "Founders Circle membership",
+        "Invitation to a Veloria dinner",
       ].map((text, order) => ({ _id: new ObjectId(), text, order })),
     },
   ]);
@@ -498,6 +491,40 @@ Members sit at closed dinners, readiness clinics, peer deal reviews and market b
     { name: "Kiteworks", logoUrl: "", website: "", order: 3, isVisible: true },
     { name: "Aether Labs", logoUrl: "", website: "", order: 4, isVisible: true },
     { name: "Pinnacle Infra", logoUrl: "", website: "", order: 5, isVisible: true },
+  ]);
+
+  await db.collection("articles").deleteMany({});
+  await db.collection("articles").insertMany([
+    {
+      title: "Build the company before you build the pitch.",
+      heading: "Readiness",
+      imageUrl:
+        "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
+      link: "https://www.linkedin.com/",
+      order: 1,
+      isPublished: true,
+      publishedAt: new Date(),
+    },
+    {
+      title: "What a serious counterparty reads first in a data room.",
+      heading: "Diligence",
+      imageUrl:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80",
+      link: "https://www.linkedin.com/",
+      order: 2,
+      isPublished: true,
+      publishedAt: new Date(),
+    },
+    {
+      title: "Governance is not paperwork. It is how the company decides.",
+      heading: "Governance",
+      imageUrl:
+        "https://images.unsplash.com/photo-1507679799987-4eee5c111973?auto=format&fit=crop&w=1200&q=80",
+      link: "https://www.linkedin.com/",
+      order: 3,
+      isPublished: true,
+      publishedAt: new Date(),
+    },
   ]);
 
   await db.collection("healthQuestions").deleteMany({});

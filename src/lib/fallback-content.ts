@@ -97,14 +97,9 @@ The objective is not documentation for its own sake. It is to make the business 
   },
   "founder-circle": {
     id: "founder-circle",
-    title: "This is not a networking group.",
-    subtitle:
-      "A closed table for founders, promoters and investors who treat readiness as leverage. Convened with intention. Extended by invitation.",
-    content: `Submitting signals interest only. It does not constitute membership. Those selected are contacted directly. We read every note.
-
-Members sit at closed dinners, readiness clinics, peer deal reviews and market briefings. What is said in the room stays in the room.
-
-“Build the company before you build the pitch.”`,
+    title: "A table. A night. The room decides the rest.",
+    subtitle: "Veloria hosts a private dinner. Invitations are sent. There is nothing to join.",
+    content: `A private dinner, thrown by Veloria. Royal in manner. Quiet in purpose. Invitations are extended — never an open list, never an application.`,
     sections: "[]",
   },
   contact: {
@@ -241,7 +236,7 @@ export const FALLBACK_PACKAGES = [
       { id: "p3f2", text: "Full diligence data room ownership", order: 1 },
       { id: "p3f3", text: "Term sheet and side letter support", order: 2 },
       { id: "p3f4", text: "Named counsel", order: 3 },
-      { id: "p3f5", text: "Founders Circle membership", order: 4 },
+      { id: "p3f5", text: "Invitation to a Veloria dinner", order: 4 },
     ],
   },
 ];
@@ -252,6 +247,39 @@ export const FALLBACK_CLIENTS = [
   { id: "c3", name: "Kiteworks", logoUrl: "", website: "", order: 3 },
   { id: "c4", name: "Aether Labs", logoUrl: "", website: "", order: 4 },
   { id: "c5", name: "Pinnacle Infra", logoUrl: "", website: "", order: 5 },
+];
+
+export const FALLBACK_ARTICLES = [
+  {
+    id: "a1",
+    title: "Build the company before you build the pitch.",
+    heading: "Readiness",
+    imageUrl:
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=720&q=55",
+    link: "https://www.linkedin.com/",
+    order: 1,
+    isPublished: true,
+  },
+  {
+    id: "a2",
+    title: "What a serious counterparty reads first in a data room.",
+    heading: "Diligence",
+    imageUrl:
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=720&q=55",
+    link: "https://www.linkedin.com/",
+    order: 2,
+    isPublished: true,
+  },
+  {
+    id: "a3",
+    title: "Governance is not paperwork. It is how the company decides.",
+    heading: "Governance",
+    imageUrl:
+      "https://images.unsplash.com/photo-1507679799987-4eee5c111973?auto=format&fit=crop&w=720&q=55",
+    link: "https://www.linkedin.com/",
+    order: 3,
+    isPublished: true,
+  },
 ];
 
 export const FALLBACK_QUESTIONS = [

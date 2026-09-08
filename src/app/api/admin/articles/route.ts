@@ -9,9 +9,9 @@ export async function GET() {
   if (error) return error;
 
   await connectMongo();
-  const col = await collections.clients();
-  const clients = await col.find({}).sort({ order: 1 }).toArray();
-  return NextResponse.json(clients.map((c) => serialize(c as Record<string, unknown>)));
+  const col = await collections.articles();
+  const articles = await col.find({}).sort({ order: 1 }).toArray();
+  return NextResponse.json(articles.map((a) => serialize(a as Record<string, unknown>)));
 }
 
 export async function POST(request: Request) {
@@ -19,25 +19,28 @@ export async function POST(request: Request) {
   if (error) return error;
 
   const body = (await request.json()) as {
-    name?: string;
-    logoUrl?: string;
-    website?: string;
+    title?: string;
+    heading?: string;
+    imageUrl?: string;
+    link?: string;
     order?: number;
-    isVisible?: boolean;
+    isPublished?: boolean;
   };
 
-  if (!body.name?.trim()) {
-    return NextResponse.json({ error: "name is required" }, { status: 400 });
+  if (!body.title?.trim() || !body.link?.trim()) {
+    return NextResponse.json({ error: "title and link are required" }, { status: 400 });
   }
 
   await connectMongo();
-  const col = await collections.clients();
+  const col = await collections.articles();
   const doc = {
-    name: body.name.trim(),
-    logoUrl: body.logoUrl ?? "",
-    website: body.website ?? "",
+    title: body.title.trim(),
+    heading: body.heading?.trim() ?? "",
+    imageUrl: body.imageUrl ?? "",
+    link: body.link.trim(),
     order: typeof body.order === "number" ? body.order : 0,
-    isVisible: body.isVisible ?? true,
+    isPublished: body.isPublished ?? true,
+    publishedAt: new Date(),
   };
   const result = await col.insertOne(doc);
   afterPublicCmsWrite();

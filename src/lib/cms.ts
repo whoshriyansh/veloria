@@ -1,7 +1,9 @@
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { connectMongo, hasMongoUri } from "@/lib/mongodb";
 import { collections, serialize } from "@/lib/models";
 import {
   FALLBACK_CLIENTS,
+  FALLBACK_ARTICLES,
   FALLBACK_PACKAGES,
   FALLBACK_PAGES,
   FALLBACK_QUESTIONS,
@@ -103,15 +105,88 @@ const DEFAULT_CONTACT: CmsContact = {
 const DEFAULT_NAV: CmsNavItem[] = [
   { id: "nav-1", label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
   { id: "nav-2", label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
-  { id: "nav-3", label: "Veloria Score", href: "/legal-health-checkup", order: 3, isVisible: true, isExternal: false },
-  { id: "nav-4", label: "Clients", href: "/#clients", order: 4, isVisible: true, isExternal: false },
-  { id: "nav-5", label: "Founders Circle", href: "/founder-circle", order: 5, isVisible: true, isExternal: false },
-  { id: "nav-6", label: "Contact", href: "/contact", order: 6, isVisible: true, isExternal: false },
+  { id: "nav-3", label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
+  { id: "nav-4", label: "Contact", href: "/contact", order: 4, isVisible: true, isExternal: false },
 ];
 
-export async function getSiteSettings(): Promise<CmsSettings> {
-  if (!hasMongoUri()) return DEFAULT_SETTINGS;
+function publicNav(items: CmsNavItem[]): CmsNavItem[] {
+  const hiddenLabels = new Set(["v-score", "veloria score", "insights", "clients"]);
+  const hiddenHrefs = new Set(["/#score", "/#insights", "/#clients", "/insights"]);
+  return items.filter((item) => {
+    const label = item.label.trim().toLowerCase();
+    const href = item.href.trim().toLowerCase();
+    return !hiddenLabels.has(label) && !hiddenHrefs.has(href);
+  });
+}
+
+type CacheEntry<T> = { value: T; exp: number };
+type CmsMem = {
+  data: Map<string, CacheEntry<unknown>>;
+  inflight: Map<string, Promise<unknown>>;
+};
+
+declare global {
+  // eslint-disable-next-line no-var
+  var veloriaCmsCache: CmsMem | undefined;
+}
+
+const cmsMem: CmsMem = global.veloriaCmsCache ?? {
+  data: new Map(),
+  inflight: new Map(),
+};
+global.veloriaCmsCache = cmsMem;
+
+const CMS_TTL_MS = 45_000;
+
+export function bustCmsCache() {
+  cmsMem.data.clear();
+}
+
+export function afterPublicCmsWrite() {
+  bustCmsCache();
+  revalidateTag("cms", "max");
+  revalidatePath("/", "layout");
+}
+
+function cachedCms<T>(key: string[], fn: () => Promise<T>): Promise<T> {
+  return unstable_cache(fn, key, { revalidate: 60, tags: ["cms"] })();
+}
+
+async function remember<T>(key: string, fallback: T, fn: () => Promise<T>): Promise<T> {
+  const hit = cmsMem.data.get(key) as CacheEntry<T> | undefined;
+  if (hit && hit.exp > Date.now()) return hit.value;
+  if (!hasMongoUri()) return fallback;
+
+  const pending = cmsMem.inflight.get(key) as Promise<T> | undefined;
+  if (pending) {
+    try {
+      return await pending;
+    } catch {
+      return hit?.value ?? fallback;
+    }
+  }
+
+  const run = fn()
+    .then((value) => {
+      cmsMem.data.set(key, { value, exp: Date.now() + CMS_TTL_MS });
+      return value;
+    })
+    .finally(() => {
+      cmsMem.inflight.delete(key);
+    });
+
+  cmsMem.inflight.set(key, run);
+
   try {
+    return await run;
+  } catch {
+    return hit?.value ?? fallback;
+  }
+}
+
+export async function getSiteSettings(): Promise<CmsSettings> {
+  return cachedCms(["cms-settings"], () =>
+    remember("settings", DEFAULT_SETTINGS, async () => {
     await connectMongo();
     const siteSettings = await collections.siteSettings();
     let settings = await siteSettings.findOne({ key: "default" });
@@ -122,14 +197,13 @@ export async function getSiteSettings(): Promise<CmsSettings> {
       settings = { ...doc, _id: result.insertedId };
     }
     return serialize(settings as Record<string, unknown>) as unknown as CmsSettings;
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
+    }),
+  );
 }
 
 export async function getContactInfo(): Promise<CmsContact> {
-  if (!hasMongoUri()) return DEFAULT_CONTACT;
-  try {
+  return cachedCms(["cms-contact"], () =>
+    remember("contact", DEFAULT_CONTACT, async () => {
     await connectMongo();
     const contactInfo = await collections.contactInfo();
     let contact = await contactInfo.findOne({ key: "default" });
@@ -140,28 +214,27 @@ export async function getContactInfo(): Promise<CmsContact> {
       contact = { ...doc, _id: result.insertedId };
     }
     return serialize(contact as Record<string, unknown>) as unknown as CmsContact;
-  } catch {
-    return DEFAULT_CONTACT;
-  }
+    }),
+  );
 }
 
 export async function getNavigation(): Promise<CmsNavItem[]> {
-  if (!hasMongoUri()) return DEFAULT_NAV;
-  try {
-    await connectMongo();
-    const navigationItems = await collections.navigationItems();
-    const items = await navigationItems.find({ isVisible: true }).sort({ order: 1 }).toArray();
-    if (!items.length) return DEFAULT_NAV;
-    return items.map((item) => serialize(item as Record<string, unknown>) as unknown as CmsNavItem);
-  } catch {
-    return DEFAULT_NAV;
-  }
+  const items = await cachedCms(["cms-nav"], () =>
+    remember("nav", DEFAULT_NAV, async () => {
+      await connectMongo();
+      const navigationItems = await collections.navigationItems();
+      const docs = await navigationItems.find({ isVisible: true }).sort({ order: 1 }).toArray();
+      if (!docs.length) return DEFAULT_NAV;
+      return docs.map((item) => serialize(item as Record<string, unknown>) as unknown as CmsNavItem);
+    }),
+  );
+  return publicNav(items);
 }
 
 export async function getPageBySlug(slug: string) {
   const fallback = FALLBACK_PAGES[slug] ?? null;
-  if (!hasMongoUri()) return fallback;
-  try {
+  return cachedCms(["cms-page", slug], () =>
+    remember(`page:${slug}`, fallback, async () => {
     await connectMongo();
     const pages = await collections.pages();
     const page = await pages.findOne({ slug });
@@ -174,14 +247,13 @@ export async function getPageBySlug(slug: string) {
           sections: string;
         })
       : fallback;
-  } catch {
-    return fallback;
-  }
+    }),
+  );
 }
 
 export async function getServices() {
-  if (!hasMongoUri()) return FALLBACK_SERVICES;
-  try {
+  return cachedCms(["cms-services"], () =>
+    remember("services", FALLBACK_SERVICES, async () => {
     await connectMongo();
     const servicesCol = await collections.services();
     const services = await servicesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
@@ -198,15 +270,14 @@ export async function getServices() {
           icon: string;
           features: string;
         },
-    );
-  } catch {
-    return FALLBACK_SERVICES;
-  }
+      );
+    }),
+  );
 }
 
 export async function getPackages(): Promise<CmsPackage[]> {
-  if (!hasMongoUri()) return FALLBACK_PACKAGES;
-  try {
+  return cachedCms(["cms-packages"], () =>
+    remember("packages", FALLBACK_PACKAGES, async () => {
     await connectMongo();
     const packagesCol = await collections.packages();
     const packages = await packagesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
@@ -216,16 +287,14 @@ export async function getPackages(): Promise<CmsPackage[]> {
       serialized.features = [...(serialized.features ?? [])].sort(
         (a, b) => (a.order ?? 0) - (b.order ?? 0),
       );
-      return serialized;
-    });
-  } catch {
-    return FALLBACK_PACKAGES;
-  }
+        return serialized;
+      });
+    }),
+  );
 }
 
 export async function getHealthQuestions() {
-  if (!hasMongoUri()) return FALLBACK_QUESTIONS;
-  try {
+  return remember("questions", FALLBACK_QUESTIONS, async () => {
     await connectMongo();
     const healthQuestions = await collections.healthQuestions();
     const questions = await healthQuestions.find({ isActive: true }).sort({ order: 1 }).toArray();
@@ -242,9 +311,7 @@ export async function getHealthQuestions() {
           helpText: string;
         },
     );
-  } catch {
-    return FALLBACK_QUESTIONS;
-  }
+  });
 }
 
 export type CmsClient = {
@@ -255,9 +322,17 @@ export type CmsClient = {
   order: number;
 };
 
+export type CmsArticle = {
+  id: string;
+  title: string;
+  heading: string;
+  imageUrl: string;
+  link: string;
+  order: number;
+};
+
 export async function getClients(): Promise<CmsClient[]> {
-  if (!hasMongoUri()) return FALLBACK_CLIENTS;
-  try {
+  return remember("clients", FALLBACK_CLIENTS, async () => {
     await connectMongo();
     const clientsCol = await collections.clients();
     const clients = await clientsCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
@@ -265,7 +340,21 @@ export async function getClients(): Promise<CmsClient[]> {
     return clients.map(
       (c) => serialize(c as Record<string, unknown>) as unknown as CmsClient,
     );
-  } catch {
-    return FALLBACK_CLIENTS;
-  }
+  });
+}
+
+export async function getArticles(limit?: number): Promise<CmsArticle[]> {
+  const fallback = limit ? FALLBACK_ARTICLES.slice(0, limit) : FALLBACK_ARTICLES;
+  return cachedCms(["cms-articles", String(limit ?? "all")], () =>
+    remember(`articles:${limit ?? "all"}`, fallback, async () => {
+    await connectMongo();
+    const col = await collections.articles();
+    const cursor = col.find({ isPublished: true }).sort({ order: 1, publishedAt: -1 });
+    const articles = await (limit ? cursor.limit(limit) : cursor).toArray();
+    if (!articles.length) return fallback;
+    return articles.map(
+      (a) => serialize(a as Record<string, unknown>) as unknown as CmsArticle,
+    );
+    }),
+  );
 }

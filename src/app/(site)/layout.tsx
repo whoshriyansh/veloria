@@ -5,7 +5,7 @@ import { CustomCursor } from "@/components/site/custom-cursor";
 import { FilmGrain, ScrollProgress } from "@/components/site/chrome";
 import { getContactInfo, getNavigation, getSiteSettings } from "@/lib/cms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [settings, contact, nav] = await Promise.all([

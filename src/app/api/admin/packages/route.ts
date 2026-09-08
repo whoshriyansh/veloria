@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
+import { afterPublicCmsWrite } from "@/lib/cms";
 import { connectMongo } from "@/lib/mongodb";
 import { collections, ObjectId, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
   };
   const result = await packagesCol.insertOne(doc);
 
+  afterPublicCmsWrite();
   return NextResponse.json(
     serialize({ ...doc, _id: result.insertedId } as Record<string, unknown>),
     { status: 201 },

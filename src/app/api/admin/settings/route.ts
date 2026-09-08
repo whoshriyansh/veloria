@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/admin-auth";
+import { afterPublicCmsWrite } from "@/lib/cms";
 import { connectMongo } from "@/lib/mongodb";
 import { collections, serialize } from "@/lib/models";
 import { NextResponse } from "next/server";
@@ -51,5 +52,6 @@ export async function PATCH(request: Request) {
     { upsert: true, returnDocument: "after" },
   );
 
+  afterPublicCmsWrite();
   return NextResponse.json(serialize(settings as Record<string, unknown>));
 }
