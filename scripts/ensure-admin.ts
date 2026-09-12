@@ -13,8 +13,10 @@ if (!uri) {
   throw new Error("Set MONGODB_URI in .env");
 }
 
+const mongoUri: string = uri;
+
 async function main() {
-  const client = new MongoClient(uri, {
+  const client = new MongoClient(mongoUri, {
     serverSelectionTimeoutMS: 8000,
     connectTimeoutMS: 8000,
   });
