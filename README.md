@@ -14,8 +14,7 @@ Business readiness, governance and transaction advisory. Full-stack Next.js site
 Copy `.env.example` → `.env`:
 
 ```bash
-MONGODB_URI="mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/veloria?retryWrites=true&w=majority"
-MONGODB_DB="veloria"
+MONGODB_URI="mongodb+srv://USER:PASSWORD@CLUSTER.mongodb.net/?retryWrites=true&w=majority"
 AUTH_SECRET="long-random-secret"
 CLOUDINARY_CLOUD_NAME="daprgk9i3"
 CLOUDINARY_API_KEY="your-key"

@@ -1,9 +1,11 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import bcrypt from "bcryptjs";
 import { MongoClient } from "mongodb";
 
+config({ path: ".env.local" });
+config();
+
 const uri = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_DB || "veloria";
 const adminEmail = (process.env.ADMIN_EMAIL || "admin@veloria.legal")
   .trim()
   .toLowerCase();
@@ -21,7 +23,7 @@ async function main() {
     connectTimeoutMS: 8000,
   });
   await client.connect();
-  const db = client.db(dbName);
+  const db = client.db();
   const users = db.collection("users");
 
   const existing = await users

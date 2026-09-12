@@ -3,10 +3,11 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { connectMongo } from "@/lib/mongodb";
 import { collections } from "@/lib/models";
+import { authSecret } from "@/lib/env";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
-  secret: process.env.AUTH_SECRET,
+  secret: authSecret() || undefined,
   providers: [
     Credentials({
       name: "Credentials",

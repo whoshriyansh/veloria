@@ -1,9 +1,11 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import bcrypt from "bcryptjs";
 import { MongoClient, ObjectId } from "mongodb";
 
+config({ path: ".env.local" });
+config();
+
 const uri = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_DB || "veloria";
 
 if (!uri) {
   throw new Error("Set MONGODB_URI in .env before seeding.");
@@ -107,7 +109,7 @@ const questions = [
 async function main() {
   const client = new MongoClient(mongoUri);
   await client.connect();
-  const db = client.db(dbName);
+  const db = client.db();
 
   const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
   const adminEmail = process.env.ADMIN_EMAIL || "admin@veloria.legal";

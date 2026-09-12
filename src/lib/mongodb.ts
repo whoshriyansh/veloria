@@ -1,20 +1,5 @@
 import { MongoClient, type Db } from "mongodb";
-
-function clean(value?: string) {
-  return (value ?? "").trim().replace(/^["']|["']$/g, "");
-}
-
-function dbNameFromUri(uri: string) {
-  try {
-    const parsed = new URL(uri.replace(/^mongodb(\+srv)?:\/\//, "https://"));
-    const name = parsed.pathname.replace(/^\//, "").split("/")[0];
-    return name || null;
-  } catch {
-    return null;
-  }
-}
-
-const uri = clean(process.env.MONGODB_URI);
+import { mongoUri } from "@/lib/env";
 
 type Cache = {
   client: MongoClient | null;
@@ -27,7 +12,7 @@ declare global {
   var mongoCache: Cache | undefined;
 }
 
-const MONGO_CACHE_VERSION = 3;
+const MONGO_CACHE_VERSION = 5;
 const cached: Cache = global.mongoCache ?? { client: null, promise: null, version: 0 };
 if (cached.version !== MONGO_CACHE_VERSION) {
   cached.client = null;
@@ -37,20 +22,18 @@ if (cached.version !== MONGO_CACHE_VERSION) {
 global.mongoCache = cached;
 
 export function hasMongoUri() {
-  return Boolean(clean(process.env.MONGODB_URI));
+  return Boolean(mongoUri());
 }
 
 export async function getDb(): Promise<Db> {
+  const uri = mongoUri();
   if (!uri) {
     throw new Error(
-      "Missing MONGODB_URI. Set it in .env locally and in Vercel project settings.",
+      "Missing MONGODB_URI. Set it in .env.local locally and in Vercel Environment Variables. Do not prefix it with NEXT_PUBLIC_.",
     );
   }
 
-  const dbName =
-    clean(process.env.MONGODB_DB) || dbNameFromUri(uri) || "veloria";
-
-  if (cached.client) return cached.client.db(dbName);
+  if (cached.client) return cached.client.db();
 
   if (!cached.promise) {
     const client = new MongoClient(uri, {
@@ -65,7 +48,7 @@ export async function getDb(): Promise<Db> {
 
   try {
     const client = await cached.promise;
-    return client.db(dbName);
+    return client.db();
   } catch (error) {
     cached.promise = null;
     cached.client = null;
