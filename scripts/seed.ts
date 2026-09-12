@@ -115,11 +115,14 @@ async function main() {
   await db.collection("users").updateOne(
     { email: adminEmail },
     {
-      $setOnInsert: {
+      $set: {
         email: adminEmail,
         name: "Veloria Admin",
         passwordHash,
         role: "ADMIN",
+        updatedAt: new Date(),
+      },
+      $setOnInsert: {
         createdAt: new Date(),
       },
     },

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:admin": "tsx scripts/ensure-admin.ts",
+    "db:up": "docker compose up -d"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

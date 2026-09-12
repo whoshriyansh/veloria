@@ -762,10 +762,8 @@ body {
 }
 
 .hero-panel {
-  background:
-    radial-gradient(circle at 78% 18%, rgba(110, 240, 164, 0.28), transparent 28%),
-    linear-gradient(145deg, #e9e1d3, #cfc4b2);
-  box-shadow: 0 24px 70px rgba(6, 20, 16, 0.12);
+  background: transparent;
+  box-shadow: none;
   transform-style: preserve-3d;
 }
 

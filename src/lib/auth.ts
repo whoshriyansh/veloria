@@ -5,6 +5,8 @@ import { connectMongo } from "@/lib/mongodb";
 import { collections } from "@/lib/models";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
+  secret: process.env.AUTH_SECRET,
   providers: [
     Credentials({
       name: "Credentials",
@@ -13,24 +15,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
-        const password = credentials?.password as string | undefined;
+        const email = String(credentials?.email ?? "")
+          .trim()
+          .toLowerCase();
+        const password = String(credentials?.password ?? "");
         if (!email || !password) return null;
 
-        await connectMongo();
-        const users = await collections.users();
-        const user = await users.findOne({ email });
-        if (!user) return null;
+        try {
+          await connectMongo();
+          const users = await collections.users();
+          const user = await users.findOne({ email });
+          if (!user?.passwordHash) return null;
 
-        const valid = await bcrypt.compare(password, user.passwordHash);
-        if (!valid) return null;
+          const valid = await bcrypt.compare(password, user.passwordHash);
+          if (!valid) return null;
 
-        return {
-          id: String(user._id),
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+          return {
+            id: String(user._id),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          if (message.includes("bad auth") || message.includes("Authentication failed")) {
+            console.error(
+              "Admin login failed: MONGODB_URI username/password was rejected by MongoDB. This is not the site login form. Fix Atlas Database Access or use local Mongo (npm run db:up).",
+            );
+          } else {
+            console.error("Admin login failed:", error);
+          }
+          return null;
+        }
       },
     }),
   ],

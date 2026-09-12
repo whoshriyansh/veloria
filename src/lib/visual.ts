@@ -19,8 +19,7 @@ import {
 } from "lucide-react";
 
 export const IMAGES = {
-  heroPanel:
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=60",
+  heroPanel: "/frame.svg",
   dinnerHero:
     "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1100&q=58",
   dinnerTable:

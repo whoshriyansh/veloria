@@ -52,7 +52,6 @@ export default async function HomePage() {
         subheadline={settings.heroSubheadline}
         ctaLabel={settings.heroCtaLabel}
         ctaHref={settings.heroCtaHref}
-        aboutPreview={settings.aboutPreview}
         logoText={settings.logoText}
       />
 

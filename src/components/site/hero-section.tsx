@@ -5,11 +5,10 @@ import { useRef } from "react";
 import { FadeIn } from "@/components/site/reveal";
 import { SplitHeading } from "@/components/site/split-heading";
 import { Magnetic } from "@/components/site/magnetic";
-import { CornerMarks, Ornament } from "@/components/site/ornament";
-import { Photo } from "@/components/site/photo";
+import { Ornament } from "@/components/site/ornament";
 import { IMAGES } from "@/lib/visual";
 
-function HeroPanel({ preview }: { preview: string }) {
+function HeroPanel() {
   const panelRef = useRef<HTMLDivElement>(null);
   const shineRef = useRef<HTMLDivElement>(null);
 
@@ -44,22 +43,18 @@ function HeroPanel({ preview }: { preview: string }) {
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       data-cursor
-      className="hero-panel relative flex min-h-[360px] flex-col justify-end overflow-hidden border border-[#cec5b6] p-8 md:min-h-[500px] md:p-[42px]"
+      className="hero-panel relative bg-transparent"
     >
-      <Photo
-        src={IMAGES.heroPanel}
-        priority
-        className="absolute inset-0 h-full w-full object-cover opacity-55"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#1a1812] via-[#1a1812]/40 to-transparent" />
-      <CornerMarks className="text-cream/50" />
       <div ref={shineRef} className="hero-shine" aria-hidden />
-      <p className="font-display relative z-[1] max-w-[440px] text-[28px] leading-[1.22] text-cream md:text-[34px]">
-        {preview}
-      </p>
-      <p className="relative z-[1] mt-5 text-[11px] uppercase tracking-[0.14em] text-gold">
-        Veloria · Business Readiness Advisory
-      </p>
+      <img
+        src={IMAGES.heroPanel}
+        alt="Veloria three-dimensional structure"
+        width={810}
+        height={635}
+        className="relative z-[1] mx-auto h-auto w-full max-w-[760px] bg-transparent object-contain lg:max-w-none"
+        decoding="async"
+        fetchPriority="high"
+      />
     </div>
   );
 }
@@ -69,19 +64,17 @@ export function HeroSection({
   subheadline,
   ctaLabel,
   ctaHref,
-  aboutPreview,
 }: {
   headline: string;
   subheadline: string;
   ctaLabel: string;
   ctaHref: string;
-  aboutPreview: string;
   logoText?: string;
 }) {
   return (
     <section className="relative border-b border-ink/10 py-[84px] md:py-[108px]">
       <Ornament className="absolute -right-8 top-10 hidden h-40 w-40 lg:block" />
-      <div className="container-v grid items-center gap-12 lg:grid-cols-[1.08fr_.92fr] lg:gap-[72px]">
+      <div className="container-v grid items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-[48px]">
         <div>
           <FadeIn>
             <p className="eyebrow mb-5">Veloria</p>
@@ -117,7 +110,7 @@ export function HeroSection({
         </div>
 
         <FadeIn delay={0.08}>
-          <HeroPanel preview={aboutPreview} />
+          <HeroPanel />
         </FadeIn>
       </div>
 

@@ -1,6 +1,20 @@
 import { MongoClient, type Db } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
+function clean(value?: string) {
+  return (value ?? "").trim().replace(/^["']|["']$/g, "");
+}
+
+function dbNameFromUri(uri: string) {
+  try {
+    const parsed = new URL(uri.replace(/^mongodb(\+srv)?:\/\//, "https://"));
+    const name = parsed.pathname.replace(/^\//, "").split("/")[0];
+    return name || null;
+  } catch {
+    return null;
+  }
+}
+
+const uri = clean(process.env.MONGODB_URI);
 
 type Cache = {
   client: MongoClient | null;
@@ -13,7 +27,7 @@ declare global {
   var mongoCache: Cache | undefined;
 }
 
-const MONGO_CACHE_VERSION = 2;
+const MONGO_CACHE_VERSION = 3;
 const cached: Cache = global.mongoCache ?? { client: null, promise: null, version: 0 };
 if (cached.version !== MONGO_CACHE_VERSION) {
   cached.client = null;
@@ -23,7 +37,7 @@ if (cached.version !== MONGO_CACHE_VERSION) {
 global.mongoCache = cached;
 
 export function hasMongoUri() {
-  return Boolean(process.env.MONGODB_URI);
+  return Boolean(clean(process.env.MONGODB_URI));
 }
 
 export async function getDb(): Promise<Db> {
@@ -33,17 +47,15 @@ export async function getDb(): Promise<Db> {
     );
   }
 
-  const dbName = process.env.MONGODB_DB || "veloria";
+  const dbName =
+    clean(process.env.MONGODB_DB) || dbNameFromUri(uri) || "veloria";
 
   if (cached.client) return cached.client.db(dbName);
 
   if (!cached.promise) {
     const client = new MongoClient(uri, {
-      serverSelectionTimeoutMS: 800,
-      connectTimeoutMS: 800,
-      socketTimeoutMS: 1200,
-      maxIdleTimeMS: 30_000,
-      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 8000,
+      connectTimeoutMS: 8000,
     });
     cached.promise = client.connect().then((c) => {
       cached.client = c;
