@@ -473,8 +473,8 @@ body {
 
 .icon-card-service {
   padding: 40px 24px 30px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  background: #fbfaf6;
 }
 
 .icon-card-service .icon-glyph {

@@ -87,16 +87,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="services" className="bg-forest-950 py-[88px] text-cream md:py-[104px]">
+      <section id="services" className="border-y border-ink/10 bg-cream-deep py-[88px] md:py-[104px]">
         <div className="container-v">
           <div className="mb-14 grid items-end gap-10 md:grid-cols-[1fr_.75fr]">
             <Reveal>
-              <h2 className="font-display text-[36px] font-medium leading-[1.18] md:text-[50px]">
+              <h2 className="font-display text-[36px] font-medium leading-[1.18] text-ink md:text-[50px]">
                 We strengthen the business behind the opportunity.
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
-              <p className="text-[15px] text-[#bac2bd]">
+              <p className="text-[15px] text-ink-soft">
                 The objective is not documentation for its own sake. It is to make the business more
                 credible, defensible and ready for serious counterparties.
               </p>
@@ -109,7 +109,6 @@ export default async function HomePage() {
                 key={service.id}
                 href={`/services#${service.slug}`}
                 variant="service"
-                dark
                 icon={serviceIcon(service.slug, service.title)}
                 title={service.title}
                 body={service.summary}
@@ -118,7 +117,7 @@ export default async function HomePage() {
           </div>
           </Reveal>
           <Magnetic className="mt-10">
-            <Link href="/services" className="btn-lux border border-cream/30 text-cream hover:bg-cream hover:text-forest-950">
+            <Link href="/services" className="btn-lux btn-lux-ghost">
               All services
             </Link>
           </Magnetic>

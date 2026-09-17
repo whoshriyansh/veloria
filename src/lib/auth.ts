@@ -26,7 +26,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           await connectMongo();
           const users = await collections.users();
           const user = await users.findOne({ email });
-          if (!user?.passwordHash) return null;
+          if (!user?.passwordHash) {
+            console.error(
+              "Admin login: no matching user in this Mongo database. Run npm run db:admin after MONGODB_URI is set.",
+            );
+            return null;
+          }
 
           const valid = await bcrypt.compare(password, user.passwordHash);
           if (!valid) return null;

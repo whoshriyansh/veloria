@@ -15,94 +15,107 @@ const mongoUri: string = uri;
 
 const questions = [
   {
-    question: "Is the company formally incorporated with current statutory records on file?",
+    question:
+      "Is the current ownership/shareholding structure clearly documented and up to date?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Investors and counterparties expect a clean legal architecture before writing a cheque.",
+    helpText: "Unclear ownership is one of the first things a serious investor or buyer will stop on.",
   },
   {
-    question: "Is ownership documented with founder agreements and a current cap table?",
+    question:
+      "If there are multiple founders, is there a written agreement defining their respective roles and responsibilities?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Undocumented equity is one of the fastest ways to stall a raise or a sale.",
+    helpText: "Verbal founder arrangements become disputes the moment capital or a departure is on the table.",
   },
   {
-    question: "Have all founders assigned intellectual property to the company?",
+    question:
+      "Does the company maintain its statutory registers, resolutions and corporate records in an organised manner?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Missing IP assignments can kill a financing round or acquisition.",
+    helpText: "If the records are not organised, the structure is not ready for diligence.",
   },
   {
-    question: "Are board or director consents, minutes and decision records maintained?",
+    question:
+      "Is it clearly documented who can make financial, operational and strategic decisions for the company?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "Governance hygiene signals institutional discipline to sophisticated counterparties.",
+    helpText: "Investors need to see that the business is run through authority, not informal founder habit.",
   },
   {
-    question: "Is there a clear process for material decisions, related-party deals and authority?",
+    question:
+      "Are important decisions of the company formally recorded rather than relying only on WhatsApp, calls or verbal discussions?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "Unclear authority creates negotiation risk when capital or a buyer arrives.",
+    helpText: "If it is not written down, it will not survive a data-room review.",
   },
   {
-    question: "Are customer, vendor and project contracts in writing and current?",
+    question:
+      "If the primary founder became unavailable for 60 days, could the business continue operating through an established decision-making structure?",
+    category: "Governance",
+    yesIsGood: true,
+    helpText: "Key-person dependence is a governance failure, not a personality trait.",
+  },
+  {
+    question: "Does the company have a written agreement with every major client?",
     category: "Contracts",
     yesIsGood: true,
-    helpText: "Handshake deals become diligence exceptions — and price chips.",
+    helpText: "Handshake revenue is not an asset in diligence.",
   },
   {
-    question: "Do employment and contractor agreements include confidentiality and IP assignment?",
+    question:
+      "Do your contracts clearly establish who owns intellectual property created during the engagement?",
     category: "Contracts",
     yesIsGood: true,
-    helpText: "Every contributor who touches the product should have paper behind them.",
+    helpText: "Unclear IP ownership can block a raise or a sale even when the product is strong.",
   },
   {
-    question: "Have unusual liability, exclusivity or payment terms been reviewed?",
+    question:
+      "Do you have written agreements with freelancers, consultants and external agencies working on your projects?",
     category: "Contracts",
     yesIsGood: true,
-    helpText: "Early commercial paper can quietly lock you into bad economics.",
+    helpText: "Anyone who touches the work should have paper transferring rights to the company.",
   },
   {
-    question: "Are privacy, terms and any sector registrations current for how you operate?",
+    question:
+      "Are all registrations and licences required for your current business activities currently valid?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "Regulatory gaps surface immediately in diligence and lender reviews.",
+    helpText: "Lapsed licences surface immediately when a counterparty asks for compliance records.",
   },
   {
-    question: "Are licences, filings and statutory compliances up to date?",
+    question: "Are your statutory filings being completed within the applicable timelines?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "Missed filings are inexpensive to fix early and expensive once a term sheet exists.",
+    helpText: "Late filings are inexpensive to fix early and expensive once a term sheet exists.",
   },
   {
-    question: "Is a data room organised with formation, equity, contracts and financials?",
+    question:
+      "If you received an investment offer tomorrow, could you provide an investor with your complete corporate documents without significant preparation?",
     category: "Transaction Readiness",
     yesIsGood: true,
-    helpText: "A clean data room shortens diligence from weeks to days.",
+    helpText: "If the files are not ready, the company is not ready.",
   },
   {
-    question: "Have prior SAFEs, notes or investment instruments been inventoried?",
+    question:
+      "Can you demonstrate ownership of the intellectual property that is critical to your business?",
     category: "Transaction Readiness",
     yesIsGood: true,
-    helpText: "Undocumented instruments create conversion chaos at priced rounds.",
+    helpText: "The company must own the IP that makes the business valuable.",
   },
   {
-    question: "Would you feel confident opening your files to a lead investor or buyer tomorrow?",
-    category: "Transaction Readiness",
-    yesIsGood: true,
-    helpText: "If the answer is no, that is exactly why the Veloria Score exists.",
-  },
-  {
-    question: "Have you identified material litigation, disputes or regulatory exposure?",
+    question:
+      "Does any single client currently contribute a disproportionately large percentage of your revenue?",
     category: "Business Risk",
     yesIsGood: false,
-    helpText: "Answering Yes means exposure exists — we help quantify and contain it.",
+    helpText: "Answering Yes means concentration risk — counterparties will price that in.",
   },
   {
-    question: "Are there known payment, counterparty or project risks that could weaken value?",
-    category: "Business Risk",
-    yesIsGood: false,
-    helpText: "Hidden commercial risk is what sophisticated buyers price in last.",
+    question:
+      "If a serious investor offered to begin due diligence next week, would you be confident that your business is legally and commercially ready for the process?",
+    category: "Investment Readiness",
+    yesIsGood: true,
+    helpText: "This is the Veloria Score in one question — build before you raise.",
   },
 ];
 

@@ -12,7 +12,7 @@ declare global {
   var mongoCache: Cache | undefined;
 }
 
-const MONGO_CACHE_VERSION = 5;
+const MONGO_CACHE_VERSION = 6;
 const cached: Cache = global.mongoCache ?? { client: null, promise: null, version: 0 };
 if (cached.version !== MONGO_CACHE_VERSION) {
   cached.client = null;
