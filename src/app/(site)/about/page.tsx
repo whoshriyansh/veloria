@@ -14,23 +14,23 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-28 text-cream md:pt-36">
+      <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Who we work with</p>
-            <h1 className="font-display max-w-4xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
+            <h1 className="page-hero-title font-display">
               {page?.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg text-cream/65">{page?.subtitle}</p>
+            <p className="mt-5 max-w-2xl text-[15px] text-cream/65 sm:mt-6 sm:text-lg">{page?.subtitle}</p>
           </Reveal>
         </div>
       </section>
 
-      <section className="py-[88px]">
+      <section className="section-y">
         <div className="container-v">
           <Reveal>
-            <div className="prose-veloria max-w-3xl font-serif text-xl leading-relaxed text-ink md:text-2xl">
+            <div className="prose-veloria max-w-3xl font-serif text-[1.05rem] leading-relaxed text-ink sm:text-xl md:text-2xl">
               {page?.content}
             </div>
           </Reveal>
@@ -53,7 +53,7 @@ export default async function AboutPage() {
 
       <section className="border-t border-ink/10 py-16">
         <div className="container-v flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <h2 className="font-display text-3xl md:text-4xl">Ready to strengthen the foundation?</h2>
+          <h2 className="font-display text-[clamp(1.75rem,5.5vw,2.5rem)] md:text-4xl">Ready to strengthen the foundation?</h2>
           <Link href="/contact" className="btn-lux btn-lux-fill">
             Speak with Veloria
           </Link>

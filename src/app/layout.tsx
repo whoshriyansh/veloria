@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, DM_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/cms";
@@ -26,6 +26,12 @@ const instrument = Instrument_Serif({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   return {
@@ -38,9 +44,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${playfair.variable} ${instrument.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${playfair.variable} ${instrument.variable} h-full overflow-x-clip antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
+      <body className="min-h-full flex flex-col overflow-x-clip bg-cream text-ink">{children}</body>
     </html>
   );
 }

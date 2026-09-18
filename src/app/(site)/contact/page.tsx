@@ -19,12 +19,12 @@ export default async function ContactPage({
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-28 text-cream md:pt-36">
+      <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Veloria Advisory</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
+            <h1 className="page-hero-title font-display">
               {page?.title ?? "Build before the opportunity arrives."}
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">{page?.subtitle}</p>
@@ -32,14 +32,14 @@ export default async function ContactPage({
         </div>
       </section>
 
-      <section className="py-[88px]">
-        <div className="container-v grid gap-12 lg:grid-cols-[.85fr_1.15fr]">
+      <section className="section-y">
+          <div className="container-v grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:gap-12">
           <Reveal>
             <div className="space-y-8">
               <p className="text-ink-soft">{page?.content}</p>
               <div>
                 <p className="eyebrow mb-2">Email</p>
-                <a href={`mailto:${contact.email}`} className="text-lg hover:text-moss">
+                <a href={`mailto:${contact.email}`} className="break-all text-lg hover:text-moss">
                   {contact.email}
                 </a>
               </div>

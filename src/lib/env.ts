@@ -9,3 +9,23 @@ export function mongoUri() {
 export function authSecret() {
   return clean(process.env.AUTH_SECRET) || clean(process.env.NEXTAUTH_SECRET);
 }
+
+export function groqApiKey() {
+  return clean(process.env.GROQ_API_KEY);
+}
+
+export function groqModel() {
+  return clean(process.env.GROQ_MODEL) || "qwen/qwen3.8-27b";
+}
+
+export function brevoApiKey() {
+  return clean(process.env.BREVO_API_KEY);
+}
+
+export function brevoSenderEmail() {
+  return clean(process.env.BREVO_SENDER_EMAIL) || "no-reply@veloria.co.in";
+}
+
+export function brevoSenderName() {
+  return clean(process.env.BREVO_SENDER_NAME) || "Veloria";
+}

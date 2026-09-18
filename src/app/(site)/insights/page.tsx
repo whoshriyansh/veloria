@@ -7,12 +7,12 @@ export default async function InsightsPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-28 text-cream md:pt-36">
+      <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Insights</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
+            <h1 className="page-hero-title font-display">
               Notes from the desk.
             </h1>
             <p className="mt-6 max-w-xl text-lg text-cream/65">
@@ -23,7 +23,7 @@ export default async function InsightsPage() {
         </div>
       </section>
 
-      <section className="py-[88px]">
+      <section className="section-y">
         <div className="container-v">
           {articles.length ? (
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">

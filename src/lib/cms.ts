@@ -1,6 +1,7 @@
 import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { connectMongo, hasMongoUri } from "@/lib/mongodb";
 import { collections, serialize } from "@/lib/models";
+import { sanitizeNotifyEmails } from "@/lib/email";
 import {
   FALLBACK_CLIENTS,
   FALLBACK_ARTICLES,
@@ -39,6 +40,7 @@ export type CmsContact = {
   twitter: string;
   calendly: string;
   hours: string;
+  notifyEmails: string[];
 };
 
 export type CmsNavItem = {
@@ -100,6 +102,7 @@ const DEFAULT_CONTACT: CmsContact = {
   twitter: "",
   calendly: "",
   hours: "Mon–Fri, 10am–7pm IST",
+  notifyEmails: [],
 };
 
 const DEFAULT_NAV: CmsNavItem[] = [
@@ -213,7 +216,12 @@ export async function getContactInfo(): Promise<CmsContact> {
       const result = await contactInfo.insertOne(doc);
       contact = { ...doc, _id: result.insertedId };
     }
-    return serialize(contact as Record<string, unknown>) as unknown as CmsContact;
+    return serialize({
+      ...contact,
+      notifyEmails: sanitizeNotifyEmails(
+        (contact as { notifyEmails?: unknown }).notifyEmails,
+      ),
+    } as Record<string, unknown>) as unknown as CmsContact;
     }),
   );
 }

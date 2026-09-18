@@ -105,6 +105,22 @@ export async function POST(request: Request) {
   const leads = await collections.leads();
   const result = await leads.insertOne(doc);
 
+  try {
+    const { notifyNewLead } = await import("@/lib/email");
+    await notifyNewLead({
+      name,
+      phone,
+      email: email || null,
+      company: company || null,
+      source: "Legal Health Checkup",
+      score,
+      maxScore,
+      readiness,
+    });
+  } catch (error) {
+    console.error("Lead email pipeline failed:", error);
+  }
+
   return NextResponse.json({
     ok: true,
     leadId: String(result.insertedId),

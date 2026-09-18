@@ -8,12 +8,12 @@ export default async function PackagesPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-24 pt-28 text-cream md:pt-36">
+      <section className="page-hero">
         <div className="aurora" />
         <div className="container-v">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">Retainers</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
+            <h1 className="page-hero-title font-display">
               Monthly counsel. No price tags on the page.
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">
@@ -25,13 +25,13 @@ export default async function PackagesPage() {
         <div className="absolute inset-x-0 bottom-0 h-3 bg-cream" />
       </section>
 
-      <section className="py-[88px]">
+      <section className="section-y">
         <div className="container-v grid gap-6 lg:grid-cols-3">
           {packages.map((pkg, i) => (
             <Reveal key={pkg.id} delay={i * 0.08}>
               <article
                 className={cn(
-                  "flex h-full flex-col rounded-[1.75rem] border p-7 md:p-8",
+                  "flex h-full flex-col rounded-[1.75rem] border p-6 sm:p-7 md:p-8",
                   pkg.highlight
                     ? "border-forest-900 bg-forest-900 text-cream"
                     : "border-ink/10 bg-white/50 text-ink",

@@ -54,12 +54,12 @@ export function ArticleGrid({
   if (!articles.length) return null;
 
   return (
-    <section id="insights" className="bg-white py-[88px] md:py-[104px]">
+    <section id="insights" className="section-y bg-white">
       <div className="container-v">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="eyebrow mb-4">From the desk</p>
-            <h2 className="font-display text-[36px] font-medium leading-[1.18] md:text-[48px]">
+            <h2 className="font-display text-[clamp(1.85rem,6vw,3rem)] font-medium leading-[1.18]">
               {heading}
             </h2>
             {intro ? <p className="mt-3 max-w-[460px] text-[14px] text-ink-soft">{intro}</p> : null}

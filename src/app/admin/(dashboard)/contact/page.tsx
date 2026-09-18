@@ -13,6 +13,7 @@ export default async function ContactPage() {
         twitter: contact.twitter,
         calendly: contact.calendly,
         hours: contact.hours,
+        notifyEmails: contact.notifyEmails ?? [],
       }}
     />
   );

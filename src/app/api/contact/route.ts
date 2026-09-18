@@ -46,6 +46,20 @@ export async function POST(request: Request) {
     updatedAt: now,
   });
 
+  try {
+    const { notifyNewLead } = await import("@/lib/email");
+    await notifyNewLead({
+      name,
+      phone,
+      email: email || null,
+      company: company || null,
+      source: "Contact Form",
+      notes: message || "",
+    });
+  } catch (error) {
+    console.error("Lead email pipeline failed:", error);
+  }
+
   return NextResponse.json({
     ok: true,
     leadId: String(result.insertedId),

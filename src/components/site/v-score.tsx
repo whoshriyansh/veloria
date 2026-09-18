@@ -69,7 +69,7 @@ export function VScore({
 
         <div className="vscore-hub">
           <p className="text-[10px] uppercase tracking-[0.28em] text-gold">V-Score</p>
-          <p className="font-display mt-1 text-[64px] leading-none text-cream md:text-[78px]">
+          <p className="font-display mt-1 text-[clamp(2.6rem,10vw,4.875rem)] leading-none text-cream">
             <CountUp value={value} />
           </p>
           <p className="mt-2 text-[11px] tracking-[0.14em] text-[#c6cec9]">/ 100</p>
@@ -129,9 +129,9 @@ export function VScore({
               key="idle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center text-[13px] text-[#9aa39d]"
+              className="text-center text-[13px] text-[#9aa39d] max-md:px-2"
             >
-              Hover a pillar. Light travels into the V-Score — the composite of all six.
+              Select a pillar. Light travels into the V-Score — the composite of all six.
             </motion.p>
           )}
         </AnimatePresence>

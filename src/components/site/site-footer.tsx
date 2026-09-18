@@ -17,10 +17,10 @@ export function SiteFooter({
 }) {
   return (
     <footer className="bg-[#101613] text-[#aab3ad]">
-      <div className="container-v py-11">
+      <div className="container-v py-9 pb-[max(2.25rem,env(safe-area-inset-bottom))] sm:py-11">
         <div className="grid gap-11 md:grid-cols-[1.3fr_.8fr_.8fr]">
           <div>
-            <p className="font-display text-[29px] tracking-[0.11em] text-white">{logoText}</p>
+            <p className="font-display text-[clamp(1.5rem,6vw,1.8rem)] tracking-[0.08em] text-white sm:text-[29px] sm:tracking-[0.11em]">{logoText}</p>
             <p className="mt-3 max-w-[350px] text-[12px] leading-relaxed">
               Business readiness, governance and transaction advisory for ambitious companies and
               entrepreneurs.
@@ -42,7 +42,7 @@ export function SiteFooter({
             <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#d4dad6]">Contact</p>
             <ul className="space-y-2 text-[12px]">
               <li>
-                <a href={`mailto:${email}`} className="hover:text-white">
+                <a href={`mailto:${email}`} className="break-all hover:text-white">
                   {email}
                 </a>
               </li>

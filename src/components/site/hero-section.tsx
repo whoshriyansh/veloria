@@ -51,7 +51,7 @@ function HeroPanel() {
         alt="Veloria three-dimensional structure"
         width={810}
         height={635}
-        className="relative z-[1] mx-auto h-auto w-full max-w-[760px] bg-transparent object-contain lg:max-w-none"
+        className="relative z-[1] mx-auto h-auto max-h-[240px] w-full max-w-[760px] bg-transparent object-contain sm:max-h-[340px] lg:max-h-none lg:max-w-none"
         decoding="async"
         fetchPriority="high"
       />
@@ -72,36 +72,36 @@ export function HeroSection({
   logoText?: string;
 }) {
   return (
-    <section className="relative border-b border-ink/10 py-[84px] md:py-[108px]">
+    <section className="relative border-b border-ink/10 py-12 sm:py-16 md:py-[88px] lg:py-[108px]">
       <Ornament className="absolute -right-8 top-10 hidden h-40 w-40 lg:block" />
-      <div className="container-v grid items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-[48px]">
+      <div className="container-v grid items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-[48px]">
         <div>
           <FadeIn>
-            <p className="eyebrow mb-5">Veloria</p>
+            <p className="eyebrow mb-4 sm:mb-5">Veloria</p>
           </FadeIn>
           <SplitHeading
             text={headline}
-            className="font-display text-[clamp(3.2rem,7.4vw,6.1rem)] font-medium leading-[1.18] tracking-[-0.03em] text-ink"
+            className="font-display text-[clamp(2.15rem,8.4vw,6.1rem)] font-medium leading-[1.14] tracking-[-0.03em] text-ink"
           />
           <FadeIn delay={0.06}>
-            <p className="font-display mt-5 text-[26px] leading-[1.25] text-[#2e3833] md:text-[34px]">
+            <p className="font-display mt-4 text-[22px] leading-[1.25] text-[#2e3833] sm:mt-5 sm:text-[26px] md:text-[34px]">
               Structure. Strength. Readiness.
             </p>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="mt-6 max-w-[690px] text-[17px] leading-relaxed text-ink-soft">
+            <p className="mt-4 max-w-[690px] text-[15px] leading-relaxed text-ink-soft sm:mt-6 sm:text-[17px]">
               {subheadline}
             </p>
           </FadeIn>
           <FadeIn delay={0.14}>
-            <div className="mt-8 flex flex-wrap gap-3.5">
-              <Magnetic>
-                <Link href={ctaHref} className="btn-lux btn-lux-fill">
+            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3.5">
+              <Magnetic className="w-full sm:w-auto">
+                <Link href={ctaHref} className="btn-lux btn-lux-fill w-full sm:w-auto">
                   {ctaLabel}
                 </Link>
               </Magnetic>
-              <Magnetic>
-                <Link href="/services" className="btn-lux btn-lux-ghost">
+              <Magnetic className="w-full sm:w-auto">
+                <Link href="/services" className="btn-lux btn-lux-ghost w-full sm:w-auto">
                   Explore Veloria
                 </Link>
               </Magnetic>

@@ -102,10 +102,10 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="border border-ink/8 bg-white/50 p-8 md:p-12"
+        className="border border-ink/8 bg-white/50 p-6 sm:p-8 md:p-12"
       >
         <p className="eyebrow mb-4">Report received</p>
-        <h2 className="font-display text-4xl tracking-tight text-ink md:text-5xl">
+        <h2 className="font-display text-[clamp(1.85rem,6vw,3rem)] tracking-tight text-ink">
           Our representative will call you soon.
         </h2>
         <p className="mt-5 max-w-xl text-ink-soft">{result.message}</p>
@@ -131,7 +131,7 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
   }
 
   return (
-    <div className=" border border-ink/8 bg-white/40 p-6 backdrop-blur-sm md:p-10">
+    <div className="border border-ink/8 bg-white/40 p-5 backdrop-blur-sm sm:p-6 md:p-10">
       <div className="mb-8">
         <div className="mb-3 flex items-center justify-between text-xs tracking-[0.16em] text-ink-soft">
           <span>
@@ -158,19 +158,19 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
             transition={{ duration: 0.35 }}
           >
             <p className="eyebrow mb-4">{current.category}</p>
-            <h2 className="font-display max-w-2xl text-3xl leading-tight tracking-tight text-ink md:text-4xl">
+            <h2 className="font-display max-w-2xl text-[clamp(1.55rem,5.6vw,2.25rem)] leading-tight tracking-tight text-ink">
               {current.question}
             </h2>
             {current.helpText ? (
               <p className="mt-4 max-w-xl text-sm text-ink-soft">{current.helpText}</p>
             ) : null}
 
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap">
               <button
                 type="button"
                 onClick={() => setAnswer(current.id, true)}
                 className={cn(
-                  "min-w-[120px] rounded-full border px-8 py-3.5 text-sm font-medium transition",
+                  "w-full min-w-0 rounded-full border px-8 py-3.5 text-sm font-medium transition sm:w-auto sm:min-w-[120px]",
                   answers[current.id] === true
                     ? "border-forest-900 bg-forest-900 text-cream"
                     : "border-ink/15 bg-transparent text-ink hover:border-ink/40",
@@ -182,7 +182,7 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
                 type="button"
                 onClick={() => setAnswer(current.id, false)}
                 className={cn(
-                  "min-w-[120px] rounded-full border px-8 py-3.5 text-sm font-medium transition",
+                  "w-full min-w-0 rounded-full border px-8 py-3.5 text-sm font-medium transition sm:w-auto sm:min-w-[120px]",
                   answers[current.id] === false
                     ? "border-forest-900 bg-forest-900 text-cream"
                     : "border-ink/15 bg-transparent text-ink hover:border-ink/40",
@@ -222,7 +222,7 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
             className="max-w-xl"
           >
             <p className="eyebrow mb-4">Almost done</p>
-            <h2 className="font-display text-3xl tracking-tight text-ink md:text-4xl">
+            <h2 className="font-display text-[clamp(1.55rem,5.6vw,2.25rem)] tracking-tight text-ink">
               Where should we reach you?
             </h2>
             <p className="mt-3 text-sm text-ink-soft">

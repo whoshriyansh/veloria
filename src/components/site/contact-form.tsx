@@ -52,7 +52,7 @@ export function ContactForm({ defaultMessage = "" }: { defaultMessage?: string }
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-[1.75rem] border border-ink/10 bg-white/50 p-8 md:p-10"
+      className="rounded-[1.75rem] border border-ink/10 bg-white/50 p-5 sm:p-8 md:p-10"
     >
       <div className="grid gap-4">
         <label className="grid gap-2 text-sm">
@@ -100,7 +100,7 @@ export function ContactForm({ defaultMessage = "" }: { defaultMessage?: string }
       <button
         type="submit"
         disabled={loading}
-        className="mt-6 rounded-full bg-forest-900 px-6 py-3 text-sm font-medium text-cream disabled:opacity-60"
+        className="mt-6 w-full rounded-full bg-forest-900 px-6 py-3 text-sm font-medium text-cream disabled:opacity-60 sm:w-auto"
       >
         {loading ? "Sending…" : "Send message"}
       </button>

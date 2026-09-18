@@ -7,12 +7,12 @@ export default async function LegalHealthCheckupPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 px-6 pb-20 pt-28 text-cream md:pt-36">
+      <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-6">The Veloria Score™</p>
-            <h1 className="font-display max-w-3xl text-5xl font-medium leading-[1.18] tracking-tight md:text-7xl">
+            <h1 className="page-hero-title font-display">
               Legal Health Checkup
             </h1>
             <p className="mt-6 max-w-xl text-cream/65">
@@ -24,7 +24,7 @@ export default async function LegalHealthCheckupPage() {
         </div>
       </section>
 
-      <section className="bg-cream-deep py-16 md:py-24">
+      <section className="section-y bg-cream-deep">
         <div className="container-v max-w-3xl">
           {questions.length === 0 ? (
             <p className="text-ink-soft">The checkup will appear here once questions are published in admin.</p>

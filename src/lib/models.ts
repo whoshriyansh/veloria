@@ -42,6 +42,7 @@ export type ContactInfoDoc = {
   twitter: string;
   calendly: string;
   hours: string;
+  notifyEmails?: string[];
 };
 
 export type NavigationItemDoc = {

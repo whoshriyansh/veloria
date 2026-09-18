@@ -189,6 +189,9 @@ async function main() {
         hours: "Mon–Fri, 10am–7pm IST",
         updatedAt: new Date(),
       },
+      $setOnInsert: {
+        notifyEmails: [],
+      },
     },
     { upsert: true },
   );

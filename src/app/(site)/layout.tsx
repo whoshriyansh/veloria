@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { CheckupPopup } from "@/components/checkup/checkup-popup";
 import { CustomCursor } from "@/components/site/custom-cursor";
 import { FilmGrain, ScrollProgress } from "@/components/site/chrome";
+import { VeloriaChat } from "@/components/site/veloria-chat";
 import { getContactInfo, getNavigation, getSiteSettings } from "@/lib/cms";
 
 export const revalidate = 60;
@@ -24,7 +25,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         items={nav}
         contactEmail={contact.email}
       />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-[5.5rem] sm:pb-24 lg:pb-0">{children}</main>
       <SiteFooter
         logoText={settings.logoText}
         footerText={settings.footerText}
@@ -40,6 +41,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         body={settings.popupBody}
         cta={settings.popupCta}
       />
+      <VeloriaChat />
     </>
   );
 }

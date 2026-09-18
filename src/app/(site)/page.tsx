@@ -57,12 +57,12 @@ export default async function HomePage() {
 
       <TrustMarquee items={trustItems} />
 
-      <section id="who" className="relative py-[88px] md:py-[104px]">
+      <section id="who" className="relative section-y">
         <Ornament className="absolute bottom-10 left-4 hidden h-28 w-28 lg:block" />
         <div className="container-v">
           <div className="mb-12 grid items-end gap-10 md:grid-cols-[1fr_.75fr] md:gap-[70px]">
             <Reveal>
-              <h2 className="font-display text-[36px] font-medium leading-[1.18] text-ink md:text-[50px]">
+              <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18] text-ink">
                 {audiences?.title ?? "Built for businesses beyond one stage or one industry."}
               </h2>
             </Reveal>
@@ -87,11 +87,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="services" className="border-y border-ink/10 bg-cream-deep py-[88px] md:py-[104px]">
+      <section id="services" className="section-y border-y border-ink/10 bg-cream-deep">
         <div className="container-v">
           <div className="mb-14 grid items-end gap-10 md:grid-cols-[1fr_.75fr]">
             <Reveal>
-              <h2 className="font-display text-[36px] font-medium leading-[1.18] text-ink md:text-[50px]">
+              <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18] text-ink">
                 We strengthen the business behind the opportunity.
               </h2>
             </Reveal>
@@ -124,11 +124,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="score" className="bg-cream-deep py-[88px] md:py-[104px]">
+      <section id="score" className="section-y bg-cream-deep">
         <div className="container-v">
           <Reveal className="mx-auto max-w-[720px] text-center">
             <p className="eyebrow mb-4">{score?.label ?? "A proprietary readiness framework"}</p>
-            <h2 className="font-display text-[36px] font-medium leading-[1.18] md:text-[50px]">
+            <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
               See your business the way a serious counterparty will.
             </h2>
             <p className="mx-auto mt-5 max-w-[620px] text-ink-soft">
@@ -152,11 +152,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#fbfaf6] py-[88px] md:py-[104px]">
+      <section className="section-y bg-[#fbfaf6]">
         <div className="container-v">
           <div className="mb-12 grid items-end gap-10 md:grid-cols-[1fr_.75fr]">
             <Reveal>
-              <h2 className="font-display text-[36px] font-medium leading-[1.18] md:text-[50px]">
+              <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
                 {approach?.title}
               </h2>
             </Reveal>
@@ -190,7 +190,7 @@ export default async function HomePage() {
 
       <Testimonials />
 
-      <section id="circle" className="relative overflow-hidden bg-[#161512] py-[88px] text-cream md:py-[104px]">
+      <section id="circle" className="section-y relative overflow-hidden bg-[#161512] text-cream">
         <Photo
           src={IMAGES.dinnerHero}
           className="absolute inset-0 h-full w-full object-cover opacity-35"
@@ -199,7 +199,7 @@ export default async function HomePage() {
         <div className="container-v relative grid items-end gap-10 lg:grid-cols-[1.1fr_.7fr]">
           <Reveal>
             <p className="eyebrow eyebrow-light mb-5">Founders Circle · Invitation only</p>
-            <h2 className="font-display max-w-xl text-[40px] font-medium leading-[1.18] md:text-[56px]">
+            <h2 className="font-display max-w-xl text-[clamp(2rem,6.5vw,3.5rem)] font-medium leading-[1.18]">
               An evening. Not a group.
             </h2>
             <p className="mt-5 max-w-md text-[15px] text-cream/70">
@@ -216,11 +216,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="contact" className="py-[88px] text-center md:py-[104px]">
+      <section id="contact" className="section-y text-center">
         <div className="container-v">
           <Reveal>
             <p className="eyebrow mb-5">Veloria Advisory</p>
-            <h2 className="font-display text-[44px] font-medium leading-[1.18] md:text-[64px]">
+            <h2 className="font-display text-[clamp(2rem,7vw,4rem)] font-medium leading-[1.18]">
               Build before the opportunity arrives.
             </h2>
             <p className="mx-auto mt-5 max-w-[640px] text-ink-soft">
