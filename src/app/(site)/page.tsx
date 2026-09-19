@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroSection } from "@/components/site/hero-section";
 import { Reveal } from "@/components/site/reveal";
@@ -9,6 +10,7 @@ import { IconCard } from "@/components/site/icon-card";
 import { ArticleGrid } from "@/components/site/article-card";
 import { Ornament } from "@/components/site/ornament";
 import { getArticles, getPageBySlug, getServices, getSiteSettings } from "@/lib/cms";
+import { cmsPageMetadata } from "@/lib/seo";
 import { mergeScorePillars } from "@/lib/score-pillars";
 import { parseJsonArray } from "@/lib/utils";
 import { Photo } from "@/components/site/photo";
@@ -25,6 +27,20 @@ type Section = {
   caption?: string;
   items?: Item[] | string[];
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [settings, page] = await Promise.all([
+    getSiteSettings(),
+    getPageBySlug("home"),
+  ]);
+  return cmsPageMetadata({
+    page,
+    title: settings.metaTitle,
+    description: settings.metaDescription,
+    path: "/",
+    absoluteTitle: settings.metaTitle,
+  });
+}
 
 export default async function HomePage() {
   const [settings, page, services, articles] = await Promise.all([
@@ -193,6 +209,7 @@ export default async function HomePage() {
       <section id="circle" className="section-y relative overflow-hidden bg-[#161512] text-cream">
         <Photo
           src={IMAGES.dinnerHero}
+          alt="Veloria Founders Circle dinner"
           className="absolute inset-0 h-full w-full object-cover opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b0a08] via-[#0b0a08]/80 to-[#0b0a08]/45" />

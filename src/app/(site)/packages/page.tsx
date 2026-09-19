@@ -1,13 +1,31 @@
+import type { Metadata } from "next";
 import { Reveal } from "@/components/site/reveal";
+import { JsonLd } from "@/components/site/json-ld";
 import { getPackages } from "@/lib/cms";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+
+export function generateMetadata(): Metadata {
+  return pageMetadata({
+    title: "Packages",
+    description:
+      "Veloria monthly retainers scoped around readiness, continuity and diligence speed. Pricing is shared after a conversation.",
+    path: "/packages",
+  });
+}
 
 export default async function PackagesPage() {
   const packages = await getPackages();
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "Packages", path: "/packages" },
+        ])}
+      />
       <section className="page-hero">
         <div className="aurora" />
         <div className="container-v">

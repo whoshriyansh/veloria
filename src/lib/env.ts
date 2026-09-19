@@ -29,3 +29,11 @@ export function brevoSenderEmail() {
 export function brevoSenderName() {
   return clean(process.env.BREVO_SENDER_NAME) || "Veloria";
 }
+
+export function siteUrl() {
+  const explicit = clean(process.env.SITE_URL) || clean(process.env.NEXT_PUBLIC_SITE_URL);
+  if (explicit) return explicit.replace(/\/+$/, "");
+  const vercel = clean(process.env.VERCEL_PROJECT_PRODUCTION_URL);
+  if (vercel) return `https://${vercel.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
+  return "https://veloria.co.in";
+}

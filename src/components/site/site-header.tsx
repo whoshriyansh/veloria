@@ -52,6 +52,8 @@ export function SiteHeader({
         <div className="container-v flex h-[64px] items-center justify-between sm:h-[74px] lg:h-[82px]">
           <Link
             href="/"
+            aria-label="Veloria home"
+            title="Veloria"
             className={cn(
               "font-display min-w-0 truncate text-[1.28rem] tracking-[0.1em] transition-colors duration-400 sm:text-[1.5rem] sm:tracking-[0.12em] lg:text-[1.65rem] lg:tracking-[0.14em]",
               inverted ? "text-cream" : "text-ink",
@@ -60,7 +62,7 @@ export function SiteHeader({
             {logoText}
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
+          <div className="hidden items-center gap-5 xl:gap-8 lg:flex">
             {items.map((item) => (
               <Link
                 key={item.id}
@@ -82,10 +84,10 @@ export function SiteHeader({
           <div className="flex items-center gap-3">
             <Magnetic className="hidden sm:block">
               <Link
-                href="/contact"
+                href="/legal-health-checkup"
                 className="btn-lux btn-lux-ghost !px-[17px] !py-[11px] text-[12px] tracking-wide"
               >
-                Speak with Veloria
+                Check your V Score
               </Link>
             </Magnetic>
             <button
@@ -119,10 +121,10 @@ export function SiteHeader({
               </Link>
             ))}
             <Link
-              href="/contact"
+              href="/legal-health-checkup"
               className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-cream px-5 py-3.5 text-sm text-forest-950 sm:w-auto"
             >
-              Speak with Veloria
+              Check your V Score
             </Link>
           </div>
         </div>

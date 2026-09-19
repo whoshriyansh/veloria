@@ -160,9 +160,9 @@ async function main() {
         footerText:
           "© 2026 Veloria. All rights reserved. Information on this website is general in nature and does not constitute legal advice.",
         logoText: "VELORIA",
-        metaTitle: "Veloria — Build Before You Raise",
+        metaTitle: "Veloria — Business Readiness, Governance & Transaction Advisory",
         metaDescription:
-          "Veloria helps startups, companies, builders, contractors and business owners strengthen structure, governance and transaction readiness.",
+          "Veloria is a business readiness advisory for startups, companies, founders and owners in India. Strengthen structure, governance and transactions — then take the Veloria Score.",
         showCheckupPopup: true,
         popupDelayMs: 1800,
         popupTitle: "How ready is your business?",
@@ -201,7 +201,7 @@ async function main() {
     { label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
     { label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
     { label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
-    { label: "Contact", href: "/contact", order: 4, isVisible: true, isExternal: false },
+    { label: "Speak with Veloria", href: "/contact", order: 4, isVisible: true, isExternal: false },
   ]);
 
   const homeSections = JSON.stringify([

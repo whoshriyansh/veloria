@@ -1,15 +1,33 @@
+import type { Metadata } from "next";
 import { Reveal } from "@/components/site/reveal";
+import { JsonLd } from "@/components/site/json-ld";
 import { getServices } from "@/lib/cms";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { parseJsonArray } from "@/lib/utils";
 import { Photo } from "@/components/site/photo";
 import { serviceIcon } from "@/lib/visual";
 import Link from "next/link";
+
+export function generateMetadata(): Metadata {
+  return pageMetadata({
+    title: "What We Do",
+    description:
+      "Veloria advisory across structure, contracts, fundraising, diligence, projects and strategic decisions — so the business is ready for serious counterparties.",
+    path: "/services",
+  });
+}
 
 export default async function ServicesPage() {
   const services = await getServices();
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "What We Do", path: "/services" },
+        ])}
+      />
       <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">
@@ -46,6 +64,7 @@ export default async function ServicesPage() {
                     {service.imageUrl ? (
                       <Photo
                         src={service.imageUrl}
+                        alt={`${service.title} — Veloria`}
                         className="mt-6 aspect-[4/3] w-full object-cover"
                       />
                     ) : null}

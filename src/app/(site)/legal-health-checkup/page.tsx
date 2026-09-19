@@ -1,12 +1,30 @@
+import type { Metadata } from "next";
 import { LegalHealthCheckup } from "@/components/checkup/legal-health-checkup";
+import { JsonLd } from "@/components/site/json-ld";
 import { Reveal } from "@/components/site/reveal";
 import { getHealthQuestions } from "@/lib/cms";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+
+export function generateMetadata(): Metadata {
+  return pageMetadata({
+    title: "Veloria Score — Legal Health Checkup",
+    description:
+      "Take the free Veloria Score: a 15-question legal health checkup across structure, governance, contracts, compliance and transaction readiness.",
+    path: "/legal-health-checkup",
+  });
+}
 
 export default async function LegalHealthCheckupPage() {
   const questions = await getHealthQuestions();
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "Veloria Score", path: "/legal-health-checkup" },
+        ])}
+      />
       <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">

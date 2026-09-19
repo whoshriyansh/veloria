@@ -82,9 +82,9 @@ const DEFAULT_SETTINGS: CmsSettings = {
   footerText:
     "© 2026 Veloria. All rights reserved. Information on this website is general in nature and does not constitute legal advice.",
   logoText: "VELORIA",
-  metaTitle: "Veloria — Build Before You Raise",
+  metaTitle: "Veloria — Business Readiness, Governance & Transaction Advisory",
   metaDescription:
-    "Veloria helps startups, companies, builders, contractors and business owners strengthen structure, governance and transaction readiness.",
+    "Veloria is a business readiness advisory for startups, companies, founders and owners in India. Strengthen structure, governance and transactions — then take the Veloria Score.",
   showCheckupPopup: true,
   popupDelayMs: 1800,
   popupTitle: "How ready is your business?",
@@ -109,17 +109,24 @@ const DEFAULT_NAV: CmsNavItem[] = [
   { id: "nav-1", label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
   { id: "nav-2", label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
   { id: "nav-3", label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
-  { id: "nav-4", label: "Contact", href: "/contact", order: 4, isVisible: true, isExternal: false },
+  { id: "nav-4", label: "Speak with Veloria", href: "/contact", order: 4, isVisible: true, isExternal: false },
 ];
 
 function publicNav(items: CmsNavItem[]): CmsNavItem[] {
   const hiddenLabels = new Set(["v-score", "veloria score", "insights", "clients"]);
   const hiddenHrefs = new Set(["/#score", "/#insights", "/#clients", "/insights"]);
-  return items.filter((item) => {
-    const label = item.label.trim().toLowerCase();
-    const href = item.href.trim().toLowerCase();
-    return !hiddenLabels.has(label) && !hiddenHrefs.has(href);
-  });
+  return items
+    .filter((item) => {
+      const label = item.label.trim().toLowerCase();
+      const href = item.href.trim().toLowerCase();
+      return !hiddenLabels.has(label) && !hiddenHrefs.has(href);
+    })
+    .map((item) => {
+      if (item.href.trim() === "/contact" && item.label.trim().toLowerCase() === "contact") {
+        return { ...item, label: "Speak with Veloria" };
+      }
+      return item;
+    });
 }
 
 type CacheEntry<T> = { value: T; exp: number };
@@ -198,6 +205,18 @@ export async function getSiteSettings(): Promise<CmsSettings> {
       const doc = { ...defaults, key: "default" as const };
       const result = await siteSettings.insertOne(doc);
       settings = { ...doc, _id: result.insertedId };
+    } else if (settings.metaTitle === "Veloria — Build Before You Raise") {
+      await siteSettings.updateOne(
+        { key: "default" },
+        {
+          $set: {
+            metaTitle: DEFAULT_SETTINGS.metaTitle,
+            metaDescription: DEFAULT_SETTINGS.metaDescription,
+          },
+        },
+      );
+      settings.metaTitle = DEFAULT_SETTINGS.metaTitle;
+      settings.metaDescription = DEFAULT_SETTINGS.metaDescription;
     }
     return serialize(settings as Record<string, unknown>) as unknown as CmsSettings;
     }),
@@ -231,6 +250,10 @@ export async function getNavigation(): Promise<CmsNavItem[]> {
     remember("nav", DEFAULT_NAV, async () => {
       await connectMongo();
       const navigationItems = await collections.navigationItems();
+      await navigationItems.updateMany(
+        { href: "/contact", label: "Contact" },
+        { $set: { label: "Speak with Veloria" } },
+      );
       const docs = await navigationItems.find({ isVisible: true }).sort({ order: 1 }).toArray();
       if (!docs.length) return DEFAULT_NAV;
       return docs.map((item) => serialize(item as Record<string, unknown>) as unknown as CmsNavItem);
@@ -239,7 +262,17 @@ export async function getNavigation(): Promise<CmsNavItem[]> {
   return publicNav(items);
 }
 
-export async function getPageBySlug(slug: string) {
+export type CmsPage = {
+  id: string;
+  title: string;
+  subtitle: string;
+  content: string;
+  sections: string;
+  seoTitle?: string;
+  seoDescription?: string;
+};
+
+export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
   const fallback = FALLBACK_PAGES[slug] ?? null;
   return cachedCms(["cms-page", slug], () =>
     remember(`page:${slug}`, fallback, async () => {
@@ -247,13 +280,7 @@ export async function getPageBySlug(slug: string) {
     const pages = await collections.pages();
     const page = await pages.findOne({ slug });
     return page
-      ? (serialize(page as Record<string, unknown>) as Record<string, unknown> & {
-          id: string;
-          title: string;
-          subtitle: string;
-          content: string;
-          sections: string;
-        })
+      ? (serialize(page as Record<string, unknown>) as unknown as CmsPage)
       : fallback;
     }),
   );

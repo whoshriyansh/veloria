@@ -1,14 +1,33 @@
+import type { Metadata } from "next";
 import { Reveal } from "@/components/site/reveal";
+import { JsonLd } from "@/components/site/json-ld";
 import { CornerMarks } from "@/components/site/ornament";
 import { Photo } from "@/components/site/photo";
+import { breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
 import { IMAGES } from "@/lib/visual";
+
+export function generateMetadata(): Metadata {
+  return pageMetadata({
+    title: "Founders Circle",
+    description:
+      "Veloria hosts a private Founders Circle dinner by invitation. Founders, promoters and counterparties — one night, conversation only.",
+    path: "/founder-circle",
+  });
+}
 
 export default function FounderCirclePage() {
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "Founders Circle", path: "/founder-circle" },
+        ])}
+      />
       <section className="relative min-h-[88svh] overflow-hidden bg-forest-950 text-cream">
         <Photo
           src={IMAGES.dinnerHero}
+          alt="Veloria Founders Circle dinner table"
           priority
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -30,7 +49,7 @@ export default function FounderCirclePage() {
         <div className="container-v grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <Reveal>
             <div className="relative overflow-hidden">
-              <Photo src={IMAGES.dinnerTable} className="aspect-[4/5] w-full object-cover" />
+              <Photo src={IMAGES.dinnerTable} alt="A private Veloria dinner setting" className="aspect-[4/5] w-full object-cover" />
               <CornerMarks />
             </div>
           </Reveal>
@@ -49,10 +68,10 @@ export default function FounderCirclePage() {
 
       <section className="grid md:grid-cols-2">
         <div className="relative min-h-[420px]">
-          <Photo src={IMAGES.dinnerRoom} className="absolute inset-0 h-full w-full object-cover" />
+          <Photo src={IMAGES.dinnerRoom} alt="Veloria Founders Circle room" className="absolute inset-0 h-full w-full object-cover" />
         </div>
         <div className="relative min-h-[420px]">
-          <Photo src={IMAGES.dinnerGlass} className="absolute inset-0 h-full w-full object-cover" />
+          <Photo src={IMAGES.dinnerGlass} alt="Veloria Founders Circle evening" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-[#070806]/35" />
           <div className="relative flex h-full min-h-[320px] items-end p-6 text-cream sm:p-10 md:min-h-[420px] md:p-14">
             <p className="font-display max-w-sm text-[28px] leading-[1.25]">

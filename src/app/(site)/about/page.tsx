@@ -1,11 +1,25 @@
+import type { Metadata } from "next";
 import { Reveal } from "@/components/site/reveal";
 import { IconCard } from "@/components/site/icon-card";
+import { JsonLd } from "@/components/site/json-ld";
 import { getPageBySlug } from "@/lib/cms";
+import { breadcrumbJsonLd, cmsPageMetadata } from "@/lib/seo";
 import { parseJsonArray } from "@/lib/utils";
 import { audienceIcon } from "@/lib/visual";
 import Link from "next/link";
 
 type Audience = { title: string; body: string };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug("about");
+  return cmsPageMetadata({
+    page,
+    title: "Who We Work With",
+    description:
+      "Veloria works with startups, companies, founders, builders and business owners who need stronger structure, governance and transaction readiness.",
+    path: "/about",
+  });
+}
 
 export default async function AboutPage() {
   const page = await getPageBySlug("about");
@@ -14,6 +28,12 @@ export default async function AboutPage() {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "Who We Work With", path: "/about" },
+        ])}
+      />
       <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">

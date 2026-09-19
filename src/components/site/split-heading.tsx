@@ -13,11 +13,21 @@ export function SplitHeading({
   const words = text.split(" ");
 
   if (reduce) {
-    return <h1 className={className}>{text}</h1>;
+    return (
+      <h1 className={className}>
+        {text.toLowerCase().includes("veloria") ? null : (
+          <span className="sr-only">Veloria. </span>
+        )}
+        {text}
+      </h1>
+    );
   }
 
   return (
     <h1 className={className}>
+      {text.toLowerCase().includes("veloria") ? null : (
+        <span className="sr-only">Veloria. </span>
+      )}
       {words.map((word, i) => (
         <span key={`${word}-${i}`} className="inline-block overflow-hidden align-bottom pb-[0.28em] pr-[0.22em] -mb-[0.18em]">
           <motion.span

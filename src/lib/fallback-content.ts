@@ -63,7 +63,15 @@ export const FALLBACK_HOME_SECTIONS = JSON.stringify([
 
 export const FALLBACK_PAGES: Record<
   string,
-  { id: string; title: string; subtitle: string; content: string; sections: string }
+  {
+    id: string;
+    title: string;
+    subtitle: string;
+    content: string;
+    sections: string;
+    seoTitle?: string;
+    seoDescription?: string;
+  }
 > = {
   home: {
     id: "home",

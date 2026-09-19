@@ -36,10 +36,17 @@ export function SiteFooter({
                   </Link>
                 </li>
               ))}
+              {nav.some((item) => item.href === "/legal-health-checkup") ? null : (
+                <li>
+                  <Link href="/legal-health-checkup" className="nav-link transition hover:text-white">
+                    Veloria Score
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
           <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#d4dad6]">Contact</p>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[#d4dad6]">Speak with Veloria</p>
             <ul className="space-y-2 text-[12px]">
               <li>
                 <a href={`mailto:${email}`} className="break-all hover:text-white">

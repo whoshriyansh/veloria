@@ -1,6 +1,20 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/site/contact-form";
+import { JsonLd } from "@/components/site/json-ld";
 import { Reveal } from "@/components/site/reveal";
 import { getContactInfo, getPageBySlug } from "@/lib/cms";
+import { breadcrumbJsonLd, cmsPageMetadata } from "@/lib/seo";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageBySlug("contact");
+  return cmsPageMetadata({
+    page,
+    title: "Speak with Veloria",
+    description:
+      "Speak with Veloria about business readiness, governance, transactions or the Veloria Score. A representative will reach out within 24 hours.",
+    path: "/contact",
+  });
+}
 
 export default async function ContactPage({
   searchParams,
@@ -19,6 +33,12 @@ export default async function ContactPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Veloria", path: "/" },
+          { name: "Speak with Veloria", path: "/contact" },
+        ])}
+      />
       <section className="page-hero">
         <div className="aurora" />
         <div className="container-v relative">

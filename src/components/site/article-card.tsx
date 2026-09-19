@@ -20,7 +20,7 @@ export function ArticleCard({
     >
       <div className="article-card-media">
         {article.imageUrl ? (
-          <Photo src={article.imageUrl} />
+          <Photo src={article.imageUrl} alt={article.title} />
         ) : (
           <div className="flex h-full items-center justify-center bg-forest-900 text-gold">
             {article.heading || "Insight"}
