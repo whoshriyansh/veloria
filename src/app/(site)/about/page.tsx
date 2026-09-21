@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/site/reveal";
 import { IconCard } from "@/components/site/icon-card";
 import { JsonLd } from "@/components/site/json-ld";
-import { getPageBySlug } from "@/lib/cms";
+import { FoundingTeam } from "@/components/site/founding-team";
+import { getFoundingMembers, getPageBySlug } from "@/lib/cms";
 import { breadcrumbJsonLd, cmsPageMetadata } from "@/lib/seo";
 import { parseJsonArray } from "@/lib/utils";
 import { audienceIcon } from "@/lib/visual";
@@ -22,7 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const page = await getPageBySlug("about");
+  const [page, members] = await Promise.all([
+    getPageBySlug("about"),
+    getFoundingMembers(),
+  ]);
   const sections = parseJsonArray<{ type: string; items?: Audience[] }>(page?.sections ?? "[]");
   const audiences = sections.find((s) => s.type === "audiences")?.items ?? [];
 
@@ -70,6 +74,8 @@ export default async function AboutPage() {
           </Reveal>
         </div>
       </section>
+
+      <FoundingTeam members={members} />
 
       <section className="border-t border-ink/10 py-16">
         <div className="container-v flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">

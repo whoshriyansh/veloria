@@ -514,6 +514,52 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     { name: "Pinnacle Infra", logoUrl: "", website: "", order: 5, isVisible: true },
   ]);
 
+  const foundingMembers = [
+    {
+      slug: "divyam-gaur",
+      name: "Divyam Gaur",
+      role: "Founding Member",
+      imageUrl: "/founding_team/divyam_gaur.jpeg",
+      bio: "",
+      order: 1,
+      isVisible: true,
+    },
+    {
+      slug: "himanshu-arya",
+      name: "Himanshu Arya",
+      role: "Founding Member",
+      imageUrl: "/founding_team/himanshu_arya.jpeg",
+      bio: "",
+      order: 2,
+      isVisible: true,
+    },
+    {
+      slug: "tanishq-garg",
+      name: "Tanishq Garg",
+      role: "Founding Member",
+      imageUrl: "/founding_team/tanishq_garg.jpeg",
+      bio: "",
+      order: 3,
+      isVisible: true,
+    },
+    {
+      slug: "farishq-shidique",
+      name: "Farishq Shidique",
+      role: "Founding Member",
+      imageUrl: "/founding_team/farishq_shidique.jpeg",
+      bio: "",
+      order: 4,
+      isVisible: true,
+    },
+  ];
+  for (const member of foundingMembers) {
+    await db.collection("foundingMembers").updateOne(
+      { slug: member.slug },
+      { $setOnInsert: member },
+      { upsert: true },
+    );
+  }
+
   await db.collection("articles").deleteMany({});
   await db.collection("articles").insertMany([
     {

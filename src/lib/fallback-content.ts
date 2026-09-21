@@ -249,6 +249,45 @@ export const FALLBACK_PACKAGES = [
   },
 ];
 
+export const FALLBACK_FOUNDING_MEMBERS = [
+  {
+    id: "fm-divyam",
+    slug: "divyam-gaur",
+    name: "Divyam Gaur",
+    role: "Founding Member",
+    imageUrl: "/founding_team/divyam_gaur.jpeg",
+    bio: "",
+    order: 1,
+  },
+  {
+    id: "fm-himanshu",
+    slug: "himanshu-arya",
+    name: "Himanshu Arya",
+    role: "Founding Member",
+    imageUrl: "/founding_team/himanshu_arya.jpeg",
+    bio: "",
+    order: 2,
+  },
+  {
+    id: "fm-tanishq",
+    slug: "tanishq-garg",
+    name: "Tanishq Garg",
+    role: "Founding Member",
+    imageUrl: "/founding_team/tanishq_garg.jpeg",
+    bio: "",
+    order: 3,
+  },
+  {
+    id: "fm-farishq",
+    slug: "farishq-shidique",
+    name: "Farishq Shidique",
+    role: "Founding Member",
+    imageUrl: "/founding_team/farishq_shidique.jpeg",
+    bio: "",
+    order: 4,
+  },
+];
+
 export const FALLBACK_CLIENTS = [
   { id: "c1", name: "Northline", logoUrl: "", website: "", order: 1 },
   { id: "c2", name: "Harbour & Co.", logoUrl: "", website: "", order: 2 },

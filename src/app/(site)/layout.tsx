@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
-import { CheckupPopup } from "@/components/checkup/checkup-popup";
+import { PublicOverlays } from "@/components/site/public-overlays";
 import { CustomCursor } from "@/components/site/custom-cursor";
 import { FilmGrain, ScrollProgress } from "@/components/site/chrome";
 import { VeloriaChat } from "@/components/site/veloria-chat";
@@ -39,12 +39,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         address={contact.address}
         nav={nav}
       />
-      <CheckupPopup
-        enabled={settings.showCheckupPopup}
-        delayMs={settings.popupDelayMs}
-        title={settings.popupTitle}
-        body={settings.popupBody}
-        cta={settings.popupCta}
+      <PublicOverlays
+        checkupEnabled={settings.showCheckupPopup}
+        checkupDelayMs={settings.popupDelayMs}
+        checkupTitle={settings.popupTitle}
+        checkupBody={settings.popupBody}
+        checkupCta={settings.popupCta}
       />
       <VeloriaChat />
     </>

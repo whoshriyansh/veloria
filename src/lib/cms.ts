@@ -4,6 +4,7 @@ import { collections, serialize } from "@/lib/models";
 import { sanitizeNotifyEmails } from "@/lib/email";
 import {
   FALLBACK_CLIENTS,
+  FALLBACK_FOUNDING_MEMBERS,
   FALLBACK_ARTICLES,
   FALLBACK_PACKAGES,
   FALLBACK_PAGES,
@@ -366,6 +367,15 @@ export type CmsArticle = {
   order: number;
 };
 
+export type CmsFoundingMember = {
+  id: string;
+  name: string;
+  role: string;
+  imageUrl: string;
+  bio: string;
+  order: number;
+};
+
 export async function getClients(): Promise<CmsClient[]> {
   return remember("clients", FALLBACK_CLIENTS, async () => {
     await connectMongo();
@@ -376,6 +386,32 @@ export async function getClients(): Promise<CmsClient[]> {
       (c) => serialize(c as Record<string, unknown>) as unknown as CmsClient,
     );
   });
+}
+
+export async function getFoundingMembers(): Promise<CmsFoundingMember[]> {
+  return cachedCms(["cms-founding-members"], () =>
+    remember("foundingMembers", FALLBACK_FOUNDING_MEMBERS, async () => {
+      await connectMongo();
+      const col = await collections.foundingMembers();
+      let members = await col.find({ isVisible: true }).sort({ order: 1 }).toArray();
+      if (!members.length) {
+        const existing = await col.countDocuments();
+        if (existing === 0) {
+          await col.insertMany(
+            FALLBACK_FOUNDING_MEMBERS.map(({ id: _id, ...member }) => ({
+              ...member,
+              isVisible: true,
+            })),
+          );
+          members = await col.find({ isVisible: true }).sort({ order: 1 }).toArray();
+        }
+      }
+      if (!members.length) return FALLBACK_FOUNDING_MEMBERS;
+      return members.map(
+        (m) => serialize(m as Record<string, unknown>) as unknown as CmsFoundingMember,
+      );
+    }),
+  );
 }
 
 export async function getArticles(limit?: number): Promise<CmsArticle[]> {
