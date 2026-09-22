@@ -66,21 +66,35 @@ export function SettingsForm({ initial }: { initial: Settings }) {
 
   return (
     <div>
-      <PageHeader title="Site settings" description="Global copy, SEO, and checkup popup." />
+      <PageHeader
+        title="Site settings"
+        description="Global copy, SEO, and checkup popup."
+      />
       <form onSubmit={onSubmit} className="space-y-4">
         {message ? <Flash>{message}</Flash> : null}
         {error ? <Flash tone="error">{error}</Flash> : null}
 
         <AdminCard className="grid gap-4 md:grid-cols-2">
-          <h2 className="text-sm font-medium text-white md:col-span-2">Brand & hero</h2>
+          <h2 className="text-sm font-medium text-white md:col-span-2">
+            Brand & hero
+          </h2>
           <Field label="Site name">
-            <Input value={form.siteName} onChange={(e) => set("siteName", e.target.value)} />
+            <Input
+              value={form.siteName}
+              onChange={(e) => set("siteName", e.target.value)}
+            />
           </Field>
           <Field label="Logo text">
-            <Input value={form.logoText} onChange={(e) => set("logoText", e.target.value)} />
+            <Input
+              value={form.logoText}
+              onChange={(e) => set("logoText", e.target.value)}
+            />
           </Field>
           <Field label="Tagline">
-            <Input value={form.tagline} onChange={(e) => set("tagline", e.target.value)} />
+            <Input
+              value={form.tagline}
+              onChange={(e) => set("tagline", e.target.value)}
+            />
           </Field>
           <Field label="Hero headline">
             <Input
@@ -125,7 +139,10 @@ export function SettingsForm({ initial }: { initial: Settings }) {
         <AdminCard className="grid gap-4 md:grid-cols-2">
           <h2 className="text-sm font-medium text-white md:col-span-2">SEO</h2>
           <Field label="Meta title">
-            <Input value={form.metaTitle} onChange={(e) => set("metaTitle", e.target.value)} />
+            <Input
+              value={form.metaTitle}
+              onChange={(e) => set("metaTitle", e.target.value)}
+            />
           </Field>
           <Field label="Meta description" className="md:col-span-2">
             <Textarea
@@ -137,7 +154,9 @@ export function SettingsForm({ initial }: { initial: Settings }) {
         </AdminCard>
 
         <AdminCard className="grid gap-4 md:grid-cols-2">
-          <h2 className="text-sm font-medium text-white md:col-span-2">Checkup popup</h2>
+          <h2 className="text-sm font-medium text-white md:col-span-2">
+            Checkup popup
+          </h2>
           <Checkbox
             label="Show checkup popup"
             checked={form.showCheckupPopup}
@@ -164,7 +183,10 @@ export function SettingsForm({ initial }: { initial: Settings }) {
             />
           </Field>
           <Field label="Popup CTA">
-            <Input value={form.popupCta} onChange={(e) => set("popupCta", e.target.value)} />
+            <Input
+              value={form.popupCta}
+              onChange={(e) => set("popupCta", e.target.value)}
+            />
           </Field>
         </AdminCard>
 

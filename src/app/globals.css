@@ -39,8 +39,12 @@
   --font-serif: var(--font-serif);
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   background: var(--background);
@@ -109,14 +113,22 @@ body {
   padding: 14px 22px;
   font-size: 13px;
   letter-spacing: 0.01em;
-  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease;
 }
 
 .btn-lux::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 32%, rgba(255,255,255,.22) 50%, transparent 68%);
+  background: linear-gradient(
+    105deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 68%
+  );
   transform: translateX(-130%);
   transition: transform 0.7s ease;
 }
@@ -214,7 +226,9 @@ body {
 }
 
 .approach-step {
-  transition: background 0.4s ease, transform 0.4s ease;
+  transition:
+    background 0.4s ease,
+    transform 0.4s ease;
 }
 
 .approach-step:hover {
@@ -222,7 +236,10 @@ body {
 }
 
 .logo-cell {
-  transition: background 0.35s ease, color 0.35s ease, transform 0.35s ease;
+  transition:
+    background 0.35s ease,
+    color 0.35s ease,
+    transform 0.35s ease;
 }
 
 .logo-cell:hover {
@@ -243,7 +260,11 @@ body {
   width: 70%;
   height: 70%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(110, 240, 164, 0.2), transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(110, 240, 164, 0.2),
+    transparent 70%
+  );
 }
 
 .score-row {
@@ -283,8 +304,12 @@ body {
   box-shadow: 0 28px 70px rgba(6, 20, 16, 0.14);
 }
 
-.score-float-down { top: calc(100% - 6px); }
-.score-float-up { bottom: calc(100% - 6px); }
+.score-float-down {
+  top: calc(100% - 6px);
+}
+.score-float-up {
+  bottom: calc(100% - 6px);
+}
 
 .mark-signal {
   background: color-mix(in oklab, var(--signal) 58%, white);
@@ -309,8 +334,12 @@ body {
 }
 
 @keyframes testimonial-bar {
-  from { width: 0; }
-  to { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @media (max-width: 640px) {
@@ -329,7 +358,11 @@ body {
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(110, 240, 164, 0.32), transparent 68%);
+  background: radial-gradient(
+    circle,
+    rgba(110, 240, 164, 0.32),
+    transparent 68%
+  );
   transition: opacity 0.35s ease;
 }
 
@@ -358,7 +391,13 @@ body {
 
 .trust-marquee {
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 7%, black 93%, transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 7%,
+    black 93%,
+    transparent
+  );
 }
 
 .trust-track {
@@ -382,13 +421,26 @@ body {
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes scroll-pulse {
-  0%, 100% { transform: scaleY(1); opacity: 0.45; transform-origin: top; }
-  50% { transform: scaleY(0.55); opacity: 1; transform-origin: top; }
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.45;
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(0.55);
+    opacity: 1;
+    transform-origin: top;
+  }
 }
 
 ::selection {
@@ -396,8 +448,12 @@ body {
   color: var(--forest-950);
 }
 
-.font-display { font-family: var(--font-display), Georgia, serif; }
-.font-serif { font-family: var(--font-serif), Georgia, serif; }
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
 
 .container-v {
   width: min(1180px, 100%);
@@ -448,14 +504,19 @@ body {
   color: var(--gold);
 }
 
-.eyebrow-light { color: rgba(196, 165, 116, 0.85); }
+.eyebrow-light {
+  color: rgba(196, 165, 116, 0.85);
+}
 
 .glass-nav {
   background: rgba(243, 239, 231, 0.88);
   backdrop-filter: blur(18px) saturate(1.2);
   border-bottom: 1px solid var(--line);
   padding-top: env(safe-area-inset-top, 0px);
-  transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+  transition:
+    background 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
 }
 
 .nav-scrolled {
@@ -505,7 +566,9 @@ body {
   display: block;
   margin-inline: auto;
   fill: transparent;
-  transition: color 0.3s ease, fill 0.3s ease;
+  transition:
+    color 0.3s ease,
+    fill 0.3s ease;
 }
 
 .icon-glyph-xl {
@@ -628,7 +691,11 @@ body {
   margin-inline: auto;
   aspect-ratio: 1;
   background:
-    radial-gradient(circle at 50% 50%, rgba(110, 240, 164, 0.1), transparent 42%),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(110, 240, 164, 0.1),
+      transparent 42%
+    ),
     var(--forest-950);
 }
 
@@ -658,7 +725,11 @@ body {
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(196, 165, 116, 0.45);
-  background: radial-gradient(circle at 50% 40%, rgba(45, 106, 79, 0.45), #061410 70%);
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(45, 106, 79, 0.45),
+    #061410 70%
+  );
   box-shadow: 0 0 40px rgba(110, 240, 164, 0.12);
 }
 
@@ -694,7 +765,6 @@ body {
   color: var(--gold);
 }
 
-
 .vscore-info {
   min-height: 132px;
   margin-top: 28px;
@@ -714,7 +784,9 @@ body {
   overflow: hidden;
   border: 1px solid var(--line);
   background: #fbfaf6;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
 }
 
 .article-card:hover {
@@ -744,7 +816,9 @@ body {
 }
 
 @keyframes vscore-run {
-  to { stroke-dashoffset: -44; }
+  to {
+    stroke-dashoffset: -44;
+  }
 }
 
 @media (max-width: 860px) {
@@ -765,7 +839,9 @@ body {
     grid-column: 1 / -1;
     margin: 10px auto 18px;
   }
-  .vscore-svg { display: none; }
+  .vscore-svg {
+    display: none;
+  }
   .vscore-node {
     position: relative;
     left: auto !important;
@@ -800,9 +876,21 @@ body {
   inset: -20% -10% auto;
   height: 120%;
   background:
-    radial-gradient(ellipse 50% 40% at 20% 40%, rgba(110, 240, 164, 0.22), transparent 60%),
-    radial-gradient(ellipse 45% 35% at 75% 30%, rgba(196, 165, 116, 0.18), transparent 55%),
-    radial-gradient(ellipse 40% 50% at 50% 80%, rgba(45, 106, 79, 0.4), transparent 60%);
+    radial-gradient(
+      ellipse 50% 40% at 20% 40%,
+      rgba(110, 240, 164, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 45% 35% at 75% 30%,
+      rgba(196, 165, 116, 0.18),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 40% 50% at 50% 80%,
+      rgba(45, 106, 79, 0.4),
+      transparent 60%
+    );
   filter: blur(42px);
   animation: drift 18s ease-in-out infinite alternate;
   pointer-events: none;
@@ -815,7 +903,11 @@ body {
   max-width: 720px;
   max-height: 720px;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(110, 240, 164, 0.32), transparent 68%);
+  background: radial-gradient(
+    circle,
+    rgba(110, 240, 164, 0.32),
+    transparent 68%
+  );
   filter: blur(48px);
   animation: pulse-glow 10s ease-in-out infinite;
   pointer-events: none;
@@ -828,13 +920,24 @@ body {
 }
 
 @keyframes drift {
-  0% { transform: translate3d(-2%, -1%, 0) scale(1); }
-  100% { transform: translate3d(3%, 2%, 0) scale(1.08); }
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.08); }
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
 }
 
 .watermark {
@@ -852,19 +955,32 @@ body {
   color: var(--ink-soft);
 }
 
-.prose-veloria strong { color: var(--ink); font-weight: 600; }
+.prose-veloria strong {
+  color: var(--ink);
+  font-weight: 600;
+}
 
-.admin-shell { background: #0f1412; color: #e8ebe9; }
+.admin-shell {
+  background: #0f1412;
+  color: #e8ebe9;
+}
 .admin-card {
   background: #171d1a;
   border: 1px solid rgba(232, 235, 233, 0.08);
   border-radius: 1rem;
 }
 
-input, textarea, select, button { font: inherit; }
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
 
 @media (max-width: 560px) {
-  .scroll-cue { display: none; }
+  .scroll-cue {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1120,7 +1236,10 @@ input, textarea, select, button { font: inherit; }
   background: var(--cream);
   color: var(--forest-900);
   border: 1px solid color-mix(in oklab, var(--gold) 55%, var(--line));
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .veloria-chat-cta:hover {
@@ -1145,7 +1264,10 @@ input, textarea, select, button { font: inherit; }
   color: var(--ink-soft);
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid var(--line);
-  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    color 0.25s ease,
+    background 0.25s ease;
 }
 
 .veloria-chat-chip:hover {
@@ -1189,7 +1311,9 @@ input, textarea, select, button { font: inherit; }
   border-radius: 999px;
   background: var(--forest-900);
   color: var(--cream);
-  transition: background 0.25s ease, transform 0.25s ease;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
 }
 
 .veloria-chat-send:hover:not(:disabled) {
@@ -1223,8 +1347,12 @@ input, textarea, select, button { font: inherit; }
   animation: veloria-dot 1s ease-in-out infinite;
 }
 
-.veloria-chat-dots i:nth-child(2) { animation-delay: 0.15s; }
-.veloria-chat-dots i:nth-child(3) { animation-delay: 0.3s; }
+.veloria-chat-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.veloria-chat-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
 
 .veloria-chat-error {
   font-size: 12px;
@@ -1241,17 +1369,33 @@ input, textarea, select, button { font: inherit; }
 }
 
 @keyframes veloria-caret {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes veloria-dot {
-  0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
-  40% { transform: translateY(-3px); opacity: 1; }
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
 }
 
 @keyframes veloria-orb-ping {
-  0% { opacity: 0.55; transform: scale(0.86); }
-  100% { opacity: 0; transform: scale(1.12); }
+  0% {
+    opacity: 0.55;
+    transform: scale(0.86);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
 }
 
 @media (max-width: 560px) {

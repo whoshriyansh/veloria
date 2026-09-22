@@ -107,15 +107,53 @@ const DEFAULT_CONTACT: CmsContact = {
 };
 
 const DEFAULT_NAV: CmsNavItem[] = [
-  { id: "nav-1", label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
-  { id: "nav-2", label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
-  { id: "nav-3", label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
-  { id: "nav-4", label: "Speak with Veloria", href: "/contact", order: 4, isVisible: true, isExternal: false },
+  {
+    id: "nav-1",
+    label: "Who We Work With",
+    href: "/about",
+    order: 1,
+    isVisible: true,
+    isExternal: false,
+  },
+  {
+    id: "nav-2",
+    label: "What We Do",
+    href: "/services",
+    order: 2,
+    isVisible: true,
+    isExternal: false,
+  },
+  {
+    id: "nav-3",
+    label: "Founders Circle",
+    href: "/founder-circle",
+    order: 3,
+    isVisible: true,
+    isExternal: false,
+  },
+  {
+    id: "nav-4",
+    label: "Speak with Veloria",
+    href: "/contact",
+    order: 4,
+    isVisible: true,
+    isExternal: false,
+  },
 ];
 
 function publicNav(items: CmsNavItem[]): CmsNavItem[] {
-  const hiddenLabels = new Set(["v-score", "veloria score", "insights", "clients"]);
-  const hiddenHrefs = new Set(["/#score", "/#insights", "/#clients", "/insights"]);
+  const hiddenLabels = new Set([
+    "v-score",
+    "veloria score",
+    "insights",
+    "clients",
+  ]);
+  const hiddenHrefs = new Set([
+    "/#score",
+    "/#insights",
+    "/#clients",
+    "/insights",
+  ]);
   return items
     .filter((item) => {
       const label = item.label.trim().toLowerCase();
@@ -123,7 +161,10 @@ function publicNav(items: CmsNavItem[]): CmsNavItem[] {
       return !hiddenLabels.has(label) && !hiddenHrefs.has(href);
     })
     .map((item) => {
-      if (item.href.trim() === "/contact" && item.label.trim().toLowerCase() === "contact") {
+      if (
+        item.href.trim() === "/contact" &&
+        item.label.trim().toLowerCase() === "contact"
+      ) {
         return { ...item, label: "Speak with Veloria" };
       }
       return item;
@@ -163,7 +204,11 @@ function cachedCms<T>(key: string[], fn: () => Promise<T>): Promise<T> {
   return unstable_cache(fn, key, { revalidate: 60, tags: ["cms"] })();
 }
 
-async function remember<T>(key: string, fallback: T, fn: () => Promise<T>): Promise<T> {
+async function remember<T>(
+  key: string,
+  fallback: T,
+  fn: () => Promise<T>,
+): Promise<T> {
   const hit = cmsMem.data.get(key) as CacheEntry<T> | undefined;
   if (hit && hit.exp > Date.now()) return hit.value;
   if (!hasMongoUri()) return fallback;
@@ -198,28 +243,30 @@ async function remember<T>(key: string, fallback: T, fn: () => Promise<T>): Prom
 export async function getSiteSettings(): Promise<CmsSettings> {
   return cachedCms(["cms-settings"], () =>
     remember("settings", DEFAULT_SETTINGS, async () => {
-    await connectMongo();
-    const siteSettings = await collections.siteSettings();
-    let settings = await siteSettings.findOne({ key: "default" });
-    if (!settings) {
-      const { id: _id, ...defaults } = DEFAULT_SETTINGS;
-      const doc = { ...defaults, key: "default" as const };
-      const result = await siteSettings.insertOne(doc);
-      settings = { ...doc, _id: result.insertedId };
-    } else if (settings.metaTitle === "Veloria — Build Before You Raise") {
-      await siteSettings.updateOne(
-        { key: "default" },
-        {
-          $set: {
-            metaTitle: DEFAULT_SETTINGS.metaTitle,
-            metaDescription: DEFAULT_SETTINGS.metaDescription,
+      await connectMongo();
+      const siteSettings = await collections.siteSettings();
+      let settings = await siteSettings.findOne({ key: "default" });
+      if (!settings) {
+        const { id: _id, ...defaults } = DEFAULT_SETTINGS;
+        const doc = { ...defaults, key: "default" as const };
+        const result = await siteSettings.insertOne(doc);
+        settings = { ...doc, _id: result.insertedId };
+      } else if (settings.metaTitle === "Veloria — Build Before You Raise") {
+        await siteSettings.updateOne(
+          { key: "default" },
+          {
+            $set: {
+              metaTitle: DEFAULT_SETTINGS.metaTitle,
+              metaDescription: DEFAULT_SETTINGS.metaDescription,
+            },
           },
-        },
-      );
-      settings.metaTitle = DEFAULT_SETTINGS.metaTitle;
-      settings.metaDescription = DEFAULT_SETTINGS.metaDescription;
-    }
-    return serialize(settings as Record<string, unknown>) as unknown as CmsSettings;
+        );
+        settings.metaTitle = DEFAULT_SETTINGS.metaTitle;
+        settings.metaDescription = DEFAULT_SETTINGS.metaDescription;
+      }
+      return serialize(
+        settings as Record<string, unknown>,
+      ) as unknown as CmsSettings;
     }),
   );
 }
@@ -227,21 +274,21 @@ export async function getSiteSettings(): Promise<CmsSettings> {
 export async function getContactInfo(): Promise<CmsContact> {
   return cachedCms(["cms-contact"], () =>
     remember("contact", DEFAULT_CONTACT, async () => {
-    await connectMongo();
-    const contactInfo = await collections.contactInfo();
-    let contact = await contactInfo.findOne({ key: "default" });
-    if (!contact) {
-      const { id: _id, ...defaults } = DEFAULT_CONTACT;
-      const doc = { ...defaults, key: "default" as const };
-      const result = await contactInfo.insertOne(doc);
-      contact = { ...doc, _id: result.insertedId };
-    }
-    return serialize({
-      ...contact,
-      notifyEmails: sanitizeNotifyEmails(
-        (contact as { notifyEmails?: unknown }).notifyEmails,
-      ),
-    } as Record<string, unknown>) as unknown as CmsContact;
+      await connectMongo();
+      const contactInfo = await collections.contactInfo();
+      let contact = await contactInfo.findOne({ key: "default" });
+      if (!contact) {
+        const { id: _id, ...defaults } = DEFAULT_CONTACT;
+        const doc = { ...defaults, key: "default" as const };
+        const result = await contactInfo.insertOne(doc);
+        contact = { ...doc, _id: result.insertedId };
+      }
+      return serialize({
+        ...contact,
+        notifyEmails: sanitizeNotifyEmails(
+          (contact as { notifyEmails?: unknown }).notifyEmails,
+        ),
+      } as Record<string, unknown>) as unknown as CmsContact;
     }),
   );
 }
@@ -255,9 +302,15 @@ export async function getNavigation(): Promise<CmsNavItem[]> {
         { href: "/contact", label: "Contact" },
         { $set: { label: "Speak with Veloria" } },
       );
-      const docs = await navigationItems.find({ isVisible: true }).sort({ order: 1 }).toArray();
+      const docs = await navigationItems
+        .find({ isVisible: true })
+        .sort({ order: 1 })
+        .toArray();
       if (!docs.length) return DEFAULT_NAV;
-      return docs.map((item) => serialize(item as Record<string, unknown>) as unknown as CmsNavItem);
+      return docs.map(
+        (item) =>
+          serialize(item as Record<string, unknown>) as unknown as CmsNavItem,
+      );
     }),
   );
   return publicNav(items);
@@ -277,12 +330,12 @@ export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
   const fallback = FALLBACK_PAGES[slug] ?? null;
   return cachedCms(["cms-page", slug], () =>
     remember(`page:${slug}`, fallback, async () => {
-    await connectMongo();
-    const pages = await collections.pages();
-    const page = await pages.findOne({ slug });
-    return page
-      ? (serialize(page as Record<string, unknown>) as unknown as CmsPage)
-      : fallback;
+      await connectMongo();
+      const pages = await collections.pages();
+      const page = await pages.findOne({ slug });
+      return page
+        ? (serialize(page as Record<string, unknown>) as unknown as CmsPage)
+        : fallback;
     }),
   );
 }
@@ -290,22 +343,25 @@ export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
 export async function getServices() {
   return cachedCms(["cms-services"], () =>
     remember("services", FALLBACK_SERVICES, async () => {
-    await connectMongo();
-    const servicesCol = await collections.services();
-    const services = await servicesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
-    if (!services.length) return FALLBACK_SERVICES;
-    return services.map(
-      (s) =>
-        serialize(s as Record<string, unknown>) as Record<string, unknown> & {
-          id: string;
-          title: string;
-          slug: string;
-          summary: string;
-          description: string;
-          imageUrl: string;
-          icon: string;
-          features: string;
-        },
+      await connectMongo();
+      const servicesCol = await collections.services();
+      const services = await servicesCol
+        .find({ isVisible: true })
+        .sort({ order: 1 })
+        .toArray();
+      if (!services.length) return FALLBACK_SERVICES;
+      return services.map(
+        (s) =>
+          serialize(s as Record<string, unknown>) as Record<string, unknown> & {
+            id: string;
+            title: string;
+            slug: string;
+            summary: string;
+            description: string;
+            imageUrl: string;
+            icon: string;
+            features: string;
+          },
       );
     }),
   );
@@ -314,15 +370,20 @@ export async function getServices() {
 export async function getPackages(): Promise<CmsPackage[]> {
   return cachedCms(["cms-packages"], () =>
     remember("packages", FALLBACK_PACKAGES, async () => {
-    await connectMongo();
-    const packagesCol = await collections.packages();
-    const packages = await packagesCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
-    if (!packages.length) return FALLBACK_PACKAGES;
-    return packages.map((pkg) => {
-      const serialized = serialize(pkg as Record<string, unknown>) as unknown as CmsPackage;
-      serialized.features = [...(serialized.features ?? [])].sort(
-        (a, b) => (a.order ?? 0) - (b.order ?? 0),
-      );
+      await connectMongo();
+      const packagesCol = await collections.packages();
+      const packages = await packagesCol
+        .find({ isVisible: true })
+        .sort({ order: 1 })
+        .toArray();
+      if (!packages.length) return FALLBACK_PACKAGES;
+      return packages.map((pkg) => {
+        const serialized = serialize(
+          pkg as Record<string, unknown>,
+        ) as unknown as CmsPackage;
+        serialized.features = [...(serialized.features ?? [])].sort(
+          (a, b) => (a.order ?? 0) - (b.order ?? 0),
+        );
         return serialized;
       });
     }),
@@ -333,7 +394,10 @@ export async function getHealthQuestions() {
   return remember("questions", FALLBACK_QUESTIONS, async () => {
     await connectMongo();
     const healthQuestions = await collections.healthQuestions();
-    const questions = await healthQuestions.find({ isActive: true }).sort({ order: 1 }).toArray();
+    const questions = await healthQuestions
+      .find({ isActive: true })
+      .sort({ order: 1 })
+      .toArray();
     if (!questions.length) return FALLBACK_QUESTIONS;
     return questions.map(
       (q) =>
@@ -380,7 +444,10 @@ export async function getClients(): Promise<CmsClient[]> {
   return remember("clients", FALLBACK_CLIENTS, async () => {
     await connectMongo();
     const clientsCol = await collections.clients();
-    const clients = await clientsCol.find({ isVisible: true }).sort({ order: 1 }).toArray();
+    const clients = await clientsCol
+      .find({ isVisible: true })
+      .sort({ order: 1 })
+      .toArray();
     if (!clients.length) return FALLBACK_CLIENTS;
     return clients.map(
       (c) => serialize(c as Record<string, unknown>) as unknown as CmsClient,
@@ -393,7 +460,10 @@ export async function getFoundingMembers(): Promise<CmsFoundingMember[]> {
     remember("foundingMembers", FALLBACK_FOUNDING_MEMBERS, async () => {
       await connectMongo();
       const col = await collections.foundingMembers();
-      let members = await col.find({ isVisible: true }).sort({ order: 1 }).toArray();
+      let members = await col
+        .find({ isVisible: true })
+        .sort({ order: 1 })
+        .toArray();
       if (!members.length) {
         const existing = await col.countDocuments();
         if (existing === 0) {
@@ -403,29 +473,39 @@ export async function getFoundingMembers(): Promise<CmsFoundingMember[]> {
               isVisible: true,
             })),
           );
-          members = await col.find({ isVisible: true }).sort({ order: 1 }).toArray();
+          members = await col
+            .find({ isVisible: true })
+            .sort({ order: 1 })
+            .toArray();
         }
       }
       if (!members.length) return FALLBACK_FOUNDING_MEMBERS;
       return members.map(
-        (m) => serialize(m as Record<string, unknown>) as unknown as CmsFoundingMember,
+        (m) =>
+          serialize(
+            m as Record<string, unknown>,
+          ) as unknown as CmsFoundingMember,
       );
     }),
   );
 }
 
 export async function getArticles(limit?: number): Promise<CmsArticle[]> {
-  const fallback = limit ? FALLBACK_ARTICLES.slice(0, limit) : FALLBACK_ARTICLES;
+  const fallback = limit
+    ? FALLBACK_ARTICLES.slice(0, limit)
+    : FALLBACK_ARTICLES;
   return cachedCms(["cms-articles", String(limit ?? "all")], () =>
     remember(`articles:${limit ?? "all"}`, fallback, async () => {
-    await connectMongo();
-    const col = await collections.articles();
-    const cursor = col.find({ isPublished: true }).sort({ order: 1, publishedAt: -1 });
-    const articles = await (limit ? cursor.limit(limit) : cursor).toArray();
-    if (!articles.length) return fallback;
-    return articles.map(
-      (a) => serialize(a as Record<string, unknown>) as unknown as CmsArticle,
-    );
+      await connectMongo();
+      const col = await collections.articles();
+      const cursor = col
+        .find({ isPublished: true })
+        .sort({ order: 1, publishedAt: -1 });
+      const articles = await (limit ? cursor.limit(limit) : cursor).toArray();
+      if (!articles.length) return fallback;
+      return articles.map(
+        (a) => serialize(a as Record<string, unknown>) as unknown as CmsArticle,
+      );
     }),
   );
 }

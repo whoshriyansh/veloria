@@ -104,7 +104,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en-IN"
       className={`${dmSans.variable} ${playfair.variable} ${instrument.variable} h-full overflow-x-clip antialiased`}
     >
-      <body className="min-h-full flex flex-col overflow-x-clip bg-cream text-ink">{children}</body>
+      <body className="min-h-full flex flex-col overflow-x-clip bg-cream text-ink">
+        {children}
+      </body>
     </html>
   );
 }

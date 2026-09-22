@@ -15,7 +15,9 @@ export function CustomCursor() {
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (!fine || reduce) return;
 
     setEnabled(true);
@@ -30,7 +32,9 @@ export function CustomCursor() {
 
     const isField = (el: EventTarget | null) => {
       if (!(el instanceof Element)) return false;
-      return Boolean(el.closest("input, textarea, select, [contenteditable='true']"));
+      return Boolean(
+        el.closest("input, textarea, select, [contenteditable='true']"),
+      );
     };
 
     const onMove = (e: MouseEvent) => {
@@ -60,7 +64,8 @@ export function CustomCursor() {
         dot.style.transform = `translate3d(${mouse.current.x}px, ${mouse.current.y}px, 0)`;
       }
       if (circle) {
-        circle.style.opacity = !ready.current || hidden.current ? "0" : hover.current ? "0.55" : "1";
+        circle.style.opacity =
+          !ready.current || hidden.current ? "0" : hover.current ? "0.55" : "1";
         circle.style.transform = `translate3d(${ring.current.x}px, ${ring.current.y}px, 0) scale(${scale.current})`;
       }
       raf = requestAnimationFrame(tick);

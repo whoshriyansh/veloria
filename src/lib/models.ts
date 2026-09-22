@@ -249,7 +249,9 @@ export function serialize(
         answer.id = String(answer._id);
         delete answer._id;
       }
-      const snap = answer.questionSnapshot as Record<string, unknown> | undefined;
+      const snap = answer.questionSnapshot as
+        | Record<string, unknown>
+        | undefined;
       if (snap) {
         answer.question = {
           id: String(answer.questionId ?? ""),

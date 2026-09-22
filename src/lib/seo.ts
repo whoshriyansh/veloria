@@ -22,9 +22,17 @@ export const PUBLIC_PATHS = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
   { path: "/about", changeFrequency: "monthly" as const, priority: 0.8 },
   { path: "/services", changeFrequency: "monthly" as const, priority: 0.85 },
-  { path: "/legal-health-checkup", changeFrequency: "monthly" as const, priority: 0.9 },
+  {
+    path: "/legal-health-checkup",
+    changeFrequency: "monthly" as const,
+    priority: 0.9,
+  },
   { path: "/contact", changeFrequency: "monthly" as const, priority: 0.8 },
-  { path: "/founder-circle", changeFrequency: "monthly" as const, priority: 0.6 },
+  {
+    path: "/founder-circle",
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  },
   { path: "/packages", changeFrequency: "monthly" as const, priority: 0.55 },
   { path: "/insights", changeFrequency: "weekly" as const, priority: 0.5 },
 ];
@@ -92,7 +100,10 @@ export function pageMetadata({
 }
 
 export function organizationJsonLd(
-  contact: Pick<CmsContact, "email" | "phone" | "address" | "linkedin" | "twitter">,
+  contact: Pick<
+    CmsContact,
+    "email" | "phone" | "address" | "linkedin" | "twitter"
+  >,
   services: ServicePreview[] = [],
 ) {
   const url = siteUrl();

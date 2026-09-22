@@ -9,14 +9,25 @@ import { Testimonials } from "@/components/site/testimonials";
 import { IconCard } from "@/components/site/icon-card";
 import { ArticleGrid } from "@/components/site/article-card";
 import { Ornament } from "@/components/site/ornament";
-import { getArticles, getPageBySlug, getServices, getSiteSettings } from "@/lib/cms";
+import {
+  getArticles,
+  getPageBySlug,
+  getServices,
+  getSiteSettings,
+} from "@/lib/cms";
 import { cmsPageMetadata } from "@/lib/seo";
 import { mergeScorePillars } from "@/lib/score-pillars";
 import { parseJsonArray } from "@/lib/utils";
 import { Photo } from "@/components/site/photo";
 import { IMAGES, approachIcon, audienceIcon, serviceIcon } from "@/lib/visual";
 
-type Item = { title?: string; body?: string; mini?: string; value?: string | number; label?: string };
+type Item = {
+  title?: string;
+  body?: string;
+  mini?: string;
+  value?: string | number;
+  label?: string;
+};
 type Section = {
   type: string;
   label?: string;
@@ -79,7 +90,8 @@ export default async function HomePage() {
           <div className="mb-12 grid items-end gap-10 md:grid-cols-[1fr_.75fr] md:gap-[70px]">
             <Reveal>
               <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18] text-ink">
-                {audiences?.title ?? "Built for businesses beyond one stage or one industry."}
+                {audiences?.title ??
+                  "Built for businesses beyond one stage or one industry."}
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
@@ -87,23 +99,26 @@ export default async function HomePage() {
             </Reveal>
           </div>
           <Reveal>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {audienceItems.map((item, i) => (
-              <IconCard
-                key={item.title}
-                variant="feature"
-                icon={audienceIcon(item.title)}
-                title={item.title ?? ""}
-                body={item.body ?? ""}
-                index={`0${i + 1}`}
-              />
-            ))}
-          </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {audienceItems.map((item, i) => (
+                <IconCard
+                  key={item.title}
+                  variant="feature"
+                  icon={audienceIcon(item.title)}
+                  title={item.title ?? ""}
+                  body={item.body ?? ""}
+                  index={`0${i + 1}`}
+                />
+              ))}
+            </div>
           </Reveal>
         </div>
       </section>
 
-      <section id="services" className="section-y border-y border-ink/10 bg-cream-deep">
+      <section
+        id="services"
+        className="section-y border-y border-ink/10 bg-cream-deep"
+      >
         <div className="container-v">
           <div className="mb-14 grid items-end gap-10 md:grid-cols-[1fr_.75fr]">
             <Reveal>
@@ -113,24 +128,25 @@ export default async function HomePage() {
             </Reveal>
             <Reveal delay={0.08}>
               <p className="text-[15px] text-ink-soft">
-                The objective is not documentation for its own sake. It is to make the business more
-                credible, defensible and ready for serious counterparties.
+                The objective is not documentation for its own sake. It is to
+                make the business more credible, defensible and ready for
+                serious counterparties.
               </p>
             </Reveal>
           </div>
           <Reveal>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <IconCard
-                key={service.id}
-                href={`/services#${service.slug}`}
-                variant="service"
-                icon={serviceIcon(service.slug, service.title)}
-                title={service.title}
-                body={service.summary}
-              />
-            ))}
-          </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {services.map((service) => (
+                <IconCard
+                  key={service.id}
+                  href={`/services#${service.slug}`}
+                  variant="service"
+                  icon={serviceIcon(service.slug, service.title)}
+                  title={service.title}
+                  body={service.summary}
+                />
+              ))}
+            </div>
           </Reveal>
           <Magnetic className="mt-10">
             <Link href="/services" className="btn-lux btn-lux-ghost">
@@ -143,7 +159,9 @@ export default async function HomePage() {
       <section id="score" className="section-y bg-cream-deep">
         <div className="container-v">
           <Reveal className="mx-auto max-w-[720px] text-center">
-            <p className="eyebrow mb-4">{score?.label ?? "A proprietary readiness framework"}</p>
+            <p className="eyebrow mb-4">
+              {score?.label ?? "A proprietary readiness framework"}
+            </p>
             <h2 className="font-display text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
               See your business the way a serious counterparty will.
             </h2>
@@ -154,13 +172,18 @@ export default async function HomePage() {
           <Reveal delay={0.08}>
             <VScore
               value={scoreValue}
-              caption={score?.caption ?? "Illustrative Business Readiness Index"}
+              caption={
+                score?.caption ?? "Illustrative Business Readiness Index"
+              }
               pillars={scoreItems}
             />
           </Reveal>
           <div className="mt-10 text-center">
             <Magnetic>
-              <Link href="/legal-health-checkup" className="btn-lux btn-lux-fill">
+              <Link
+                href="/legal-health-checkup"
+                className="btn-lux btn-lux-fill"
+              >
                 Take the Legal Health Checkup
               </Link>
             </Magnetic>
@@ -181,18 +204,18 @@ export default async function HomePage() {
             </Reveal>
           </div>
           <Reveal>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {approachItems.map((step) => (
-              <IconCard
-                key={step.title}
-                variant="step"
-                icon={approachIcon(step.title)}
-                title={step.title ?? ""}
-                body={step.body ?? ""}
-                index={step.mini}
-              />
-            ))}
-          </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {approachItems.map((step) => (
+                <IconCard
+                  key={step.title}
+                  variant="step"
+                  icon={approachIcon(step.title)}
+                  title={step.title ?? ""}
+                  body={step.body ?? ""}
+                  index={step.mini}
+                />
+              ))}
+            </div>
           </Reveal>
         </div>
       </section>
@@ -204,9 +227,12 @@ export default async function HomePage() {
         viewAll
       />
 
-      <Testimonials />
+      {/* <Testimonials /> */}
 
-      <section id="circle" className="section-y relative overflow-hidden bg-[#161512] text-cream">
+      <section
+        id="circle"
+        className="section-y relative overflow-hidden bg-[#161512] text-cream"
+      >
         <Photo
           src={IMAGES.dinnerHero}
           alt="Veloria Founders Circle dinner"
@@ -215,12 +241,15 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b0a08] via-[#0b0a08]/80 to-[#0b0a08]/45" />
         <div className="container-v relative grid items-end gap-10 lg:grid-cols-[1.1fr_.7fr]">
           <Reveal>
-            <p className="eyebrow eyebrow-light mb-5">Founders Circle · Invitation only</p>
+            <p className="eyebrow eyebrow-light mb-5">
+              Founders Circle · Invitation only
+            </p>
             <h2 className="font-display max-w-xl text-[clamp(2rem,6.5vw,3.5rem)] font-medium leading-[1.18]">
               An evening. Not a group.
             </h2>
             <p className="mt-5 max-w-md text-[15px] text-cream/70">
-              A private dinner, thrown by Veloria. Invitations are extended. They are not requested.
+              A private dinner, thrown by Veloria. Invitations are extended.
+              They are not requested.
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -241,8 +270,9 @@ export default async function HomePage() {
               Build before the opportunity arrives.
             </h2>
             <p className="mx-auto mt-5 max-w-[640px] text-ink-soft">
-              Whether you are raising capital, entering a major transaction, expanding a business,
-              taking on a project or simply professionalising the company, Veloria helps prepare the
+              Whether you are raising capital, entering a major transaction,
+              expanding a business, taking on a project or simply
+              professionalising the company, Veloria helps prepare the
               foundation first.
             </p>
             <Magnetic className="mt-8">

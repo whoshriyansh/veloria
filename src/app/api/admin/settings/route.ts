@@ -11,7 +11,9 @@ export async function GET() {
   await connectMongo();
   const siteSettings = await collections.siteSettings();
   const settings = await siteSettings.findOne({ key: "default" });
-  return NextResponse.json(settings ? serialize(settings as Record<string, unknown>) : null);
+  return NextResponse.json(
+    settings ? serialize(settings as Record<string, unknown>) : null,
+  );
 }
 
 export async function PATCH(request: Request) {
@@ -41,8 +43,10 @@ export async function PATCH(request: Request) {
   for (const key of stringKeys) {
     if (typeof body[key] === "string") data[key] = body[key];
   }
-  if (typeof body.showCheckupPopup === "boolean") data.showCheckupPopup = body.showCheckupPopup;
-  if (typeof body.popupDelayMs === "number") data.popupDelayMs = body.popupDelayMs;
+  if (typeof body.showCheckupPopup === "boolean")
+    data.showCheckupPopup = body.showCheckupPopup;
+  if (typeof body.popupDelayMs === "number")
+    data.popupDelayMs = body.popupDelayMs;
 
   await connectMongo();
   const siteSettings = await collections.siteSettings();

@@ -96,12 +96,18 @@ export function HeroSection({
           <FadeIn delay={0.14}>
             <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3.5">
               <Magnetic className="w-full sm:w-auto">
-                <Link href={ctaHref} className="btn-lux btn-lux-fill w-full sm:w-auto">
+                <Link
+                  href={ctaHref}
+                  className="btn-lux btn-lux-fill w-full sm:w-auto"
+                >
                   {ctaLabel}
                 </Link>
               </Magnetic>
               <Magnetic className="w-full sm:w-auto">
-                <Link href="/services" className="btn-lux btn-lux-ghost w-full sm:w-auto">
+                <Link
+                  href="/services"
+                  className="btn-lux btn-lux-ghost w-full sm:w-auto"
+                >
                   Explore Veloria
                 </Link>
               </Magnetic>

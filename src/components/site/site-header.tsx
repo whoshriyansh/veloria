@@ -73,7 +73,8 @@ export function SiteHeader({
                   inverted
                     ? "text-cream/70 hover:text-cream"
                     : "text-[#4f5853] hover:text-ink",
-                  pathname === item.href && (inverted ? "text-cream" : "text-ink"),
+                  pathname === item.href &&
+                    (inverted ? "text-cream" : "text-ink"),
                 )}
               >
                 {item.label}
@@ -96,7 +97,9 @@ export function SiteHeader({
               onClick={() => setOpen((v) => !v)}
               className={cn(
                 "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-current lg:hidden",
-                inverted ? "border-cream/30 text-cream" : "border-ink/20 text-ink",
+                inverted
+                  ? "border-cream/30 text-cream"
+                  : "border-ink/20 text-ink",
               )}
             >
               {open ? <X size={18} /> : <Menu size={18} />}
@@ -117,7 +120,9 @@ export function SiteHeader({
                 <span className="font-display text-[1.65rem] leading-[1.15] tracking-tight sm:text-3xl">
                   {item.label}
                 </span>
-                <span className="shrink-0 text-xs tracking-[0.2em] text-gold">0{i + 1}</span>
+                <span className="shrink-0 text-xs tracking-[0.2em] text-gold">
+                  0{i + 1}
+                </span>
               </Link>
             ))}
             <Link

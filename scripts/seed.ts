@@ -19,45 +19,52 @@ const questions = [
       "Is the current ownership/shareholding structure clearly documented and up to date?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Unclear ownership is one of the first things a serious investor or buyer will stop on.",
+    helpText:
+      "Unclear ownership is one of the first things a serious investor or buyer will stop on.",
   },
   {
     question:
       "If there are multiple founders, is there a written agreement defining their respective roles and responsibilities?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "Verbal founder arrangements become disputes the moment capital or a departure is on the table.",
+    helpText:
+      "Verbal founder arrangements become disputes the moment capital or a departure is on the table.",
   },
   {
     question:
       "Does the company maintain its statutory registers, resolutions and corporate records in an organised manner?",
     category: "Corporate Structure",
     yesIsGood: true,
-    helpText: "If the records are not organised, the structure is not ready for diligence.",
+    helpText:
+      "If the records are not organised, the structure is not ready for diligence.",
   },
   {
     question:
       "Is it clearly documented who can make financial, operational and strategic decisions for the company?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "Investors need to see that the business is run through authority, not informal founder habit.",
+    helpText:
+      "Investors need to see that the business is run through authority, not informal founder habit.",
   },
   {
     question:
       "Are important decisions of the company formally recorded rather than relying only on WhatsApp, calls or verbal discussions?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "If it is not written down, it will not survive a data-room review.",
+    helpText:
+      "If it is not written down, it will not survive a data-room review.",
   },
   {
     question:
       "If the primary founder became unavailable for 60 days, could the business continue operating through an established decision-making structure?",
     category: "Governance",
     yesIsGood: true,
-    helpText: "Key-person dependence is a governance failure, not a personality trait.",
+    helpText:
+      "Key-person dependence is a governance failure, not a personality trait.",
   },
   {
-    question: "Does the company have a written agreement with every major client?",
+    question:
+      "Does the company have a written agreement with every major client?",
     category: "Contracts",
     yesIsGood: true,
     helpText: "Handshake revenue is not an asset in diligence.",
@@ -67,27 +74,32 @@ const questions = [
       "Do your contracts clearly establish who owns intellectual property created during the engagement?",
     category: "Contracts",
     yesIsGood: true,
-    helpText: "Unclear IP ownership can block a raise or a sale even when the product is strong.",
+    helpText:
+      "Unclear IP ownership can block a raise or a sale even when the product is strong.",
   },
   {
     question:
       "Do you have written agreements with freelancers, consultants and external agencies working on your projects?",
     category: "Contracts",
     yesIsGood: true,
-    helpText: "Anyone who touches the work should have paper transferring rights to the company.",
+    helpText:
+      "Anyone who touches the work should have paper transferring rights to the company.",
   },
   {
     question:
       "Are all registrations and licences required for your current business activities currently valid?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "Lapsed licences surface immediately when a counterparty asks for compliance records.",
+    helpText:
+      "Lapsed licences surface immediately when a counterparty asks for compliance records.",
   },
   {
-    question: "Are your statutory filings being completed within the applicable timelines?",
+    question:
+      "Are your statutory filings being completed within the applicable timelines?",
     category: "Compliance",
     yesIsGood: true,
-    helpText: "Late filings are inexpensive to fix early and expensive once a term sheet exists.",
+    helpText:
+      "Late filings are inexpensive to fix early and expensive once a term sheet exists.",
   },
   {
     question:
@@ -108,14 +120,16 @@ const questions = [
       "Does any single client currently contribute a disproportionately large percentage of your revenue?",
     category: "Business Risk",
     yesIsGood: false,
-    helpText: "Answering Yes means concentration risk — counterparties will price that in.",
+    helpText:
+      "Answering Yes means concentration risk — counterparties will price that in.",
   },
   {
     question:
       "If a serious investor offered to begin due diligence next week, would you be confident that your business is legally and commercially ready for the process?",
     category: "Investment Readiness",
     yesIsGood: true,
-    helpText: "This is the Veloria Score in one question — build before you raise.",
+    helpText:
+      "This is the Veloria Score in one question — build before you raise.",
   },
 ];
 
@@ -124,7 +138,10 @@ async function main() {
   await client.connect();
   const db = client.db();
 
-  const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || "admin123", 10);
+  const passwordHash = await bcrypt.hash(
+    process.env.ADMIN_PASSWORD || "admin123",
+    10,
+  );
   const adminEmail = process.env.ADMIN_EMAIL || "admin@veloria.legal";
 
   await db.collection("users").updateOne(
@@ -156,11 +173,13 @@ async function main() {
           "Veloria helps startups, companies, builders, contractors, founders and business owners strengthen the foundations behind serious growth, capital, transactions and expansion.",
         heroCtaLabel: "Start a Readiness Review",
         heroCtaHref: "/legal-health-checkup",
-        aboutPreview: "A stronger business is easier to fund, easier to scale and harder to disrupt.",
+        aboutPreview:
+          "A stronger business is easier to fund, easier to scale and harder to disrupt.",
         footerText:
           "© 2026 Veloria. All rights reserved. Information on this website is general in nature and does not constitute legal advice.",
         logoText: "VELORIA",
-        metaTitle: "Veloria — Business Readiness, Governance & Transaction Advisory",
+        metaTitle:
+          "Veloria — Business Readiness, Governance & Transaction Advisory",
         metaDescription:
           "Veloria is a business readiness advisory for startups, companies, founders and owners in India. Strengthen structure, governance and transactions — then take the Veloria Score.",
         showCheckupPopup: true,
@@ -198,16 +217,46 @@ async function main() {
 
   await db.collection("navigationItems").deleteMany({});
   await db.collection("navigationItems").insertMany([
-    { label: "Who We Work With", href: "/about", order: 1, isVisible: true, isExternal: false },
-    { label: "What We Do", href: "/services", order: 2, isVisible: true, isExternal: false },
-    { label: "Founders Circle", href: "/founder-circle", order: 3, isVisible: true, isExternal: false },
-    { label: "Speak with Veloria", href: "/contact", order: 4, isVisible: true, isExternal: false },
+    {
+      label: "Who We Work With",
+      href: "/about",
+      order: 1,
+      isVisible: true,
+      isExternal: false,
+    },
+    {
+      label: "What We Do",
+      href: "/services",
+      order: 2,
+      isVisible: true,
+      isExternal: false,
+    },
+    {
+      label: "Founders Circle",
+      href: "/founder-circle",
+      order: 3,
+      isVisible: true,
+      isExternal: false,
+    },
+    {
+      label: "Speak with Veloria",
+      href: "/contact",
+      order: 4,
+      isVisible: true,
+      isExternal: false,
+    },
   ]);
 
   const homeSections = JSON.stringify([
     {
       type: "trust",
-      items: ["Capital Readiness", "Governance", "Contracts", "Transactions", "Commercial Risk"],
+      items: [
+        "Capital Readiness",
+        "Governance",
+        "Contracts",
+        "Transactions",
+        "Commercial Risk",
+      ],
     },
     {
       type: "audiences",
@@ -245,12 +294,36 @@ async function main() {
       value: "78",
       caption: "Illustrative Business Readiness Index",
       items: [
-        { title: "Corporate Structure", body: "Ownership, records and legal architecture", value: "82" },
-        { title: "Governance", body: "Decision-making and institutional discipline", value: "76" },
-        { title: "Contracts", body: "Commercial documentation and risk allocation", value: "80" },
-        { title: "Compliance", body: "Operational and regulatory readiness", value: "74" },
-        { title: "Transaction Readiness", body: "Diligence and documentation preparedness", value: "78" },
-        { title: "Business Risk", body: "Exposure that could weaken value or negotiations", value: "78" },
+        {
+          title: "Corporate Structure",
+          body: "Ownership, records and legal architecture",
+          value: "82",
+        },
+        {
+          title: "Governance",
+          body: "Decision-making and institutional discipline",
+          value: "76",
+        },
+        {
+          title: "Contracts",
+          body: "Commercial documentation and risk allocation",
+          value: "80",
+        },
+        {
+          title: "Compliance",
+          body: "Operational and regulatory readiness",
+          value: "74",
+        },
+        {
+          title: "Transaction Readiness",
+          body: "Diligence and documentation preparedness",
+          value: "78",
+        },
+        {
+          title: "Business Risk",
+          body: "Exposure that could weaken value or negotiations",
+          value: "78",
+        },
       ],
     },
     {
@@ -258,10 +331,26 @@ async function main() {
       title: "A clear path from uncertainty to readiness.",
       body: "Veloria keeps the process commercial, prioritised and practical.",
       items: [
-        { mini: "Assess", title: "Understand", body: "Review structure, documentation, risk and the business objective ahead." },
-        { mini: "Prioritise", title: "Focus", body: "Separate urgent issues from improvements that can follow later." },
-        { mini: "Implement", title: "Strengthen", body: "Put the agreements, systems, records and governance foundations in place." },
-        { mini: "Ready", title: "Move", body: "Approach capital, partnerships, projects and transactions with greater confidence." },
+        {
+          mini: "Assess",
+          title: "Understand",
+          body: "Review structure, documentation, risk and the business objective ahead.",
+        },
+        {
+          mini: "Prioritise",
+          title: "Focus",
+          body: "Separate urgent issues from improvements that can follow later.",
+        },
+        {
+          mini: "Implement",
+          title: "Strengthen",
+          body: "Put the agreements, systems, records and governance foundations in place.",
+        },
+        {
+          mini: "Ready",
+          title: "Move",
+          body: "Approach capital, partnerships, projects and transactions with greater confidence.",
+        },
       ],
     },
     {
@@ -298,11 +387,26 @@ Whether you are raising capital, entering a major transaction, expanding, taking
         {
           type: "audiences",
           items: [
-            { title: "Startups", body: "For founders preparing to raise capital, formalise ownership, strengthen contracts and move from an early-stage business into a more institutional company." },
-            { title: "Companies", body: "For established and growing companies that need stronger governance, commercial documentation, transaction readiness and corporate discipline." },
-            { title: "Builders & Developers", body: "For real-estate and project businesses navigating contracts, counterparties, commercial arrangements, risk allocation and large transactions." },
-            { title: "Contractors", body: "For project-driven businesses managing work orders, payments, liabilities, subcontracting arrangements and recurring commercial exposure." },
-            { title: "Entrepreneurs & Business Owners", body: "For promoters preparing for partnerships, expansion, succession, investment or a more professional operating structure." },
+            {
+              title: "Startups",
+              body: "For founders preparing to raise capital, formalise ownership, strengthen contracts and move from an early-stage business into a more institutional company.",
+            },
+            {
+              title: "Companies",
+              body: "For established and growing companies that need stronger governance, commercial documentation, transaction readiness and corporate discipline.",
+            },
+            {
+              title: "Builders & Developers",
+              body: "For real-estate and project businesses navigating contracts, counterparties, commercial arrangements, risk allocation and large transactions.",
+            },
+            {
+              title: "Contractors",
+              body: "For project-driven businesses managing work orders, payments, liabilities, subcontracting arrangements and recurring commercial exposure.",
+            },
+            {
+              title: "Entrepreneurs & Business Owners",
+              body: "For promoters preparing for partnerships, expansion, succession, investment or a more professional operating structure.",
+            },
           ],
         },
       ]),
@@ -310,7 +414,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       slug: "founder-circle",
       title: "A table. A night. The room decides the rest.",
-      subtitle: "Veloria hosts a private dinner. Invitations are sent. There is nothing to join.",
+      subtitle:
+        "Veloria hosts a private dinner. Invitations are sent. There is nothing to join.",
       content: `A private dinner, thrown by Veloria. Royal in manner. Quiet in purpose. Invitations are extended — never an open list, never an application.`,
       heroImage: "",
       isPublished: true,
@@ -319,7 +424,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       slug: "contact",
       title: "Build before the opportunity arrives.",
-      subtitle: "Speak with Veloria. Tell us where you are. We will tell you what diligence will ask next.",
+      subtitle:
+        "Speak with Veloria. Tell us where you are. We will tell you what diligence will ask next.",
       content:
         "Whether you are raising capital, entering a major transaction, expanding a business, taking on a project or simply professionalising the company, Veloria helps prepare the foundation first. Our team replies within one business day.",
       heroImage: "",
@@ -329,11 +435,13 @@ Whether you are raising capital, entering a major transaction, expanding, taking
   ];
 
   for (const page of pages) {
-    await db.collection("pages").updateOne(
-      { slug: page.slug },
-      { $set: { ...page, updatedAt: new Date() } },
-      { upsert: true },
-    );
+    await db
+      .collection("pages")
+      .updateOne(
+        { slug: page.slug },
+        { $set: { ...page, updatedAt: new Date() } },
+        { upsert: true },
+      );
   }
 
   await db.collection("services").deleteMany({});
@@ -341,7 +449,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Corporate Structure & Governance",
       slug: "corporate-structure-governance",
-      summary: "Ownership, board processes, records, founder arrangements and governance architecture.",
+      summary:
+        "Ownership, board processes, records, founder arrangements and governance architecture.",
       description:
         "We review the legal spine of the company — incorporation, ownership, founder arrangements, board process and records — so the entity can survive diligence, not just a pitch meeting.",
       imageUrl: "",
@@ -358,7 +467,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Contracts & Commercial Risk",
       slug: "contracts-commercial-risk",
-      summary: "Commercial agreements, project contracts, employment arrangements and recurring documentation.",
+      summary:
+        "Commercial agreements, project contracts, employment arrangements and recurring documentation.",
       description:
         "We strengthen the paper that actually runs the business — customers, vendors, projects, employment and recurring commercial exposure — with risk allocation a sophisticated counterparty will respect.",
       imageUrl: "",
@@ -375,7 +485,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Fundraising & Investment Readiness",
       slug: "fundraising-investment-readiness",
-      summary: "Diligence preparation, term-sheet support and investment documentation.",
+      summary:
+        "Diligence preparation, term-sheet support and investment documentation.",
       description:
         "We prepare the company the way a lead investor will read it — cap table, prior instruments, data room and the narrative of ownership — so the raise is a process, not a cleanup project.",
       imageUrl: "",
@@ -392,7 +503,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Due Diligence Preparation",
       slug: "due-diligence-preparation",
-      summary: "Identifying gaps before investors, lenders, buyers or institutional counterparties do.",
+      summary:
+        "Identifying gaps before investors, lenders, buyers or institutional counterparties do.",
       description:
         "We run the review an investor, lender or buyer would run — then close gaps while you still control the timeline.",
       imageUrl: "",
@@ -409,7 +521,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Projects & Expansion",
       slug: "projects-expansion",
-      summary: "Legal-commercial support for projects, partnerships, growth and new markets.",
+      summary:
+        "Legal-commercial support for projects, partnerships, growth and new markets.",
       description:
         "For builders, contractors and expanding companies — we support the contracts, counterparties and risk allocation that sit underneath growth.",
       imageUrl: "",
@@ -426,7 +539,8 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     {
       title: "Strategic Advisory",
       slug: "strategic-advisory",
-      summary: "Clear legal-commercial thinking around consequential business decisions.",
+      summary:
+        "Clear legal-commercial thinking around consequential business decisions.",
       description:
         "Standing counsel for decisions that move value — partnerships, succession, expansion, and the moments when templates are not enough.",
       imageUrl: "",
@@ -508,56 +622,85 @@ Whether you are raising capital, entering a major transaction, expanding, taking
   await db.collection("clients").deleteMany({});
   await db.collection("clients").insertMany([
     { name: "Northline", logoUrl: "", website: "", order: 1, isVisible: true },
-    { name: "Harbour & Co.", logoUrl: "", website: "", order: 2, isVisible: true },
+    {
+      name: "Harbour & Co.",
+      logoUrl: "",
+      website: "",
+      order: 2,
+      isVisible: true,
+    },
     { name: "Kiteworks", logoUrl: "", website: "", order: 3, isVisible: true },
-    { name: "Aether Labs", logoUrl: "", website: "", order: 4, isVisible: true },
-    { name: "Pinnacle Infra", logoUrl: "", website: "", order: 5, isVisible: true },
+    {
+      name: "Aether Labs",
+      logoUrl: "",
+      website: "",
+      order: 4,
+      isVisible: true,
+    },
+    {
+      name: "Pinnacle Infra",
+      logoUrl: "",
+      website: "",
+      order: 5,
+      isVisible: true,
+    },
   ]);
 
   const foundingMembers = [
     {
-      slug: "divyam-gaur",
-      name: "Divyam Gaur",
-      role: "Founding Member",
-      imageUrl: "/founding_team/divyam_gaur.jpeg",
-      bio: "",
-      order: 1,
-      isVisible: true,
-    },
-    {
+      id: "fm-himanshu",
       slug: "himanshu-arya",
       name: "Himanshu Arya",
-      role: "Founding Member",
+      role: "Founder & Managing Partner",
       imageUrl: "/founding_team/himanshu_arya.jpeg",
       bio: "",
       order: 2,
-      isVisible: true,
     },
     {
+      id: "fm-divyam",
+      slug: "divyam-gaur",
+      name: "Divyam Gaur",
+      role: "Co-founder & Managing Partner",
+      imageUrl: "/founding_team/divyam_gaur.jpeg",
+      bio: "",
+      order: 1,
+    },
+    {
+      id: "fm-tanishq",
       slug: "tanishq-garg",
       name: "Tanishq Garg",
-      role: "Founding Member",
+      role: "Associate",
       imageUrl: "/founding_team/tanishq_garg.jpeg",
       bio: "",
       order: 3,
-      isVisible: true,
     },
     {
+      id: "fm-farishq",
       slug: "farishq-shidique",
       name: "Farishq Shidique",
-      role: "Founding Member",
+      role: "Associate",
       imageUrl: "/founding_team/farishq_shidique.jpeg",
       bio: "",
       order: 4,
-      isVisible: true,
+    },
+    {
+      id: "fm-farishq",
+      slug: "preeti-garg",
+      name: "Preeti Garg",
+      role: "Associate",
+      imageUrl: "/founding_team/preeti_garg.jpeg",
+      bio: "",
+      order: 5,
     },
   ];
   for (const member of foundingMembers) {
-    await db.collection("foundingMembers").updateOne(
-      { slug: member.slug },
-      { $setOnInsert: member },
-      { upsert: true },
-    );
+    await db
+      .collection("foundingMembers")
+      .updateOne(
+        { slug: member.slug },
+        { $setOnInsert: member },
+        { upsert: true },
+      );
   }
 
   await db.collection("articles").deleteMany({});
@@ -605,7 +748,9 @@ Whether you are raising capital, entering a major transaction, expanding, taking
   );
 
   console.log("Veloria MongoDB seed complete.");
-  console.log(`Admin: ${adminEmail} / ${process.env.ADMIN_PASSWORD || "admin123"}`);
+  console.log(
+    `Admin: ${adminEmail} / ${process.env.ADMIN_PASSWORD || "admin123"}`,
+  );
   await client.close();
 }
 

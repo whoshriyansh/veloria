@@ -76,13 +76,14 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
               className="mt-5 space-y-3 text-sm leading-relaxed text-ink-soft sm:text-[15px]"
             >
               <p>
-                This website offers general information about Veloria and its work. It is not legal
-                advice, a legal opinion, or an offer of representation.
+                This website offers general information about Veloria and its
+                work. It is not legal advice, a legal opinion, or an offer of
+                representation.
               </p>
               <p>
-                Using this site, sending a message, or taking the Veloria Score does not create a
-                lawyer–client relationship. You should take advice from a qualified professional
-                on your own facts.
+                Using this site, sending a message, or taking the Veloria Score
+                does not create a lawyer–client relationship. You should take
+                advice from a qualified professional on your own facts.
               </p>
             </div>
             <button

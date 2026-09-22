@@ -36,10 +36,16 @@ export function ImageUploader({
 
   return (
     <div className="grid gap-2">
-      <p className="text-xs uppercase tracking-[0.14em] text-white/45">{label}</p>
+      <p className="text-xs uppercase tracking-[0.14em] text-white/45">
+        {label}
+      </p>
       {value ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={value} alt="" className="h-28 w-full rounded-lg object-cover" />
+        <img
+          src={value}
+          alt=""
+          className="h-28 w-full rounded-lg object-cover"
+        />
       ) : (
         <div className="flex h-28 items-center justify-center rounded-lg border border-dashed border-white/15 text-xs text-white/40">
           No image yet
@@ -60,7 +66,9 @@ export function ImageUploader({
       />
       {uploading ? <p className="text-xs text-white/50">Uploading…</p> : null}
       {error ? <p className="text-xs text-red-400">{error}</p> : null}
-      <p className="text-[11px] text-white/35">JPG, PNG, WebP, GIF or SVG. Max 10MB. Hosted on Cloudinary.</p>
+      <p className="text-[11px] text-white/35">
+        JPG, PNG, WebP, GIF or SVG. Max 10MB. Hosted on Cloudinary.
+      </p>
     </div>
   );
 }
