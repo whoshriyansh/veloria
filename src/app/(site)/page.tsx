@@ -222,12 +222,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <ArticleGrid
+      {/* <ArticleGrid
         articles={articles}
         heading="Latest from Veloria."
         intro="Notes on readiness, diligence and building a company that can take a second meeting. Published on LinkedIn."
         viewAll
-      />
+      /> */}
 
       <FoundingTeam members={members} />
 
