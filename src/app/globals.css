@@ -958,7 +958,7 @@ button {
   }
 }
 
-.legal-disclaimer {
+.site-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
@@ -971,7 +971,7 @@ button {
   backdrop-filter: blur(8px);
 }
 
-.legal-disclaimer-card {
+.site-overlay-card {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -986,7 +986,7 @@ button {
   box-shadow: 0 24px 80px rgba(6, 20, 16, 0.28);
 }
 
-.legal-disclaimer-close {
+.site-overlay-close {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -1004,7 +1004,7 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-.legal-disclaimer-title {
+.site-overlay-title {
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(1.55rem, 5.5vw, 2.15rem);
   font-weight: 500;
@@ -1014,7 +1014,7 @@ button {
   padding-right: 44px;
 }
 
-.legal-disclaimer-copy {
+.site-overlay-copy {
   margin-top: 14px;
   display: grid;
   gap: 10px;
@@ -1023,16 +1023,21 @@ button {
   color: var(--ink-soft);
 }
 
-.legal-disclaimer-accept {
+.site-overlay-actions {
   margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.site-overlay-accept,
+.site-overlay-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   min-height: 52px;
   border-radius: 999px;
-  background: var(--forest-900);
-  color: var(--cream);
   font-size: 15px;
   font-weight: 500;
   touch-action: manipulation;
@@ -1040,28 +1045,47 @@ button {
   pointer-events: auto;
 }
 
-.legal-disclaimer-accept:active {
+.site-overlay-accept {
+  background: var(--forest-900);
+  color: var(--cream);
+}
+
+.site-overlay-accept:active,
+.site-overlay-ghost:active,
+.site-overlay-close:active {
   transform: scale(0.98);
 }
 
-body.disclaimer-open .veloria-chat {
+.site-overlay-ghost {
+  border: 1px solid rgba(20, 24, 22, 0.15);
+  color: var(--ink-soft);
+  background: #fff;
+}
+
+body.overlay-open .veloria-chat {
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
 @media (min-width: 640px) {
-  .legal-disclaimer {
+  .site-overlay {
     align-items: center;
     padding: 24px;
   }
 
-  .legal-disclaimer-card {
+  .site-overlay-card {
     padding: 36px 40px 32px;
   }
 
-  .legal-disclaimer-accept {
+  .site-overlay-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .site-overlay-accept,
+  .site-overlay-ghost {
     width: auto;
-    min-width: 180px;
+    min-width: 168px;
     padding: 0 28px;
   }
 }

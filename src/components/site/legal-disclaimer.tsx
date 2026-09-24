@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { lockPublicOverlay, unlockPublicOverlay } from "@/lib/public-overlay";
 
 export const DISCLAIMER_KEY = "veloria_legal_disclaimer_ack";
 export const DISCLAIMER_TTL_MS = 2 * 24 * 60 * 60 * 1000;
@@ -31,22 +32,20 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
       return;
     }
     setOpen(true);
-    document.body.classList.add("disclaimer-open");
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     const timer = window.setTimeout(() => acceptRef.current?.focus(), 80);
-    return () => {
-      document.body.classList.remove("disclaimer-open");
-      document.body.style.overflow = previous;
-      window.clearTimeout(timer);
-    };
+    return () => window.clearTimeout(timer);
   }, [onDone]);
+
+  useEffect(() => {
+    if (!open) return;
+    lockPublicOverlay();
+    return () => unlockPublicOverlay();
+  }, [open]);
 
   const accept = () => {
     if (done.current) return;
     done.current = true;
     acknowledgeDisclaimer();
-    document.body.classList.remove("disclaimer-open");
     setOpen(false);
     onDone();
   };
@@ -55,7 +54,7 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="legal-disclaimer"
+          className="site-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -65,7 +64,7 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
             aria-modal="true"
             aria-labelledby="legal-disclaimer-title"
             aria-describedby="legal-disclaimer-body"
-            className="legal-disclaimer-card"
+            className="site-overlay-card"
             initial={{ opacity: 0, y: 36, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20 }}
@@ -73,7 +72,7 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
           >
             <button
               type="button"
-              className="legal-disclaimer-close"
+              className="site-overlay-close"
               aria-label="Close and continue"
               onPointerUp={accept}
               onClick={accept}
@@ -81,10 +80,10 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
               <X size={18} />
             </button>
             <p className="eyebrow mb-4">Veloria</p>
-            <h2 id="legal-disclaimer-title" className="legal-disclaimer-title">
+            <h2 id="legal-disclaimer-title" className="site-overlay-title">
               Before you continue.
             </h2>
-            <div id="legal-disclaimer-body" className="legal-disclaimer-copy">
+            <div id="legal-disclaimer-body" className="site-overlay-copy">
               <p>
                 This website offers general information about Veloria and its work. It is not legal
                 advice, a legal opinion, or an offer of representation.
@@ -95,15 +94,17 @@ export function LegalDisclaimer({ onDone }: { onDone: () => void }) {
                 on your own facts.
               </p>
             </div>
-            <button
-              ref={acceptRef}
-              type="button"
-              className="legal-disclaimer-accept"
-              onPointerUp={accept}
-              onClick={accept}
-            >
-              I understand
-            </button>
+            <div className="site-overlay-actions">
+              <button
+                ref={acceptRef}
+                type="button"
+                className="site-overlay-accept"
+                onPointerUp={accept}
+                onClick={accept}
+              >
+                I understand
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       ) : null}

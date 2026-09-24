@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { lockPublicOverlay, unlockPublicOverlay } from "@/lib/public-overlay";
 
 const STORAGE_KEY = "veloria_checkup_popup_seen";
 
@@ -21,6 +22,7 @@ export function CheckupPopup({
   cta: string;
 }) {
   const [open, setOpen] = useState(false);
+  const closed = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
@@ -31,7 +33,15 @@ export function CheckupPopup({
     return () => window.clearTimeout(timer);
   }, [enabled, delayMs]);
 
+  useEffect(() => {
+    if (!open) return;
+    lockPublicOverlay();
+    return () => unlockPublicOverlay();
+  }, [open]);
+
   const dismiss = () => {
+    if (closed.current) return;
+    closed.current = true;
     localStorage.setItem(STORAGE_KEY, "1");
     setOpen(false);
   };
@@ -40,52 +50,54 @@ export function CheckupPopup({
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-end justify-center bg-forest-950/55 p-4 backdrop-blur-sm sm:items-center"
+          className="site-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          onPointerUp={(e) => {
+            if (e.target === e.currentTarget) dismiss();
+          }}
         >
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-labelledby="checkup-popup-title"
-            className="relative w-full max-w-lg overflow-hidden bg-cream p-6 shadow-2xl sm:p-7 md:p-9"
+            className="site-overlay-card"
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            onPointerUp={(e) => e.stopPropagation()}
           >
-            <div className="aurora-soft -left-20 -top-24 opacity-70" />
             <button
               type="button"
-              onClick={dismiss}
-              className="absolute right-4 top-4 rounded-full border border-ink/10 p-2 text-ink-soft hover:text-ink"
+              className="site-overlay-close"
               aria-label="Dismiss"
+              onPointerUp={dismiss}
+              onClick={dismiss}
             >
-              <X size={16} />
+              <X size={18} />
             </button>
 
-            <p className="eyebrow mb-4 relative">The Veloria Score™</p>
-            <h2
-              id="checkup-popup-title"
-              className="font-display relative text-[clamp(1.7rem,6vw,2.25rem)] leading-tight tracking-tight text-ink md:text-4xl"
-            >
+            <p className="eyebrow mb-4">The Veloria Score™</p>
+            <h2 id="checkup-popup-title" className="site-overlay-title">
               {title}
             </h2>
-            <p className="relative mt-4 text-sm leading-relaxed text-ink-soft md:text-base">{body}</p>
+            <p className="site-overlay-copy">{body}</p>
 
-            <div className="relative mt-8 flex flex-wrap gap-3">
+            <div className="site-overlay-actions">
               <Link
                 href="/legal-health-checkup"
                 onClick={dismiss}
-                className="rounded-full bg-forest-900 px-5 py-3 text-sm font-medium text-cream transition hover:bg-forest-800"
+                className="site-overlay-accept"
               >
                 {cta}
               </Link>
               <button
                 type="button"
+                className="site-overlay-ghost"
+                onPointerUp={dismiss}
                 onClick={dismiss}
-                className="rounded-full border border-ink/15 px-5 py-3 text-sm text-ink-soft hover:text-ink"
               >
                 Maybe later
               </button>
