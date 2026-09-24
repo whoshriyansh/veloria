@@ -48,14 +48,15 @@ function MemberCard({
   return (
     <Reveal delay={delay}>
       <article
-        className={cn("team-card", featured && "team-card-featured", open && "is-open")}
+        className={cn(
+          "team-card",
+          featured && "team-card-featured",
+          open && "is-open",
+        )}
         onClick={() => bio && setOpen((v) => !v)}
         onMouseLeave={() => setOpen(false)}
       >
         <div className="team-card-frame">
-          <span className="team-card-index" aria-hidden>
-            {pad(member.order)}
-          </span>
           {member.imageUrl ? (
             <Photo
               src={member.imageUrl}
@@ -93,7 +94,10 @@ export function FoundingTeam({ members }: { members: CmsFoundingMember[] }) {
   const associates = sorted.slice(2);
 
   return (
-    <section id="team" className="section-y border-t border-ink/10 bg-[#fbfaf6]">
+    <section
+      id="team"
+      className="section-y border-t border-ink/10 bg-[#fbfaf6]"
+    >
       <div className="container-v">
         <Reveal>
           <p className="eyebrow mb-4">The people behind Veloria</p>
@@ -101,7 +105,8 @@ export function FoundingTeam({ members }: { members: CmsFoundingMember[] }) {
             Founding team
           </h2>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
-            The partners who set the standard. Hover a portrait to read a brief note on their work.
+            The partners who set the standard. Hover a portrait to read a brief
+            note on their work.
           </p>
         </Reveal>
         {founders.length ? (
@@ -120,12 +125,12 @@ export function FoundingTeam({ members }: { members: CmsFoundingMember[] }) {
         {associates.length ? (
           <div className="mt-16 border-t border-ink/10 pt-12 sm:mt-20 sm:pt-14">
             <Reveal>
-              <p className="eyebrow mb-4">The practice</p>
               <h2 className="font-display max-w-xl text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
                 Our associates
               </h2>
               <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
-                The bench that carries the work through — records, contracts, research and follow-through.
+                The bench that carries the work through — records, contracts,
+                research and follow-through.
               </p>
             </Reveal>
             <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
