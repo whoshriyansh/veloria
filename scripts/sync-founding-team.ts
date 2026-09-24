@@ -9,9 +9,10 @@ const uri = process.env.MONGODB_URI;
 if (!uri) {
   throw new Error("Set MONGODB_URI in .env before syncing the founding team.");
 }
+const mongoUri: string = uri;
 
 async function main() {
-  const client = new MongoClient(uri);
+  const client = new MongoClient(mongoUri);
   await client.connect();
   const db = client.db();
   const col = db.collection("foundingMembers");
