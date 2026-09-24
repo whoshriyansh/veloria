@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { Photo } from "@/components/site/photo";
 import { Reveal } from "@/components/site/reveal";
+import { cn } from "@/lib/utils";
 import type { CmsFoundingMember } from "@/lib/cms";
 
 const FACE_FOCUS: Record<string, string> = {
@@ -25,55 +29,112 @@ function faceFocus(member: CmsFoundingMember) {
   );
 }
 
+function pad(order: number) {
+  return String(order).padStart(2, "0");
+}
+
+function MemberCard({
+  member,
+  delay,
+  featured = false,
+}: {
+  member: CmsFoundingMember;
+  delay: number;
+  featured?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const bio = member.bio?.trim();
+
+  return (
+    <Reveal delay={delay}>
+      <article
+        className={cn("team-card", featured && "team-card-featured", open && "is-open")}
+        onClick={() => bio && setOpen((v) => !v)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        <div className="team-card-frame">
+          <span className="team-card-index" aria-hidden>
+            {pad(member.order)}
+          </span>
+          {member.imageUrl ? (
+            <Photo
+              src={member.imageUrl}
+              alt={member.name}
+              className="team-card-photo"
+              style={{ objectPosition: faceFocus(member) }}
+            />
+          ) : (
+            <div className="team-card-fallback">
+              <p className="font-display text-2xl">{member.name}</p>
+            </div>
+          )}
+          <div className="team-card-veil" aria-hidden />
+          {bio ? (
+            <div className="team-card-bio">
+              <span className="team-card-rule" aria-hidden />
+              <p>{bio}</p>
+            </div>
+          ) : null}
+        </div>
+        <div className="team-card-meta">
+          <h3>{member.name}</h3>
+          {member.role ? <p>{member.role}</p> : null}
+        </div>
+      </article>
+    </Reveal>
+  );
+}
+
 export function FoundingTeam({ members }: { members: CmsFoundingMember[] }) {
   if (!members.length) return null;
+
+  const sorted = [...members].sort((a, b) => a.order - b.order);
+  const founders = sorted.slice(0, 2);
+  const associates = sorted.slice(2);
 
   return (
     <section id="team" className="section-y border-t border-ink/10 bg-[#fbfaf6]">
       <div className="container-v">
         <Reveal>
-          <p className="eyebrow mb-4">The founding team</p>
-          <h2 className="font-display max-w-xl text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
-            The people behind Veloria.
+          <p className="eyebrow mb-4">The people behind Veloria</p>
+          <h2 className="font-display max-w-2xl text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
+            Founding team
           </h2>
+          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+            The partners who set the standard. Hover a portrait to read a brief note on their work.
+          </p>
         </Reveal>
-        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-5">
-          {members.map((member, i) => (
-            <Reveal key={member.id} delay={i * 0.05}>
-              <article>
-                <div className="overflow-hidden bg-[#ece6da]">
-                  {member.imageUrl ? (
-                    <div className="relative aspect-3/4 w-full">
-                      <Photo
-                        src={member.imageUrl}
-                        alt={member.name}
-                        className="absolute inset-0 h-full w-full object-cover"
-                        style={{
-                          objectPosition: faceFocus(member),
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex aspect-3/4 items-end bg-forest-900 p-5 text-cream">
-                      <p className="font-display text-2xl">{member.name}</p>
-                    </div>
-                  )}
-                </div>
-                <h3 className="font-display mt-4 text-[1.15rem] font-medium leading-tight tracking-tight sm:text-[1.28rem]">
-                  {member.name}
-                </h3>
-                {member.role ? (
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-ink-soft sm:text-[11px] sm:tracking-[0.16em]">
-                    {member.role}
-                  </p>
-                ) : null}
-                {member.bio ? (
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">{member.bio}</p>
-                ) : null}
-              </article>
+        {founders.length ? (
+          <div className="mx-auto mt-12 grid max-w-[44rem] grid-cols-2 gap-x-5 gap-y-10 lg:max-w-[52rem] lg:gap-x-10">
+            {founders.map((member, i) => (
+              <MemberCard
+                key={member.id}
+                member={member}
+                delay={i * 0.08}
+                featured
+              />
+            ))}
+          </div>
+        ) : null}
+
+        {associates.length ? (
+          <div className="mt-16 border-t border-ink/10 pt-12 sm:mt-20 sm:pt-14">
+            <Reveal>
+              <p className="eyebrow mb-4">The practice</p>
+              <h2 className="font-display max-w-xl text-[clamp(1.85rem,6vw,3.15rem)] font-medium leading-[1.18]">
+                Our associates
+              </h2>
+              <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+                The bench that carries the work through — records, contracts, research and follow-through.
+              </p>
             </Reveal>
-          ))}
-        </div>
+            <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
+              {associates.map((member, i) => (
+                <MemberCard key={member.id} member={member} delay={i * 0.06} />
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

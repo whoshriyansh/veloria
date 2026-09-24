@@ -1,7 +1,6 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { PublicOverlays } from "@/components/site/public-overlays";
-import { CustomCursor } from "@/components/site/custom-cursor";
 import { FilmGrain, ScrollProgress } from "@/components/site/chrome";
 import { VeloriaChat } from "@/components/site/veloria-chat";
 import { JsonLd } from "@/components/site/json-ld";
@@ -31,7 +30,6 @@ export default async function SiteLayout({
     <>
       <JsonLd data={organizationJsonLd(contact, services)} />
       <JsonLd data={websiteJsonLd()} />
-      <CustomCursor />
       <ScrollProgress />
       <FilmGrain />
       <SiteHeader

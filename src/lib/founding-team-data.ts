@@ -8,6 +8,21 @@ export type FoundingTeamRecord = {
   order: number;
 };
 
+const BIOS: Record<string, string> = {
+  "himanshu-arya":
+    "Himanshu leads Veloria’s work on structure, governance and the foundations that make a company ready for capital and serious counterparties.",
+  "divyam-gaur":
+    "Divyam shapes the commercial and transaction side of the practice — the documents, diligence and decisions that have to hold under pressure.",
+  "tanishq-garg":
+    "Tanishq supports corporate records, founder arrangements and the everyday documentation that keeps a business inspection-ready.",
+  "farishq-shidique":
+    "Farishq works across contracts and commercial risk, helping clients put clean paper behind the deals they intend to close.",
+  "preeti-garg":
+    "Preeti assists with research, filings and the disciplined follow-through that turns advice into a record a counterparty can trust.",
+  rupesh:
+    "Rupesh supports the associate bench on review, documentation and the practical work behind a Veloria engagement.",
+};
+
 const FILES = [
   "01_himanshu_arya_Founder & Managing Partner.jpeg",
   "02_divyam_gaur_Co-founder & Managing Partner.jpeg",
@@ -43,7 +58,7 @@ function parseFile(filename: string): FoundingTeamRecord {
     name: titleName(match[2]),
     role: match[3].trim(),
     imageUrl: imageUrl(filename),
-    bio: "",
+    bio: BIOS[slug] ?? "",
     order,
   };
 }
