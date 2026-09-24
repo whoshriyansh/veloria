@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx scripts/seed.ts",
+    "db:founding-team": "tsx scripts/sync-founding-team.ts",
     "db:admin": "tsx scripts/ensure-admin.ts",
     "db:up": "docker compose up -d"
   },

@@ -5,13 +5,14 @@ import { Reveal } from "@/components/site/reveal";
 import { TrustMarquee } from "@/components/site/trust-marquee";
 import { Magnetic } from "@/components/site/magnetic";
 import { VScore } from "@/components/site/v-score";
-import { Testimonials } from "@/components/site/testimonials";
+import { FoundingTeam } from "@/components/site/founding-team";
 import { IconCard } from "@/components/site/icon-card";
 import { ArticleGrid } from "@/components/site/article-card";
 import { Ornament } from "@/components/site/ornament";
 import {
   getArticles,
   getPageBySlug,
+  getFoundingMembers,
   getServices,
   getSiteSettings,
 } from "@/lib/cms";
@@ -54,11 +55,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [settings, page, services, articles] = await Promise.all([
+  const [settings, page, services, articles, members] = await Promise.all([
     getSiteSettings(),
     getPageBySlug("home"),
     getServices(),
     getArticles(3),
+    getFoundingMembers(),
   ]);
 
   const sections = parseJsonArray<Section>(page?.sections ?? "[]");
@@ -227,7 +229,7 @@ export default async function HomePage() {
         viewAll
       />
 
-      {/* <Testimonials /> */}
+      <FoundingTeam members={members} />
 
       <section
         id="circle"

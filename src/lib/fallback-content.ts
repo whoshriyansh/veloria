@@ -351,53 +351,7 @@ export const FALLBACK_PACKAGES = [
   },
 ];
 
-export const FALLBACK_FOUNDING_MEMBERS = [
-  {
-    id: "fm-himanshu",
-    slug: "himanshu-arya",
-    name: "Himanshu Arya",
-    role: "Founder & Managing Partner",
-    imageUrl: "/founding_team/himanshu_arya.jpeg",
-    bio: "",
-    order: 2,
-  },
-  {
-    id: "fm-divyam",
-    slug: "divyam-gaur",
-    name: "Divyam Gaur",
-    role: "Co-founder & Managing Partner",
-    imageUrl: "/founding_team/divyam_gaur.jpeg",
-    bio: "",
-    order: 1,
-  },
-  {
-    id: "fm-tanishq",
-    slug: "tanishq-garg",
-    name: "Tanishq Garg",
-    role: "Associate",
-    imageUrl: "/founding_team/tanishq_garg.jpeg",
-    bio: "",
-    order: 3,
-  },
-  {
-    id: "fm-farishq",
-    slug: "farishq-shidique",
-    name: "Farishq Shidique",
-    role: "Associate",
-    imageUrl: "/founding_team/farishq_shidique.jpeg",
-    bio: "",
-    order: 4,
-  },
-  {
-    id: "fm-farishq",
-    slug: "preeti-garg",
-    name: "Preeti Garg",
-    role: "Associate",
-    imageUrl: "/founding_team/preeti_garg.jpeg",
-    bio: "",
-    order: 5,
-  },
-];
+export { FALLBACK_FOUNDING_MEMBERS } from "@/lib/founding-team-data";
 
 export const FALLBACK_CLIENTS = [
   { id: "c1", name: "Northline", logoUrl: "", website: "", order: 1 },

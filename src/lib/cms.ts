@@ -433,6 +433,7 @@ export type CmsArticle = {
 
 export type CmsFoundingMember = {
   id: string;
+  slug?: string;
   name: string;
   role: string;
   imageUrl: string;
@@ -460,25 +461,28 @@ export async function getFoundingMembers(): Promise<CmsFoundingMember[]> {
     remember("foundingMembers", FALLBACK_FOUNDING_MEMBERS, async () => {
       await connectMongo();
       const col = await collections.foundingMembers();
-      let members = await col
+      const keepSlugs = FALLBACK_FOUNDING_MEMBERS.map((member) => member.slug);
+      for (const member of FALLBACK_FOUNDING_MEMBERS) {
+        const { id, ...fields } = member;
+        await col.updateOne(
+          { slug: member.slug },
+          {
+            $set: { id, ...fields, isVisible: true, updatedAt: new Date() },
+            $setOnInsert: { createdAt: new Date() },
+          },
+          { upsert: true },
+        );
+      }
+      if (keepSlugs.length) {
+        await col.updateMany(
+          { slug: { $nin: keepSlugs } },
+          { $set: { isVisible: false, updatedAt: new Date() } },
+        );
+      }
+      const members = await col
         .find({ isVisible: true })
         .sort({ order: 1 })
         .toArray();
-      if (!members.length) {
-        const existing = await col.countDocuments();
-        if (existing === 0) {
-          await col.insertMany(
-            FALLBACK_FOUNDING_MEMBERS.map(({ id: _id, ...member }) => ({
-              ...member,
-              isVisible: true,
-            })),
-          );
-          members = await col
-            .find({ isVisible: true })
-            .sort({ order: 1 })
-            .toArray();
-        }
-      }
       if (!members.length) return FALLBACK_FOUNDING_MEMBERS;
       return members.map(
         (m) =>

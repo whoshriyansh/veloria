@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import bcrypt from "bcryptjs";
 import { MongoClient, ObjectId } from "mongodb";
+import { FALLBACK_FOUNDING_MEMBERS } from "../src/lib/founding-team-data";
 
 config({ path: ".env.local" });
 config();
@@ -646,62 +647,28 @@ Whether you are raising capital, entering a major transaction, expanding, taking
     },
   ]);
 
-  const foundingMembers = [
-    {
-      id: "fm-himanshu",
-      slug: "himanshu-arya",
-      name: "Himanshu Arya",
-      role: "Founder & Managing Partner",
-      imageUrl: "/founding_team/himanshu_arya.jpeg",
-      bio: "",
-      order: 2,
-    },
-    {
-      id: "fm-divyam",
-      slug: "divyam-gaur",
-      name: "Divyam Gaur",
-      role: "Co-founder & Managing Partner",
-      imageUrl: "/founding_team/divyam_gaur.jpeg",
-      bio: "",
-      order: 1,
-    },
-    {
-      id: "fm-tanishq",
-      slug: "tanishq-garg",
-      name: "Tanishq Garg",
-      role: "Associate",
-      imageUrl: "/founding_team/tanishq_garg.jpeg",
-      bio: "",
-      order: 3,
-    },
-    {
-      id: "fm-farishq",
-      slug: "farishq-shidique",
-      name: "Farishq Shidique",
-      role: "Associate",
-      imageUrl: "/founding_team/farishq_shidique.jpeg",
-      bio: "",
-      order: 4,
-    },
-    {
-      id: "fm-farishq",
-      slug: "preeti-garg",
-      name: "Preeti Garg",
-      role: "Associate",
-      imageUrl: "/founding_team/preeti_garg.jpeg",
-      bio: "",
-      order: 5,
-    },
-  ];
+  const foundingMembers = FALLBACK_FOUNDING_MEMBERS;
+  const keepSlugs = foundingMembers.map((member) => member.slug);
   for (const member of foundingMembers) {
-    await db
-      .collection("foundingMembers")
-      .updateOne(
-        { slug: member.slug },
-        { $setOnInsert: member },
-        { upsert: true },
-      );
+    const { id: _id, ...fields } = member;
+    await db.collection("foundingMembers").updateOne(
+      { slug: member.slug },
+      {
+        $set: {
+          id: member.id,
+          ...fields,
+          isVisible: true,
+          updatedAt: new Date(),
+        },
+        $setOnInsert: { createdAt: new Date() },
+      },
+      { upsert: true },
+    );
   }
+  await db.collection("foundingMembers").updateMany(
+    { slug: { $nin: keepSlugs } },
+    { $set: { isVisible: false, updatedAt: new Date() } },
+  );
 
   await db.collection("articles").deleteMany({});
   await db.collection("articles").insertMany([
