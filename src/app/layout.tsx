@@ -97,11 +97,11 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: [
-        { url: "/logo/logo_trans.png", type: "image/png" },
-        { url: "/logo/logo_trans.svg", type: "image/svg+xml" },
+        { url: "/logo/logo_trans.png?v=3", type: "image/png" },
+        { url: "/logo/logo_trans.svg?v=3", type: "image/svg+xml" },
       ],
-      apple: [{ url: "/logo/logo_trans.png" }],
-      shortcut: "/logo/logo_trans.png",
+      apple: [{ url: "/logo/logo_trans.png?v=3" }],
+      shortcut: "/logo/logo_trans.png?v=3",
     },
   };
 }

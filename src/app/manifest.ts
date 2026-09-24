@@ -13,7 +13,7 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "en-IN",
     icons: [
       {
-        src: "/logo/logo_trans.png",
+        src: "/logo/logo_trans.png?v=3",
         sizes: "512x512",
         type: "image/png",
       },

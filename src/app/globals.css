@@ -958,6 +958,114 @@ button {
   }
 }
 
+.legal-disclaimer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: rgba(6, 20, 16, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.legal-disclaimer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 34rem;
+  max-height: min(88dvh, 640px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #e7e1d4;
+  background: var(--cream);
+  padding: 22px 20px calc(18px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 24px 80px rgba(6, 20, 16, 0.28);
+}
+
+.legal-disclaimer-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(20, 24, 22, 0.12);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  background: #fff;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.legal-disclaimer-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.55rem, 5.5vw, 2.15rem);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  padding-right: 44px;
+}
+
+.legal-disclaimer-copy {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.legal-disclaimer-accept {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  border-radius: 999px;
+  background: var(--forest-900);
+  color: var(--cream);
+  font-size: 15px;
+  font-weight: 500;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
+}
+
+.legal-disclaimer-accept:active {
+  transform: scale(0.98);
+}
+
+body.disclaimer-open .veloria-chat {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (min-width: 640px) {
+  .legal-disclaimer {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .legal-disclaimer-card {
+    padding: 36px 40px 32px;
+  }
+
+  .legal-disclaimer-accept {
+    width: auto;
+    min-width: 180px;
+    padding: 0 28px;
+  }
+}
+
 .veloria-chat {
   position: fixed;
   right: max(16px, env(safe-area-inset-right, 0px));
