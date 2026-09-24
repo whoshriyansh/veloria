@@ -23,12 +23,19 @@ const BIOS: Record<string, string> = {
     "Rupesh supports the associate bench on review, documentation and the practical work behind a Veloria engagement.",
 };
 
+const DISPLAY: Record<string, { order: number; name?: string }> = {
+  rupesh: { order: 3, name: "Rupesh Gupta" },
+  "preeti-garg": { order: 4 },
+  "farishq-shidique": { order: 5 },
+  "tanishq-garg": { order: 6 },
+};
+
 const FILES = [
   "01_himanshu_arya_Founder & Managing Partner.jpeg",
   "02_divyam_gaur_Co-founder & Managing Partner.jpeg",
   "03_tanishq_garg_Associate.jpeg",
   "04_farishq_shidique_Associate.jpeg",
-  "05_preeti_garg_Associate.jpeg",
+  "05_preeti_garg_Associate.png",
   "06_Rupesh_Associate.png",
 ] as const;
 
@@ -50,16 +57,16 @@ function parseFile(filename: string): FoundingTeamRecord {
   if (!match) {
     throw new Error(`Could not parse founding team filename: ${filename}`);
   }
-  const order = Number(match[1]);
   const slug = match[2].toLowerCase().replace(/_/g, "-");
+  const display = DISPLAY[slug];
   return {
     id: `fm-${slug}`,
     slug,
-    name: titleName(match[2]),
+    name: display?.name ?? titleName(match[2]),
     role: match[3].trim(),
     imageUrl: imageUrl(filename),
     bio: BIOS[slug] ?? "",
-    order,
+    order: display?.order ?? Number(match[1]),
   };
 }
 

@@ -95,6 +95,14 @@ export async function generateMetadata(): Promise<Metadata> {
     other: {
       "geo.region": "IN",
     },
+    icons: {
+      icon: [
+        { url: "/logo/logo_trans.png", type: "image/png" },
+        { url: "/logo/logo_trans.svg", type: "image/svg+xml" },
+      ],
+      apple: [{ url: "/logo/logo_trans.png" }],
+      shortcut: "/logo/logo_trans.png",
+    },
   };
 }
 
