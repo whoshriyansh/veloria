@@ -1,6 +1,6 @@
 import { connectMongo } from "@/lib/mongodb";
 import { collections, isValidId, ObjectId, oid } from "@/lib/models";
-import { readinessFromScore } from "@/lib/utils";
+import { readinessFromScore, scorePercent } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
     }
   }
 
+  const percent = scorePercent(score, maxScore);
   const readiness = readinessFromScore(score, maxScore);
   const now = new Date();
 
@@ -126,6 +127,7 @@ export async function POST(request: Request) {
     leadId: String(result.insertedId),
     score,
     maxScore,
+    percent,
     readiness,
     message:
       "Thanks — a Veloria representative will review your checkup and call you shortly.",

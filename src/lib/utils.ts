@@ -5,8 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function scorePercent(score: number, maxScore: number) {
+  if (!maxScore) return 0;
+  return Math.round((score / maxScore) * 100);
+}
+
 export function readinessFromScore(score: number, maxScore: number) {
-  const pct = maxScore === 0 ? 0 : (score / maxScore) * 100;
+  const pct = scorePercent(score, maxScore);
   if (pct >= 85) return "Investment Ready";
   if (pct >= 60) return "Nearly Ready";
   if (pct >= 35) return "Needs Work";

@@ -3,7 +3,7 @@
 import { FormEvent, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, scorePercent } from "@/lib/utils";
 
 type Question = {
   id: string;
@@ -112,11 +112,12 @@ export function LegalHealthCheckup({ questions }: { questions: Question[] }) {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl bg-forest-900 p-5 text-cream">
-            <p className="text-xs uppercase tracking-[0.18em] text-cream/55">Score</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-cream/55">Veloria Score</p>
             <p className="mt-2 font-display text-4xl">
-              {result.score}
-              <span className="text-xl text-cream/50">/{result.maxScore}</span>
+              {scorePercent(result.score, result.maxScore)}
+              <span className="text-xl text-cream/50">%</span>
             </p>
+            <p className="mt-1 text-xs text-cream/50">out of 100</p>
           </div>
           <div className="rounded-2xl bg-cream-deep/60 p-5 sm:col-span-2">
             <p className="text-xs uppercase tracking-[0.18em] text-ink-soft">Readiness</p>
