@@ -9,8 +9,8 @@ import type { CmsFoundingMember } from "@/lib/cms";
 const FACE_FOCUS: Record<string, string> = {
   "fm-himanshu-arya": "50% 10%",
   "himanshu-arya": "50% 10%",
-  "fm-divyam-gaur": "50% 16%",
-  "divyam-gaur": "50% 16%",
+  "fm-divyam-gaur": "50% 10%",
+  "divyam-gaur": "50% 10%",
   "fm-tanishq-garg": "50% 8%",
   "tanishq-garg": "50% 8%",
   "fm-farishq-shidique": "50% 12%",
